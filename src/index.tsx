@@ -180,7 +180,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     onImageUploadStop: () => {
       // no default behavior
     },
-    onClickLink: href => {
+    onClickLink: (href) => {
       window.open(href, "_blank");
     },
     embeds: [],
@@ -216,6 +216,22 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   marks: { [name: string]: MarkSpec };
   commands: Record<string, any>;
   rulePlugins: PluginSimple[];
+  unmounted = false;
+
+  constructor(props) {
+    super(props);
+    this.view = null as any;
+    this.nodeViews = null as any;
+    this.nodes = null as any;
+    this.marks = null as any;
+    this.serializer = null as any;
+    this.parser = null as any;
+    this.extensions = null as any;
+  }
+
+  UNSAFE_componentWillMount() {
+    this.unmounted = false;
+  }
 
   componentDidMount() {
     this.init();
@@ -233,32 +249,36 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
+  UNSAFE_componentWillUpdate(nextProps: Readonly<Props>) {
+    if (this.unmounted) {
+      return;
+    }
+    const prevProps = this.props;
     // Allow changes to the 'value' prop to update the editor from outside
-    if (this.props.value && prevProps.value !== this.props.value) {
-      const newState = this.createState(this.props.value);
+    if (nextProps.value && prevProps.value !== nextProps.value) {
+      const newState = this.createState(nextProps.value);
       this.view.updateState(newState);
     }
 
     // pass readOnly changes through to underlying editor instance
-    if (prevProps.readOnly !== this.props.readOnly) {
+    if (prevProps.readOnly !== nextProps.readOnly) {
       this.view.update({
         ...this.view.props,
-        editable: () => !this.props.readOnly,
+        editable: () => !nextProps.readOnly,
       });
     }
 
-    if (this.props.scrollTo && this.props.scrollTo !== prevProps.scrollTo) {
-      this.scrollToAnchor(this.props.scrollTo);
+    if (nextProps.scrollTo && nextProps.scrollTo !== prevProps.scrollTo) {
+      this.scrollToAnchor(nextProps.scrollTo);
     }
 
     // Focus at the end of the document if switching from readOnly and autoFocus
     // is set to true
-    if (prevProps.readOnly && !this.props.readOnly && this.props.autoFocus) {
+    if (prevProps.readOnly && !nextProps.readOnly && nextProps.autoFocus) {
       this.focusAtEnd();
     }
 
-    if (prevProps.dir !== this.props.dir) {
+    if (prevProps.dir !== nextProps.dir) {
       this.calculateDir();
     }
 
@@ -270,8 +290,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       !this.state.selectionMenuOpen
     ) {
       this.isBlurred = true;
-      if (this.props.onBlur) {
-        this.props.onBlur();
+      if (nextProps.onBlur) {
+        nextProps.onBlur();
       }
     }
 
@@ -283,10 +303,18 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         this.state.selectionMenuOpen)
     ) {
       this.isBlurred = false;
-      if (this.props.onFocus) {
-        this.props.onFocus();
+      if (nextProps.onFocus) {
+        nextProps.onFocus();
       }
     }
+
+    this.unmounted = false;
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
+    const newState = this.createState("");
+    this.view.updateState(newState);
   }
 
   init() {
@@ -402,7 +430,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new MaxLength({
             maxLength: this.props.maxLength,
           }),
-        ].filter(extension => {
+        ].filter((extension) => {
           // Optionaly disable extensions
           if (this.props.disableExtensions) {
             return !(this.props.disableExtensions as string[]).includes(
@@ -528,7 +556,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       throw new Error("createView called before ref available");
     }
 
-    const isEditingCheckbox = tr => {
+    const isEditingCheckbox = (tr) => {
       return tr.steps.some(
         (step: Step) =>
           step.slice?.content?.firstChild?.type.name ===
@@ -554,7 +582,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         // changing then call our own change handler to let the outside world
         // know
         if (
-          transactions.some(tr => tr.docChanged) &&
+          transactions.some((tr) => tr.docChanged) &&
           (!self.props.readOnly ||
             (self.props.readOnlyWriteCheckboxes &&
               transactions.some(isEditingCheckbox)))
@@ -692,7 +720,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     const headings: { title: string; level: number; id: string }[] = [];
     const previouslySeen = {};
 
-    this.view.state.doc.forEach(node => {
+    this.view.state.doc.forEach((node) => {
       if (node.type.name === "heading") {
         // calculate the optimal slug
         const slug = headingToSlug(node);
@@ -742,6 +770,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     const { isRTL } = this.state;
     const dictionary = this.dictionary(this.props.dictionary);
 
+    if (this.unmounted) {
+      return <div ref={(ref) => (this.element = ref)} />;
+    }
+
     return (
       <Flex
         onKeyDown={onKeyDown}
@@ -759,7 +791,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
               rtl={isRTL}
               readOnly={readOnly}
               readOnlyWriteCheckboxes={readOnlyWriteCheckboxes}
-              ref={ref => (this.element = ref)}
+              ref={(ref) => (this.element = ref)}
             />
             {!readOnly && this.view && (
               <React.Fragment>

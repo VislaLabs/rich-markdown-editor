@@ -55,8 +55,8 @@
     "smooth-scroll-into-view-if-needed": "^1.1.29"
   },
   "peerDependencies": {
-    "react": "^16.0.0 || ^17.0.0",
-    "react-dom": "^16.0.0 || ^17.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "styled-components": "^5.0.0"
   },
   "devDependencies": {
@@ -83,8 +83,8 @@
     "@types/prosemirror-schema-list": "^1.0.1",
     "@types/prosemirror-state": "^1.2.4",
     "@types/prosemirror-view": "^1.11.4",
-    "@types/react": "^16.9.19",
-    "@types/react-dom": "^16.9.5",
+    "@types/react": "^18.2.25",
+    "@types/react-dom": "^18.2.11",
     "@types/refractor": "^2.8.0",
     "@types/styled-components": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^4.15.2",
@@ -101,8 +101,8 @@
     "eslint-plugin-react-hooks": "^4.0.8",
     "jest": "^26.6.3",
     "prettier": "^1.19.1",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "source-map-loader": "^0.2.4",
     "styled-components": "^5.2.1",
     "ts-loader": "^6.2.1",
