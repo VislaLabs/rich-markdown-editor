@@ -1,11 +1,13 @@
-import * as React from "react";
-import ReactDOM from "react-dom";
-import { ThemeProvider } from "styled-components";
-import { EditorView, Decoration } from "prosemirror-view";
-import Extension from "../lib/Extension";
-import Node from "../nodes/Node";
-import { light as lightTheme, dark as darkTheme } from "../styles/theme";
-import Editor from "../";
+import * as React from 'react';
+import ReactDOM from 'react-dom/client';
+import ReactShadowRoot from 'react-shadow-root';
+import { ThemeProvider } from 'styled-components';
+import { EditorView, Decoration } from 'prosemirror-view';
+import { default as GlobalStyle, SetTheme } from 'app/GlobalStyle';
+import Extension from '../lib/Extension';
+import Node from '../nodes/Node';
+import { light as lightTheme, dark as darkTheme } from '../styles/theme';
+import Editor from '../';
 
 type Component = (options: {
   node: Node;
@@ -25,11 +27,12 @@ export default class ComponentView {
   decorations: Decoration<{ [key: string]: any }>[];
   isSelected = false;
   dom: HTMLElement | null;
+  root: ReactDOM.Root;
 
   // See https://prosemirror.net/docs/ref/#view.NodeView
   constructor(
     component,
-    { editor, extension, node, view, getPos, decorations }
+    { editor, extension, node, view, getPos, decorations },
   ) {
     this.component = component;
     this.editor = editor;
@@ -39,9 +42,9 @@ export default class ComponentView {
     this.node = node;
     this.view = view;
     this.dom = node.type.spec.inline
-      ? document.createElement("span")
-      : document.createElement("div");
-
+      ? document.createElement('span')
+      : document.createElement('div');
+    this.root = ReactDOM.createRoot(this.dom);
     this.renderElement();
   }
 
@@ -57,9 +60,12 @@ export default class ComponentView {
       getPos: this.getPos,
     });
 
-    ReactDOM.render(
+    this.root.render(
+      // <ReactShadowRoot>
+      //   <GlobalStyle />
+      //   <SetTheme />
       <ThemeProvider theme={theme}>{children}</ThemeProvider>,
-      this.dom
+      // </ReactShadowRoot>,
     );
   }
 
@@ -93,7 +99,7 @@ export default class ComponentView {
 
   destroy() {
     if (this.dom) {
-      ReactDOM.unmountComponentAtNode(this.dom);
+      this.root.unmount();
     }
     this.dom = null;
   }

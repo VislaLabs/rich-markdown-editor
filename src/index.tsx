@@ -1,86 +1,87 @@
 /* global window File Promise */
-import * as React from "react";
-import memoize from "lodash/memoize";
-import { EditorState, Selection, Plugin } from "prosemirror-state";
-import { dropCursor } from "prosemirror-dropcursor";
-import { gapCursor } from "prosemirror-gapcursor";
-import { MarkdownParser, MarkdownSerializer } from "prosemirror-markdown";
-import { EditorView } from "prosemirror-view";
-import { Schema, NodeSpec, MarkSpec, Slice } from "prosemirror-model";
-import { inputRules, InputRule } from "prosemirror-inputrules";
-import { keymap } from "prosemirror-keymap";
-import { baseKeymap } from "prosemirror-commands";
-import { selectColumn, selectRow, selectTable } from "prosemirror-utils";
-import { ThemeProvider } from "styled-components";
-import { light as lightTheme, dark as darkTheme } from "./styles/theme";
-import baseDictionary from "./dictionary";
-import Flex from "./components/Flex";
-import { SearchResult } from "./components/LinkEditor";
-import { EmbedDescriptor, ToastType } from "./types";
-import SelectionToolbar from "./components/SelectionToolbar";
-import BlockMenu from "./components/BlockMenu";
-import EmojiMenu from "./components/EmojiMenu";
-import LinkToolbar from "./components/LinkToolbar";
-import Tooltip from "./components/Tooltip";
-import Extension from "./lib/Extension";
-import ExtensionManager from "./lib/ExtensionManager";
-import ComponentView from "./lib/ComponentView";
-import headingToSlug from "./lib/headingToSlug";
+import * as React from 'react';
+import memoize from 'lodash/memoize';
+import { EditorState, Selection, Plugin } from 'prosemirror-state';
+import { dropCursor } from 'prosemirror-dropcursor';
+import { gapCursor } from 'prosemirror-gapcursor';
+import { MarkdownParser, MarkdownSerializer } from 'prosemirror-markdown';
+import { EditorView } from 'prosemirror-view';
+import { Schema, NodeSpec, MarkSpec, Slice } from 'prosemirror-model';
+import { inputRules, InputRule } from 'prosemirror-inputrules';
+import { keymap } from 'prosemirror-keymap';
+import { baseKeymap } from 'prosemirror-commands';
+import { selectColumn, selectRow, selectTable } from 'prosemirror-utils';
+import { ThemeProvider } from 'styled-components';
+import { light as lightTheme, dark as darkTheme } from './styles/theme';
+import baseDictionary from './dictionary';
+import Flex from './components/Flex';
+import { SearchResult } from './components/LinkEditor';
+import { EmbedDescriptor, ToastType } from './types';
+import SelectionToolbar from './components/SelectionToolbar';
+import BlockMenu from './components/BlockMenu';
+import EmojiMenu from './components/EmojiMenu';
+import LinkToolbar from './components/LinkToolbar';
+import Tooltip from './components/Tooltip';
+import Extension from './lib/Extension';
+import ExtensionManager from './lib/ExtensionManager';
+import ComponentView from './lib/ComponentView';
+import headingToSlug from './lib/headingToSlug';
 
 // styles
-import { StyledEditor } from "./styles/editor";
+import { StyledEditor } from './styles/editor';
 
 // nodes
-import ReactNode from "./nodes/ReactNode";
-import Doc from "./nodes/Doc";
-import Text from "./nodes/Text";
-import Blockquote from "./nodes/Blockquote";
-import BulletList from "./nodes/BulletList";
-import CodeBlock from "./nodes/CodeBlock";
-import CodeFence from "./nodes/CodeFence";
-import CheckboxList from "./nodes/CheckboxList";
-import Emoji from "./nodes/Emoji";
-import CheckboxItem from "./nodes/CheckboxItem";
-import Embed from "./nodes/Embed";
-import HardBreak from "./nodes/HardBreak";
-import Heading from "./nodes/Heading";
-import HorizontalRule from "./nodes/HorizontalRule";
-import Image from "./nodes/Image";
-import ListItem from "./nodes/ListItem";
-import Notice from "./nodes/Notice";
-import OrderedList from "./nodes/OrderedList";
-import Paragraph from "./nodes/Paragraph";
-import Table from "./nodes/Table";
-import TableCell from "./nodes/TableCell";
-import TableHeadCell from "./nodes/TableHeadCell";
-import TableRow from "./nodes/TableRow";
+import ReactNode from './nodes/ReactNode';
+import Doc from './nodes/Doc';
+import Text from './nodes/Text';
+import Blockquote from './nodes/Blockquote';
+import BulletList from './nodes/BulletList';
+import CodeBlock from './nodes/CodeBlock';
+import CodeFence from './nodes/CodeFence';
+import CheckboxList from './nodes/CheckboxList';
+import Emoji from './nodes/Emoji';
+import CheckboxItem from './nodes/CheckboxItem';
+import Embed from './nodes/Embed';
+import HardBreak from './nodes/HardBreak';
+import Heading from './nodes/Heading';
+import HorizontalRule from './nodes/HorizontalRule';
+import Image from './nodes/Image';
+import ListItem from './nodes/ListItem';
+import Notice from './nodes/Notice';
+import OrderedList from './nodes/OrderedList';
+import Paragraph from './nodes/Paragraph';
+import Table from './nodes/Table';
+import TableCell from './nodes/TableCell';
+import TableHeadCell from './nodes/TableHeadCell';
+import TableRow from './nodes/TableRow';
+import Media from './nodes/Media';
 
 // marks
-import Bold from "./marks/Bold";
-import Code from "./marks/Code";
-import Highlight from "./marks/Highlight";
-import Italic from "./marks/Italic";
-import Link from "./marks/Link";
-import Strikethrough from "./marks/Strikethrough";
-import TemplatePlaceholder from "./marks/Placeholder";
-import Underline from "./marks/Underline";
+import Bold from './marks/Bold';
+import Code from './marks/Code';
+import Highlight from './marks/Highlight';
+import Italic from './marks/Italic';
+import Link from './marks/Link';
+import Strikethrough from './marks/Strikethrough';
+import TemplatePlaceholder from './marks/Placeholder';
+import Underline from './marks/Underline';
 
 // plugins
-import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
-import EmojiTrigger from "./plugins/EmojiTrigger";
-import Folding from "./plugins/Folding";
-import History from "./plugins/History";
-import Keys from "./plugins/Keys";
-import MaxLength from "./plugins/MaxLength";
-import Placeholder from "./plugins/Placeholder";
-import SmartText from "./plugins/SmartText";
-import TrailingNode from "./plugins/TrailingNode";
-import PasteHandler from "./plugins/PasteHandler";
-import { PluginSimple } from "markdown-it";
+import BlockMenuTrigger from './plugins/BlockMenuTrigger';
+import EmojiTrigger from './plugins/EmojiTrigger';
+import Folding from './plugins/Folding';
+import History from './plugins/History';
+import Keys from './plugins/Keys';
+import MaxLength from './plugins/MaxLength';
+import Placeholder from './plugins/Placeholder';
+import SmartText from './plugins/SmartText';
+import TrailingNode from './plugins/TrailingNode';
+import PasteHandler from './plugins/PasteHandler';
+import { PluginSimple } from 'markdown-it';
 
-export { schema, parser, serializer, renderToHtml } from "./server";
+export { schema, parser, serializer, renderToHtml } from './server';
 
-export { default as Extension } from "./lib/Extension";
+export { default as Extension } from './lib/Extension';
 
 export const theme = lightTheme;
 
@@ -91,34 +92,34 @@ export type Props = {
   placeholder: string;
   extensions?: Extension[];
   disableExtensions?: (
-    | "strong"
-    | "code_inline"
-    | "highlight"
-    | "em"
-    | "link"
-    | "placeholder"
-    | "strikethrough"
-    | "underline"
-    | "blockquote"
-    | "bullet_list"
-    | "checkbox_item"
-    | "checkbox_list"
-    | "code_block"
-    | "code_fence"
-    | "embed"
-    | "br"
-    | "heading"
-    | "hr"
-    | "image"
-    | "list_item"
-    | "container_notice"
-    | "ordered_list"
-    | "paragraph"
-    | "table"
-    | "td"
-    | "th"
-    | "tr"
-    | "emoji"
+    | 'strong'
+    | 'code_inline'
+    | 'highlight'
+    | 'em'
+    | 'link'
+    | 'placeholder'
+    | 'strikethrough'
+    | 'underline'
+    | 'blockquote'
+    | 'bullet_list'
+    | 'checkbox_item'
+    | 'checkbox_list'
+    | 'code_block'
+    | 'code_fence'
+    | 'embed'
+    | 'br'
+    | 'heading'
+    | 'hr'
+    | 'image'
+    | 'list_item'
+    | 'container_notice'
+    | 'ordered_list'
+    | 'paragraph'
+    | 'table'
+    | 'td'
+    | 'th'
+    | 'tr'
+    | 'emoji'
   )[];
   autoFocus?: boolean;
   readOnly?: boolean;
@@ -171,9 +172,9 @@ type Step = {
 
 class RichMarkdownEditor extends React.PureComponent<Props, State> {
   static defaultProps = {
-    defaultValue: "",
-    dir: "auto",
-    placeholder: "Write something nice…",
+    defaultValue: '',
+    dir: 'auto',
+    placeholder: 'Write something nice…',
     onImageUploadStart: () => {
       // no default behavior
     },
@@ -181,7 +182,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       // no default behavior
     },
     onClickLink: href => {
-      window.open(href, "_blank");
+      window.open(href, '_blank');
     },
     embeds: [],
     extensions: [],
@@ -194,7 +195,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     selectionMenuOpen: false,
     blockMenuOpen: false,
     linkMenuOpen: false,
-    blockMenuSearch: "",
+    blockMenuSearch: '',
     emojiMenuOpen: false,
   };
 
@@ -216,6 +217,22 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   marks: { [name: string]: MarkSpec };
   commands: Record<string, any>;
   rulePlugins: PluginSimple[];
+  unmounted = false;
+
+  constructor(props) {
+    super(props);
+    this.view = null;
+    this.nodeViews = null;
+    this.nodes = null;
+    this.marks = null;
+    this.serializer = null;
+    this.parser = null;
+    this.extensions = null;
+  }
+
+  UNSAFE_componentWillMount() {
+    this.unmounted = false;
+  }
 
   componentDidMount() {
     this.init();
@@ -233,32 +250,36 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
   }
 
-  componentDidUpdate(prevProps: Props) {
+  UNSAFE_componentWillUpdate(nextProps: Readonly<Props>) {
+    if (this.unmounted) {
+      return;
+    }
+    const prevProps = this.props;
     // Allow changes to the 'value' prop to update the editor from outside
-    if (this.props.value && prevProps.value !== this.props.value) {
-      const newState = this.createState(this.props.value);
+    if (nextProps.value && prevProps.value !== nextProps.value) {
+      const newState = this.createState(nextProps.value);
       this.view.updateState(newState);
     }
 
     // pass readOnly changes through to underlying editor instance
-    if (prevProps.readOnly !== this.props.readOnly) {
+    if (prevProps.readOnly !== nextProps.readOnly) {
       this.view.update({
         ...this.view.props,
-        editable: () => !this.props.readOnly,
+        editable: () => !nextProps.readOnly,
       });
     }
 
-    if (this.props.scrollTo && this.props.scrollTo !== prevProps.scrollTo) {
-      this.scrollToAnchor(this.props.scrollTo);
+    if (nextProps.scrollTo && nextProps.scrollTo !== prevProps.scrollTo) {
+      this.scrollToAnchor(nextProps.scrollTo);
     }
 
     // Focus at the end of the document if switching from readOnly and autoFocus
     // is set to true
-    if (prevProps.readOnly && !this.props.readOnly && this.props.autoFocus) {
+    if (prevProps.readOnly && !nextProps.readOnly && nextProps.autoFocus) {
       this.focusAtEnd();
     }
 
-    if (prevProps.dir !== this.props.dir) {
+    if (prevProps.dir !== nextProps.dir) {
       this.calculateDir();
     }
 
@@ -270,8 +291,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       !this.state.selectionMenuOpen
     ) {
       this.isBlurred = true;
-      if (this.props.onBlur) {
-        this.props.onBlur();
+      if (nextProps.onBlur) {
+        nextProps.onBlur();
       }
     }
 
@@ -283,10 +304,18 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         this.state.selectionMenuOpen)
     ) {
       this.isBlurred = false;
-      if (this.props.onFocus) {
-        this.props.onFocus();
+      if (nextProps.onFocus) {
+        nextProps.onFocus();
       }
     }
+
+    this.unmounted = false;
+  }
+
+  componentWillUnmount() {
+    this.unmounted = true;
+    const newState = this.createState('');
+    this.view.updateState(newState);
   }
 
   init() {
@@ -348,15 +377,22 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             onImageUploadStop: this.props.onImageUploadStop,
             onShowToast: this.props.onShowToast,
           }),
-          new Table(),
-          new TableCell({
-            onSelectTable: this.handleSelectTable,
-            onSelectRow: this.handleSelectRow,
+          new Media({
+            dictionary,
+            uploadImage: this.props.uploadImage,
+            onImageUploadStart: this.props.onImageUploadStart,
+            onImageUploadStop: this.props.onImageUploadStop,
+            onShowToast: this.props.onShowToast,
           }),
-          new TableHeadCell({
-            onSelectColumn: this.handleSelectColumn,
-          }),
-          new TableRow(),
+          // new Table(),
+          // new TableCell({
+          //   onSelectTable: this.handleSelectTable,
+          //   onSelectRow: this.handleSelectRow,
+          // }),
+          // new TableHeadCell({
+          //   onSelectColumn: this.handleSelectColumn,
+          // }),
+          // new TableRow(),
           new Bold(),
           new Code(),
           new Highlight(),
@@ -406,14 +442,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           // Optionaly disable extensions
           if (this.props.disableExtensions) {
             return !(this.props.disableExtensions as string[]).includes(
-              extension.name
+              extension.name,
             );
           }
           return true;
         }),
         ...(this.props.extensions || []),
       ],
-      this
+      this,
     );
   }
 
@@ -525,14 +561,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   createView() {
     if (!this.element) {
-      throw new Error("createView called before ref available");
+      throw new Error('createView called before ref available');
     }
 
     const isEditingCheckbox = tr => {
       return tr.steps.some(
         (step: Step) =>
           step.slice?.content?.firstChild?.type.name ===
-          this.schema.nodes.checkbox_item.name
+          this.schema.nodes.checkbox_item.name,
       );
     };
 
@@ -545,7 +581,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       dispatchTransaction: function(transaction) {
         // callback is bound to have the view instance as its this binding
         const { state, transactions } = this.state.applyTransaction(
-          transaction
+          transaction,
         );
 
         this.updateState(state);
@@ -571,7 +607,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     });
 
     // Tell third-party libraries and screen-readers that this is an input
-    view.dom.setAttribute("role", "textbox");
+    view.dom.setAttribute('role', 'textbox');
 
     return view;
   }
@@ -581,7 +617,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
     try {
       const element = document.querySelector(hash);
-      if (element) element.scrollIntoView({ behavior: "smooth" });
+      if (element) element.scrollIntoView({ behavior: 'smooth' });
     } catch (err) {
       // querySelector will throw an error if the hash begins with a number
       // or contains a period. This is protected against now by safeSlugify
@@ -594,8 +630,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     if (!this.element) return;
 
     const isRTL =
-      this.props.dir === "rtl" ||
-      getComputedStyle(this.element).direction === "rtl";
+      this.props.dir === 'rtl' ||
+      getComputedStyle(this.element).direction === 'rtl';
 
     if (this.state.isRTL !== isRTL) {
       this.setState({ isRTL });
@@ -693,7 +729,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     const previouslySeen = {};
 
     this.view.state.doc.forEach(node => {
-      if (node.type.name === "heading") {
+      if (node.type.name === 'heading') {
         // calculate the optimal slug
         const slug = headingToSlug(node);
         let id = slug;
@@ -726,7 +762,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   dictionary = memoize(
     (providedDictionary?: Partial<typeof baseDictionary>) => {
       return { ...baseDictionary, ...providedDictionary };
-    }
+    },
   );
 
   render() {
@@ -741,6 +777,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     } = this.props;
     const { isRTL } = this.state;
     const dictionary = this.dictionary(this.props.dictionary);
+
+    if (this.unmounted) {
+      return <div ref={ref => (this.element = ref)} />;
+    }
 
     return (
       <Flex
