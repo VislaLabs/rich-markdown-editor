@@ -1,22 +1,22 @@
-import React from "react";
-import gemojies from "gemoji";
-import FuzzySearch from "fuzzy-search";
-import CommandMenu, { Props } from "./CommandMenu";
-import EmojiMenuItem from "./EmojiMenuItem";
+import React from 'react';
+import gemojies from 'gemoji';
+import FuzzySearch from 'fuzzy-search';
+import CommandMenu, { Props } from './CommandMenu';
+import EmojiMenuItem from './EmojiMenuItem';
 
 type Emoji = {
   name: string;
   title: string;
   emoji: string;
   description: string;
-  attrs: { markup: string; "data-name": string };
+  attrs: { markup: string; 'data-name': string };
 };
 
 const searcher = new FuzzySearch<{
   names: string[];
   description: string;
   emoji: string;
-}>(gemojies, ["names"], {
+}>(gemojies, ['names'], {
   caseSensitive: true,
   sort: true,
 });
@@ -24,15 +24,15 @@ const searcher = new FuzzySearch<{
 class EmojiMenu extends React.Component<
   Omit<
     Props<Emoji>,
-    | "renderMenuItem"
-    | "items"
-    | "onLinkToolbarOpen"
-    | "embeds"
-    | "onClearSearch"
+    | 'renderMenuItem'
+    | 'items'
+    | 'onLinkToolbarOpen'
+    | 'embeds'
+    | 'onClearSearch'
   >
 > {
   get items(): Emoji[] {
-    const { search = "" } = this.props;
+    const { search = '' } = this.props;
 
     const n = search.toLowerCase();
     const result = searcher.search(n).map(item => {
@@ -40,10 +40,10 @@ class EmojiMenu extends React.Component<
       const name = item.names[0];
       return {
         ...item,
-        name: "emoji",
+        name: 'emoji',
         title: name,
         description,
-        attrs: { markup: name, "data-name": name },
+        attrs: { markup: name, 'data-name': name },
       };
     });
 
@@ -56,10 +56,10 @@ class EmojiMenu extends React.Component<
     // clear search input
     dispatch(
       state.tr.insertText(
-        "",
-        state.selection.$from.pos - (this.props.search ?? "").length - 1,
-        state.selection.to
-      )
+        '',
+        state.selection.$from.pos - (this.props.search ?? '').length - 1,
+        state.selection.to,
+      ),
     );
   };
 

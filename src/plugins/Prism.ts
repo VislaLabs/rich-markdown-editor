@@ -1,31 +1,31 @@
-import refractor from "refractor/core";
-import flattenDeep from "lodash/flattenDeep";
-import { Plugin, PluginKey, Transaction } from "prosemirror-state";
-import { Node } from "prosemirror-model";
-import { Decoration, DecorationSet } from "prosemirror-view";
-import { findBlockNodes } from "prosemirror-utils";
+import refractor from 'refractor/core';
+import flattenDeep from 'lodash/flattenDeep';
+import { Plugin, PluginKey, Transaction } from 'prosemirror-state';
+import { Node } from 'prosemirror-model';
+import { Decoration, DecorationSet } from 'prosemirror-view';
+import { findBlockNodes } from 'prosemirror-utils';
 
 export const LANGUAGES = {
-  none: "None", // additional entry to disable highlighting
-  bash: "Bash",
-  css: "CSS",
-  clike: "C",
-  csharp: "C#",
-  go: "Go",
-  markup: "HTML",
-  objectivec: "Objective-C",
-  java: "Java",
-  javascript: "JavaScript",
-  json: "JSON",
-  perl: "Perl",
-  php: "PHP",
-  powershell: "Powershell",
-  python: "Python",
-  ruby: "Ruby",
-  rust: "Rust",
-  sql: "SQL",
-  typescript: "TypeScript",
-  yaml: "YAML",
+  none: 'None', // additional entry to disable highlighting
+  bash: 'Bash',
+  css: 'CSS',
+  clike: 'C',
+  csharp: 'C#',
+  go: 'Go',
+  markup: 'HTML',
+  objectivec: 'Objective-C',
+  java: 'Java',
+  javascript: 'JavaScript',
+  json: 'JSON',
+  perl: 'Perl',
+  php: 'PHP',
+  powershell: 'Powershell',
+  python: 'Python',
+  ruby: 'Ruby',
+  rust: 'Rust',
+  sql: 'SQL',
+  typescript: 'TypeScript',
+  yaml: 'YAML',
 };
 
 type ParsedNode = {
@@ -38,15 +38,15 @@ const cache: Record<number, { node: Node; decorations: Decoration[] }> = {};
 function getDecorations({ doc, name }: { doc: Node; name: string }) {
   const decorations: Decoration[] = [];
   const blocks: { node: Node; pos: number }[] = findBlockNodes(doc).filter(
-    item => item.node.type.name === name
+    item => item.node.type.name === name,
   );
 
   function parseNodes(
     nodes: refractor.RefractorNode[],
-    classNames: string[] = []
+    classNames: string[] = [],
   ): any {
     return nodes.map(node => {
-      if (node.type === "element") {
+      if (node.type === 'element') {
         const classes = [...classNames, ...(node.properties.className || [])];
         return parseNodes(node.children, classes);
       }
@@ -61,7 +61,7 @@ function getDecorations({ doc, name }: { doc: Node; name: string }) {
   blocks.forEach(block => {
     let startPos = block.pos + 1;
     const language = block.node.attrs.language;
-    if (!language || language === "none" || !refractor.registered(language)) {
+    if (!language || language === 'none' || !refractor.registered(language)) {
       return;
     }
 
@@ -83,8 +83,8 @@ function getDecorations({ doc, name }: { doc: Node; name: string }) {
         .filter(node => node.classes && node.classes.length)
         .map(node =>
           Decoration.inline(node.from, node.to, {
-            class: node.classes.join(" "),
-          })
+            class: node.classes.join(' '),
+          }),
         );
 
       cache[block.pos] = {
@@ -110,7 +110,7 @@ export default function Prism({ name }) {
   let highlighted = false;
 
   return new Plugin({
-    key: new PluginKey("prism"),
+    key: new PluginKey('prism'),
     state: {
       init: (_: Plugin, { doc }) => {
         return DecorationSet.create(doc, []);
@@ -120,7 +120,7 @@ export default function Prism({ name }) {
         const previousNodeName = oldState.selection.$head.parent.type.name;
         const codeBlockChanged =
           transaction.docChanged && [nodeName, previousNodeName].includes(name);
-        const ySyncEdit = !!transaction.getMeta("y-sync$");
+        const ySyncEdit = !!transaction.getMeta('y-sync$');
 
         if (!highlighted || codeBlockChanged || ySyncEdit) {
           highlighted = true;
@@ -137,14 +137,14 @@ export default function Prism({ name }) {
         // it render un-highlighted and then trigger a defered render of Prism
         // by updating the plugins metadata
         setTimeout(() => {
-          view.dispatch(view.state.tr.setMeta("prism", { loaded: true }));
+          view.dispatch(view.state.tr.setMeta('prism', { loaded: true }));
         }, 10);
       }
       return {};
     },
     props: {
       decorations(state) {
-        return this.getState(state);
+        return (this as any).getState(state);
       },
     },
   });

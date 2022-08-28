@@ -1,6 +1,6 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-export const StyledEditor = styled("div")<{
+export const StyledEditor = styled('div')<{
   rtl: boolean;
   readOnly?: boolean;
   readOnlyWriteCheckboxes?: boolean;
@@ -38,7 +38,7 @@ export const StyledEditor = styled("div")<{
     clear: both;
 
     img {
-      pointer-events: ${props => (props.readOnly ? "initial" : "none")};
+      pointer-events: ${props => (props.readOnly ? 'initial' : 'none')};
       display: inline-block;
       max-width: 100%;
       max-height: 75vh;
@@ -93,7 +93,7 @@ export const StyledEditor = styled("div")<{
 
   .ProseMirror-selectednode {
     outline: 2px solid
-      ${props => (props.readOnly ? "transparent" : props.theme.selected)};
+      ${props => (props.readOnly ? 'transparent' : props.theme.selected)};
   }
 
   /* Make sure li selections wrap around markers */
@@ -105,8 +105,8 @@ export const StyledEditor = styled("div")<{
   li.ProseMirror-selectednode:after {
     content: "";
     position: absolute;
-    left: ${props => (props.rtl ? "-2px" : "-32px")};
-    right: ${props => (props.rtl ? "-32px" : "-2px")};
+    left: ${props => (props.rtl ? '-2px' : '-32px')};
+    right: ${props => (props.rtl ? '-32px' : '-2px')};
     top: -2px;
     bottom: -2px;
     border: 2px solid ${props => props.theme.selected};
@@ -133,12 +133,12 @@ export const StyledEditor = styled("div")<{
     cursor: text;
 
     &:not(.placeholder):before {
-      display: ${props => (props.readOnly ? "none" : "inline-block")};
+      display: ${props => (props.readOnly ? 'none' : 'inline-block')};
       font-family: ${props => props.theme.fontFamilyMono};
       color: ${props => props.theme.textSecondary};
       font-size: 13px;
       line-height: 0;
-      margin-${props => (props.rtl ? "right" : "left")}: -24px;
+      margin-${props => (props.rtl ? 'right' : 'left')}: -24px;
       transition: opacity 150ms ease-in-out;
       opacity: 0;
       width: 24px;
@@ -211,7 +211,7 @@ export const StyledEditor = styled("div")<{
   }
 
   .with-emoji {
-    margin-${props => (props.rtl ? "right" : "left")}: -1em;
+    margin-${props => (props.rtl ? 'right' : 'left')}: -1em;
   }
 
   .heading-anchor,
@@ -241,8 +241,8 @@ export const StyledEditor = styled("div")<{
   .heading-actions {
     opacity: 0;
     background: ${props => props.theme.background};
-    margin-${props => (props.rtl ? "right" : "left")}: -26px;
-    flex-direction: ${props => (props.rtl ? "row-reverse" : "row")};
+    margin-${props => (props.rtl ? 'right' : 'left')}: -26px;
+    flex-direction: ${props => (props.rtl ? 'row-reverse' : 'row')};
     display: inline-flex;
     position: relative;
     top: -2px;
@@ -284,7 +284,7 @@ export const StyledEditor = styled("div")<{
     padding: 0;
 
     &.collapsed {
-      transform: rotate(${props => (props.rtl ? "90deg" : "-90deg")});
+      transform: rotate(${props => (props.rtl ? '90deg' : '-90deg')});
       transition-delay: 0.1s;
       opacity: 1;
     }
@@ -294,7 +294,7 @@ export const StyledEditor = styled("div")<{
     display: block;
     opacity: 0;
     transition: opacity 150ms ease-in-out;
-    content: ${props => (props.readOnly ? "" : "attr(data-empty-text)")};
+    content: ${props => (props.readOnly ? '' : 'attr(data-empty-text)')};
     pointer-events: none;
     height: 0;
     color: ${props => props.theme.placeholder};
@@ -334,7 +334,7 @@ export const StyledEditor = styled("div")<{
     width: 24px;
     height: 24px;
     align-self: flex-start;
-    margin-${props => (props.rtl ? "left" : "right")}: 4px;
+    margin-${props => (props.rtl ? 'left' : 'right')}: 4px;
     position: relative;
     top: 1px;
   }
@@ -370,7 +370,7 @@ export const StyledEditor = styled("div")<{
       width: 2px;
       border-radius: 1px;
       position: absolute;
-      margin-${props => (props.rtl ? "right" : "left")}: -1.5em;
+      margin-${props => (props.rtl ? 'right' : 'left')}: -1.5em;
       top: 0;
       bottom: 0;
       background: ${props => props.theme.quote};
@@ -409,13 +409,13 @@ export const StyledEditor = styled("div")<{
   }
 
   a:hover {
-    text-decoration: ${props => (props.readOnly ? "underline" : "none")};
+    text-decoration: ${props => (props.readOnly ? 'underline' : 'none')};
   }
 
   ul,
   ol {
-    margin: ${props => (props.rtl ? "0 -26px 0 0.1em" : "0 0.1em 0 -26px")};
-    padding: ${props => (props.rtl ? "0 44px 0 0" : "0 0 0 44px")};
+    margin: ${props => (props.rtl ? '0 -26px 0 0.1em' : '0 0.1em 0 -26px')};
+    padding: ${props => (props.rtl ? '0 44px 0 0' : '0 0 0 44px')};
   }
 
   ol ol {
@@ -429,7 +429,7 @@ export const StyledEditor = styled("div")<{
   ul.checkbox_list {
     list-style: none;
     padding: 0;
-    margin: ${props => (props.rtl ? "0 -24px 0 0" : "0 0 0 -24px")};
+    margin: ${props => (props.rtl ? '0 -24px 0 0' : '0 0 0 -24px')};
   }
 
   ul li,
@@ -448,7 +448,7 @@ export const StyledEditor = styled("div")<{
 
   ul.checkbox_list li {
     display: flex;
-    padding-${props => (props.rtl ? "right" : "left")}: 24px;
+    padding-${props => (props.rtl ? 'right' : 'left')}: 24px;
   }
 
   ul.checkbox_list li.checked > div > p {
@@ -461,12 +461,12 @@ export const StyledEditor = styled("div")<{
     background: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3QgeD0iOCIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iOCIgeT0iMTEiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+CjxyZWN0IHg9IjgiIHk9IjE1IiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iNyIgd2lkdGg9IjMiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM0RTVDNkUiLz4KPHJlY3QgeD0iMTMiIHk9IjExIiB3aWR0aD0iMyIgaGVpZ2h0PSIyIiByeD0iMSIgZmlsbD0iIzRFNUM2RSIvPgo8cmVjdCB4PSIxMyIgeT0iMTUiIHdpZHRoPSIzIiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjNEU1QzZFIi8+Cjwvc3ZnPgo=") no-repeat;
     background-position: 0 2px;
     content: "";
-    display: ${props => (props.readOnly ? "none" : "inline-block")};
+    display: ${props => (props.readOnly ? 'none' : 'inline-block')};
     cursor: grab;
     width: 24px;
     height: 24px;
     position: absolute;
-    ${props => (props.rtl ? "right" : "left")}: -40px;
+    ${props => (props.rtl ? 'right' : 'left')}: -40px;
     opacity: 0;
     transition: opacity 200ms ease-in-out;
   }
@@ -478,7 +478,7 @@ export const StyledEditor = styled("div")<{
 
   ul > li.counter-2::before,
   ol li.counter-2::before {
-    ${props => (props.rtl ? "right" : "left")}: -50px;
+    ${props => (props.rtl ? 'right' : 'left')}: -50px;
   }
 
   ul > li.hovering::before,
@@ -492,16 +492,16 @@ export const StyledEditor = styled("div")<{
   }
 
   ul.checkbox_list li::before {
-    ${props => (props.rtl ? "right" : "left")}: 0;
+    ${props => (props.rtl ? 'right' : 'left')}: 0;
   }
 
   ul.checkbox_list li input {
     cursor: pointer;
     pointer-events: ${props =>
-      props.readOnly && !props.readOnlyWriteCheckboxes ? "none" : "initial"};
+      props.readOnly && !props.readOnlyWriteCheckboxes ? 'none' : 'initial'};
     opacity: ${props =>
       props.readOnly && !props.readOnlyWriteCheckboxes ? 0.75 : 1};
-    margin: ${props => (props.rtl ? "0.5em 0 0 0.5em" : "0.5em 0.5em 0 0")};
+    margin: ${props => (props.rtl ? '0.5em 0 0 0.5em' : '0.5em 0.5em 0 0')};
     width: 14px;
     height: 14px;
   }
@@ -582,7 +582,7 @@ export const StyledEditor = styled("div")<{
     &.notice-block {
       select,
       button {
-        ${props => (props.rtl ? "left" : "right")}: 4px;
+        ${props => (props.rtl ? 'left' : 'right')}: 4px;
       }
     }
 
@@ -592,11 +592,11 @@ export const StyledEditor = styled("div")<{
 
     &:hover {
       select {
-        display: ${props => (props.readOnly ? "none" : "inline")};
+        display: ${props => (props.readOnly ? 'none' : 'inline')};
       }
 
       button {
-        display: ${props => (props.readOnly ? "inline" : "none")};
+        display: ${props => (props.readOnly ? 'inline' : 'none')};
       }
     }
 
@@ -740,39 +740,19 @@ export const StyledEditor = styled("div")<{
   }
 
   table {
-    width: 100%;
+    /*width: 100%;
     border-collapse: collapse;
     border-radius: 4px;
     margin-top: 1em;
-    box-sizing: border-box;
+    box-sizing: border-box;*/
 
     * {
       box-sizing: border-box;
     }
 
-    tr {
-      position: relative;
-      border-bottom: 1px solid ${props => props.theme.tableDivider};
-    }
-
-    th {
-      background: ${props => props.theme.tableHeaderBackground};
-    }
-
-    td,
-    th {
-      position: relative;
-      vertical-align: top;
-      border: 1px solid ${props => props.theme.tableDivider};
-      position: relative;
-      padding: 4px 8px;
-      text-align: ${props => (props.rtl ? "right" : "left")};
-      min-width: 100px;
-    }
-
     .selectedCell {
       background: ${props =>
-        props.readOnly ? "inherit" : props.theme.tableSelectedBackground};
+        props.readOnly ? 'inherit' : props.theme.tableSelectedBackground};
 
       /* fixes Firefox background color painting over border:
        * https://bugzilla.mozilla.org/show_bug.cgi?id=688556 */
@@ -789,22 +769,22 @@ export const StyledEditor = styled("div")<{
         cursor: pointer;
         position: absolute;
         top: -16px;
-        ${props => (props.rtl ? "right" : "left")}: 0;
+        ${props => (props.rtl ? 'right' : 'left')}: 0;
         width: 100%;
         height: 12px;
         background: ${props => props.theme.tableDivider};
         border-bottom: 3px solid ${props => props.theme.background};
-        display: ${props => (props.readOnly ? "none" : "block")};
+        display: ${props => (props.readOnly ? 'none' : 'block')};
       }
 
       &:hover::after {
         background: ${props => props.theme.text};
       }
       &.first::after {
-        border-top-${props => (props.rtl ? "right" : "left")}-radius: 3px;
+        border-top-${props => (props.rtl ? 'right' : 'left')}-radius: 3px;
       }
       &.last::after {
-        border-top-${props => (props.rtl ? "left" : "right")}-radius: 3px;
+        border-top-${props => (props.rtl ? 'left' : 'right')}-radius: 3px;
       }
       &.selected::after {
         background: ${props => props.theme.tableSelected};
@@ -816,24 +796,24 @@ export const StyledEditor = styled("div")<{
         content: "";
         cursor: pointer;
         position: absolute;
-        ${props => (props.rtl ? "right" : "left")}: -16px;
+        ${props => (props.rtl ? 'right' : 'left')}: -16px;
         top: 0;
         height: 100%;
         width: 12px;
         background: ${props => props.theme.tableDivider};
-        border-${props => (props.rtl ? "left" : "right")}: 3px solid;
+        border-${props => (props.rtl ? 'left' : 'right')}: 3px solid;
         border-color: ${props => props.theme.background};
-        display: ${props => (props.readOnly ? "none" : "block")};
+        display: ${props => (props.readOnly ? 'none' : 'block')};
       }
 
       &:hover::after {
         background: ${props => props.theme.text};
       }
       &.first::after {
-        border-top-${props => (props.rtl ? "right" : "left")}-radius: 3px;
+        border-top-${props => (props.rtl ? 'right' : 'left')}-radius: 3px;
       }
       &.last::after {
-        border-bottom-${props => (props.rtl ? "right" : "left")}-radius: 3px;
+        border-bottom-${props => (props.rtl ? 'right' : 'left')}-radius: 3px;
       }
       &.selected::after {
         background: ${props => props.theme.tableSelected};
@@ -851,8 +831,8 @@ export const StyledEditor = styled("div")<{
         border: 2px solid ${props => props.theme.background};
         position: absolute;
         top: -18px;
-        ${props => (props.rtl ? "right" : "left")}: -18px;
-        display: ${props => (props.readOnly ? "none" : "block")};
+        ${props => (props.rtl ? 'right' : 'left')}: -18px;
+        display: ${props => (props.readOnly ? 'none' : 'block')};
       }
 
       &:hover::after {
@@ -899,10 +879,10 @@ export const StyledEditor = styled("div")<{
   .scrollable {
     overflow-y: hidden;
     overflow-x: auto;
-    padding-${props => (props.rtl ? "right" : "left")}: 1em;
-    margin-${props => (props.rtl ? "right" : "left")}: -1em;
-    border-${props => (props.rtl ? "right" : "left")}: 1px solid transparent;
-    border-${props => (props.rtl ? "left" : "right")}: 1px solid transparent;
+    padding-${props => (props.rtl ? 'right' : 'left')}: 1em;
+    margin-${props => (props.rtl ? 'right' : 'left')}: -1em;
+    border-${props => (props.rtl ? 'right' : 'left')}: 1px solid transparent;
+    border-${props => (props.rtl ? 'left' : 'right')}: 1px solid transparent;
     transition: border 250ms ease-in-out 0s;
   }
 
@@ -910,11 +890,11 @@ export const StyledEditor = styled("div")<{
     position: absolute;
     top: 0;
     bottom: 0;
-    ${props => (props.rtl ? "right" : "left")}: -1em;
+    ${props => (props.rtl ? 'right' : 'left')}: -1em;
     width: 16px;
     transition: box-shadow 250ms ease-in-out;
     border: 0px solid transparent;
-    border-${props => (props.rtl ? "right" : "left")}-width: 1em;
+    border-${props => (props.rtl ? 'right' : 'left')}-width: 1em;
     pointer-events: none;
 
     &.left {
@@ -932,7 +912,7 @@ export const StyledEditor = styled("div")<{
   .block-menu-trigger {
     opacity: 0;
     pointer-events: none;
-    display: ${props => (props.readOnly ? "none" : "inline")};
+    display: ${props => (props.readOnly ? 'none' : 'inline')};
     width: 24px;
     height: 24px;
     color: ${props => props.theme.textSecondary};
@@ -945,7 +925,7 @@ export const StyledEditor = styled("div")<{
     border: 0;
     padding: 0;
     margin-top: 1px;
-    margin-${props => (props.rtl ? "right" : "left")}: -24px;
+    margin-${props => (props.rtl ? 'right' : 'left')}: -24px;
 
     &:hover,
     &:focus {

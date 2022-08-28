@@ -1,1 +1,3 @@
-declare module "gemoji";
+declare module 'gemoji' {
+  export default ReactComponent;
+}

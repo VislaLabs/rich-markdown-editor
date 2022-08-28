@@ -1,10 +1,10 @@
-import { EditorView } from "prosemirror-view";
+import { EditorView } from 'prosemirror-view';
 import uploadPlaceholderPlugin, {
   findPlaceholder,
-} from "../lib/uploadPlaceholder";
-import { ToastType } from "../types";
-import baseDictionary from "../dictionary";
-import { NodeSelection } from "prosemirror-state";
+} from '../lib/uploadPlaceholder';
+import { ToastType } from '../types';
+import baseDictionary from '../dictionary';
+import { NodeSelection } from 'prosemirror-state';
 
 let uploadId = 0;
 
@@ -20,10 +20,10 @@ const insertFiles = function(
     onImageUploadStart?: () => void;
     onImageUploadStop?: () => void;
     onShowToast?: (message: string, code: string) => void;
-  }
+  },
 ): void {
   // filter to only include image files
-  const images = files.filter(file => /image/i.test(file.type));
+  const images = files.filter(file => /(image|video)/i.test(file.type));
   if (images.length === 0) return;
 
   const {
@@ -36,7 +36,7 @@ const insertFiles = function(
 
   if (!uploadImage) {
     console.warn(
-      "uploadImage callback must be defined to handle image uploads."
+      'uploadImage callback must be defined to handle image uploads.',
     );
     return;
   }
@@ -78,41 +78,41 @@ const insertFiles = function(
       .then(src => {
         // otherwise, insert it at the placeholder's position, and remove
         // the placeholder itself
-        const newImg = new Image();
+        // const newImg = new Image();
 
-        newImg.onload = () => {
-          const result = findPlaceholder(view.state, id);
+        // newImg.onload = () => {
+        const result = findPlaceholder(view.state, id);
 
-          // if the content around the placeholder has been deleted
-          // then forget about inserting this image
-          if (result === null) {
-            return;
-          }
+        // if the content around the placeholder has been deleted
+        // then forget about inserting this image
+        if (result === null) {
+          return;
+        }
 
-          const [from, to] = result;
+        const [from, to] = result;
+        view.dispatch(
+          view.state.tr
+            .replaceWith(from, to || from, schema.nodes.media.create({ src }))
+            .setMeta(uploadPlaceholderPlugin, { remove: { id } }),
+        );
+
+        // If the users selection is still at the image then make sure to select
+        // the entire node once done. Otherwise, if the selection has moved
+        // elsewhere then we don't want to modify it
+        if (view.state.selection.from === from) {
           view.dispatch(
-            view.state.tr
-              .replaceWith(from, to || from, schema.nodes.image.create({ src }))
-              .setMeta(uploadPlaceholderPlugin, { remove: { id } })
+            view.state.tr.setSelection(
+              new NodeSelection(view.state.doc.resolve(from)),
+            ),
           );
+        }
+        // };
 
-          // If the users selection is still at the image then make sure to select
-          // the entire node once done. Otherwise, if the selection has moved
-          // elsewhere then we don't want to modify it
-          if (view.state.selection.from === from) {
-            view.dispatch(
-              view.state.tr.setSelection(
-                new NodeSelection(view.state.doc.resolve(from))
-              )
-            );
-          }
-        };
+        // newImg.onerror = error => {
+        //   throw error;
+        // };
 
-        newImg.onerror = error => {
-          throw error;
-        };
-
-        newImg.src = src;
+        // newImg.src = src;
       })
       .catch(error => {
         console.error(error);

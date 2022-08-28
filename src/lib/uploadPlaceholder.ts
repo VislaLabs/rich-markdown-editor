@@ -1,5 +1,5 @@
-import { EditorState, Plugin } from "prosemirror-state";
-import { Decoration, DecorationSet } from "prosemirror-view";
+import { EditorState, Plugin } from 'prosemirror-state';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 
 // based on the example at: https://prosemirror.net/examples/upload/
 const uploadPlaceholder = new Plugin({
@@ -18,24 +18,24 @@ const uploadPlaceholder = new Plugin({
         if (action.add.replaceExisting) {
           const $pos = tr.doc.resolve(action.add.pos);
 
-          if ($pos.nodeAfter?.type.name === "image") {
+          if ($pos.nodeAfter?.type.name === 'image') {
             const deco = Decoration.node(
               $pos.pos,
               $pos.pos + $pos.nodeAfter.nodeSize,
               {
-                class: "image-replacement-uploading",
+                class: 'image-replacement-uploading',
               },
               {
                 id: action.add.id,
-              }
+              },
             );
             set = set.add(tr.doc, [deco]);
           }
         } else {
-          const element = document.createElement("div");
-          element.className = "image placeholder";
+          const element = document.createElement('div');
+          element.className = 'image placeholder';
 
-          const img = document.createElement("img");
+          const img = document.createElement('img');
           img.src = URL.createObjectURL(action.add.file);
 
           element.appendChild(img);
@@ -49,7 +49,7 @@ const uploadPlaceholder = new Plugin({
 
       if (action?.remove) {
         set = set.remove(
-          set.find(null, null, spec => spec.id === action.remove.id)
+          set.find(null, null, spec => spec.id === action.remove.id),
         );
       }
       return set;
@@ -57,7 +57,7 @@ const uploadPlaceholder = new Plugin({
   },
   props: {
     decorations(state) {
-      return this.getState(state);
+      return (this as any).getState(state);
     },
   },
 });
@@ -66,7 +66,7 @@ export default uploadPlaceholder;
 
 export function findPlaceholder(
   state: EditorState,
-  id: string
+  id: string,
 ): [number, number] | null {
   const decos = uploadPlaceholder.getState(state);
   const found = decos.find(null, null, spec => spec.id === id);

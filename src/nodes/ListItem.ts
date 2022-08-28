@@ -2,33 +2,33 @@ import {
   splitListItem,
   sinkListItem,
   liftListItem,
-} from "prosemirror-schema-list";
+} from 'prosemirror-schema-list';
 import {
   Transaction,
   EditorState,
   Plugin,
   TextSelection,
-} from "prosemirror-state";
-import { DecorationSet, Decoration } from "prosemirror-view";
-import { findParentNodeClosestToPos } from "prosemirror-utils";
+} from 'prosemirror-state';
+import { DecorationSet, Decoration } from 'prosemirror-view';
+import { findParentNodeClosestToPos } from 'prosemirror-utils';
 
-import Node from "./Node";
-import isList from "../queries/isList";
-import isInList from "../queries/isInList";
-import getParentListItem from "../queries/getParentListItem";
+import Node from './Node';
+import isList from '../queries/isList';
+import isInList from '../queries/isInList';
+import getParentListItem from '../queries/getParentListItem';
 
 export default class ListItem extends Node {
   get name() {
-    return "list_item";
+    return 'list_item';
   }
 
   get schema() {
     return {
-      content: "paragraph block*",
+      content: 'paragraph block*',
       defining: true,
       draggable: true,
-      parseDOM: [{ tag: "li" }],
-      toDOM: () => ["li", 0],
+      parseDOM: [{ tag: 'li' }],
+      toDOM: () => ['li', 0],
     };
   }
 
@@ -43,9 +43,9 @@ export default class ListItem extends Node {
             tr: Transaction,
             set: DecorationSet,
             oldState: EditorState,
-            newState: EditorState
+            newState: EditorState,
           ) => {
-            const action = tr.getMeta("li");
+            const action = tr.getMeta('li');
             if (!action && !tr.docChanged) {
               return set;
             }
@@ -54,12 +54,12 @@ export default class ListItem extends Node {
             set = set.map(tr.mapping, tr.doc);
 
             switch (action?.event) {
-              case "mouseover": {
+              case 'mouseover': {
                 const result = findParentNodeClosestToPos(
                   newState.doc.resolve(action.pos),
                   node =>
                     node.type.name === this.name ||
-                    node.type.name === "checkbox_item"
+                    node.type.name === 'checkbox_item',
                 );
 
                 if (!result) {
@@ -68,7 +68,7 @@ export default class ListItem extends Node {
 
                 const list = findParentNodeClosestToPos(
                   newState.doc.resolve(action.pos),
-                  node => isList(node, this.editor.schema)
+                  node => isList(node, this.editor.schema),
                 );
 
                 if (!list) {
@@ -95,23 +95,23 @@ export default class ListItem extends Node {
                     },
                     {
                       hover: true,
-                    }
+                    },
                   ),
                   Decoration.node(
                     result.pos,
                     result.pos + result.node.nodeSize,
                     {
                       class: `counter-${counterLength}`,
-                    }
+                    },
                   ),
                 ]);
               }
-              case "mouseout": {
+              case 'mouseout': {
                 const result = findParentNodeClosestToPos(
                   newState.doc.resolve(action.pos),
                   node =>
                     node.type.name === this.name ||
-                    node.type.name === "checkbox_item"
+                    node.type.name === 'checkbox_item',
                 );
 
                 if (!result) {
@@ -122,8 +122,8 @@ export default class ListItem extends Node {
                   set.find(
                     result.pos,
                     result.pos + result.node.nodeSize,
-                    spec => spec.hover
-                  )
+                    spec => spec.hover,
+                  ),
                 );
               }
               default:
@@ -134,13 +134,13 @@ export default class ListItem extends Node {
         },
         props: {
           decorations(state) {
-            return this.getState(state);
+            return (this as any).getState(state);
           },
           handleDOMEvents: {
             mouseover: (view, event) => {
               const { state, dispatch } = view;
               const target = event.target as HTMLElement;
-              const li = target?.closest("li");
+              const li = target?.closest('li');
 
               if (!li) {
                 return false;
@@ -154,17 +154,17 @@ export default class ListItem extends Node {
               }
 
               dispatch(
-                state.tr.setMeta("li", {
-                  event: "mouseover",
+                state.tr.setMeta('li', {
+                  event: 'mouseover',
                   pos,
-                })
+                }),
               );
               return false;
             },
             mouseout: (view, event) => {
               const { state, dispatch } = view;
               const target = event.target as HTMLElement;
-              const li = target?.closest("li");
+              const li = target?.closest('li');
 
               if (!li) {
                 return false;
@@ -178,10 +178,10 @@ export default class ListItem extends Node {
               }
 
               dispatch(
-                state.tr.setMeta("li", {
-                  event: "mouseout",
+                state.tr.setMeta('li', {
+                  event: 'mouseout',
                   pos,
-                })
+                }),
               );
               return false;
             },
@@ -195,10 +195,10 @@ export default class ListItem extends Node {
     return {
       Enter: splitListItem(type),
       Tab: sinkListItem(type),
-      "Shift-Tab": liftListItem(type),
-      "Mod-]": sinkListItem(type),
-      "Mod-[": liftListItem(type),
-      "Shift-Enter": (state, dispatch) => {
+      'Shift-Tab': liftListItem(type),
+      'Mod-]': sinkListItem(type),
+      'Mod-[': liftListItem(type),
+      'Shift-Enter': (state, dispatch) => {
         if (!isInList(state)) return false;
         if (!state.selection.empty) return false;
 
@@ -206,7 +206,7 @@ export default class ListItem extends Node {
         dispatch(tr.split(selection.to));
         return true;
       },
-      "Alt-ArrowUp": (state, dispatch) => {
+      'Alt-ArrowUp': (state, dispatch) => {
         if (!state.selection.empty) return false;
         const result = getParentListItem(state);
         if (!result) return false;
@@ -216,9 +216,9 @@ export default class ListItem extends Node {
 
         if (
           !$pos.nodeBefore ||
-          !["list_item", "checkbox_item"].includes($pos.nodeBefore.type.name)
+          !['list_item', 'checkbox_item'].includes($pos.nodeBefore.type.name)
         ) {
-          console.log("Node before not a list item");
+          console.log('Node before not a list item');
           return false;
         }
 
@@ -229,11 +229,11 @@ export default class ListItem extends Node {
           tr
             .delete(pos, pos + li.nodeSize)
             .insert(newPos, li)
-            .setSelection(TextSelection.near(tr.doc.resolve(newPos)))
+            .setSelection(TextSelection.near(tr.doc.resolve(newPos))),
         );
         return true;
       },
-      "Alt-ArrowDown": (state, dispatch) => {
+      'Alt-ArrowDown': (state, dispatch) => {
         if (!state.selection.empty) return false;
         const result = getParentListItem(state);
         if (!result) return false;
@@ -243,9 +243,9 @@ export default class ListItem extends Node {
 
         if (
           !$pos.nodeAfter ||
-          !["list_item", "checkbox_item"].includes($pos.nodeAfter.type.name)
+          !['list_item', 'checkbox_item'].includes($pos.nodeAfter.type.name)
         ) {
-          console.log("Node after not a list item");
+          console.log('Node after not a list item');
           return false;
         }
 
@@ -256,7 +256,7 @@ export default class ListItem extends Node {
           tr
             .insert(newPos, li)
             .setSelection(TextSelection.near(tr.doc.resolve(newPos)))
-            .delete(pos, pos + li.nodeSize)
+            .delete(pos, pos + li.nodeSize),
         );
         return true;
       },
@@ -268,6 +268,6 @@ export default class ListItem extends Node {
   }
 
   parseMarkdown() {
-    return { block: "list_item" };
+    return { block: 'list_item' };
   }
 }
