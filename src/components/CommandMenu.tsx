@@ -1,18 +1,18 @@
-import * as React from "react";
-import capitalize from "lodash/capitalize";
-import { Portal } from "react-portal";
-import { EditorView } from "prosemirror-view";
-import { findDomRefAtPos, findParentNode } from "prosemirror-utils";
-import styled from "styled-components";
-import { EmbedDescriptor, MenuItem, ToastType } from "../types";
-import Input from "./Input";
-import VisuallyHidden from "./VisuallyHidden";
-import getDataTransferFiles from "../lib/getDataTransferFiles";
-import filterExcessSeparators from "../lib/filterExcessSeparators";
-import insertFiles from "../commands/insertFiles";
-import baseDictionary from "../dictionary";
+import * as React from 'react';
+import capitalize from 'lodash/capitalize';
+import { Portal } from 'react-portal';
+import { EditorView } from 'prosemirror-view';
+import { findDomRefAtPos, findParentNode } from 'prosemirror-utils';
+import styled from 'styled-components';
+import { EmbedDescriptor, MenuItem, ToastType } from '../types';
+import Input from './Input';
+import VisuallyHidden from './VisuallyHidden';
+import getDataTransferFiles from '../lib/getDataTransferFiles';
+import filterExcessSeparators from '../lib/filterExcessSeparators';
+import insertFiles from '../commands/insertFiles';
+import baseDictionary from '../dictionary';
 
-const SSR = typeof window === "undefined";
+const SSR = typeof window === 'undefined';
 
 const defaultPosition = {
   left: -1000,
@@ -42,7 +42,7 @@ export type Props<T extends MenuItem = MenuItem> = {
     options: {
       selected: boolean;
       onClick: () => void;
-    }
+    },
   ) => React.ReactNode;
   filterable?: boolean;
   items: T[];
@@ -73,7 +73,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
   componentDidMount() {
     if (!SSR) {
-      window.addEventListener("keydown", this.handleKeyDown);
+      window.addEventListener('keydown', this.handleKeyDown);
     }
   }
 
@@ -101,14 +101,14 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
   componentWillUnmount() {
     if (!SSR) {
-      window.removeEventListener("keydown", this.handleKeyDown);
+      window.removeEventListener('keydown', this.handleKeyDown);
     }
   }
 
   handleKeyDown = (event: KeyboardEvent) => {
     if (!this.props.isActive) return;
 
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
 
@@ -122,9 +122,9 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
 
     if (
-      event.key === "ArrowUp" ||
-      (event.key === "Tab" && event.shiftKey) ||
-      (event.ctrlKey && event.key === "p")
+      event.key === 'ArrowUp' ||
+      (event.key === 'Tab' && event.shiftKey) ||
+      (event.ctrlKey && event.key === 'p')
     ) {
       event.preventDefault();
       event.stopPropagation();
@@ -136,7 +136,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         this.setState({
           selectedIndex: Math.max(
             0,
-            prev && prev.name === "separator" ? prevIndex - 1 : prevIndex
+            prev && prev.name === 'separator' ? prevIndex - 1 : prevIndex,
           ),
         });
       } else {
@@ -145,9 +145,9 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
 
     if (
-      event.key === "ArrowDown" ||
-      (event.key === "Tab" && !event.shiftKey) ||
-      (event.ctrlKey && event.key === "n")
+      event.key === 'ArrowDown' ||
+      (event.key === 'Tab' && !event.shiftKey) ||
+      (event.ctrlKey && event.key === 'n')
     ) {
       event.preventDefault();
       event.stopPropagation();
@@ -159,8 +159,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
         this.setState({
           selectedIndex: Math.min(
-            next && next.name === "separator" ? nextIndex + 1 : nextIndex,
-            total
+            next && next.name === 'separator' ? nextIndex + 1 : nextIndex,
+            total,
           ),
         });
       } else {
@@ -168,18 +168,25 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       }
     }
 
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       this.close();
     }
   };
 
   insertItem = item => {
     switch (item.name) {
-      case "image":
+      case 'image':
         return this.triggerImagePick();
-      case "embed":
-        return this.triggerLinkInput(item);
-      case "link": {
+      case 'embed':
+        return item.prefix
+          ? this.insertBlock({
+              name: 'embed',
+              attrs: {
+                href: item.prefix,
+              },
+            })
+          : this.triggerLinkInput(item);
+      case 'link': {
         this.clearSearch();
         this.props.onClose();
         this.props.onLinkToolbarOpen?.();
@@ -199,7 +206,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (!this.props.isActive) return;
     if (!this.state.insertItem) return;
 
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       event.preventDefault();
       event.stopPropagation();
 
@@ -209,20 +216,20 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       if (!matches && this.props.onShowToast) {
         this.props.onShowToast(
           this.props.dictionary.embedInvalidLink,
-          ToastType.Error
+          ToastType.Error,
         );
         return;
       }
 
       this.insertBlock({
-        name: "embed",
+        name: 'embed',
         attrs: {
           href,
         },
       });
     }
 
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       this.props.onClose();
       this.props.view.focus();
     }
@@ -232,7 +239,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (!this.props.isActive) return;
     if (!this.state.insertItem) return;
 
-    const href = event.clipboardData.getData("text/plain");
+    const href = event.clipboardData.getData('text/plain');
     const matches = this.state.insertItem.matcher(href);
 
     if (matches) {
@@ -240,7 +247,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       event.stopPropagation();
 
       this.insertBlock({
-        name: "embed",
+        name: 'embed',
         attrs: {
           href,
         },
@@ -274,7 +281,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.clearSearch();
 
     if (!uploadImage) {
-      throw new Error("uploadImage prop is required to replace images");
+      throw new Error('uploadImage prop is required to replace images');
     }
 
     if (parent) {
@@ -288,7 +295,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
 
     if (this.inputRef.current) {
-      this.inputRef.current.value = "";
+      this.inputRef.current.value = '';
     }
 
     this.props.onClose();
@@ -399,7 +406,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   get filtered() {
     const {
       embeds = [],
-      search = "",
+      search = '',
       uploadImage,
       commands,
       filterable = true,
@@ -411,20 +418,20 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       if (embed.title && embed.icon) {
         embedItems.push({
           ...embed,
-          name: "embed",
+          name: 'embed',
         });
       }
     }
 
     if (embedItems.length) {
       items.push({
-        name: "separator",
+        name: 'separator',
       });
       items = items.concat(embedItems);
     }
 
     const filtered = items.filter(item => {
-      if (item.name === "separator") return true;
+      if (item.name === 'separator') return true;
 
       // Some extensions may be disabled, remove corresponding menu items
       if (
@@ -436,7 +443,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       }
 
       // If no image upload callback has been passed, filter the image block out
-      if (!uploadImage && item.name === "image") return false;
+      if (!uploadImage && item.name === 'image') return false;
 
       // some items (defaultHidden) are not visible until a search query exists
       if (!search) return !item.defaultHidden;
@@ -446,8 +453,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         return item;
       }
       return (
-        (item.title || "").toLowerCase().includes(n) ||
-        (item.keywords || "").toLowerCase().includes(n)
+        (item.title || '').toLowerCase().includes(n) ||
+        (item.keywords || '').toLowerCase().includes(n)
       );
     });
 
@@ -462,7 +469,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     return (
       <Portal>
         <Wrapper
-          id={this.props.id || "block-menu-container"}
+          id={this.props.id || 'block-menu-container'}
           active={isActive}
           ref={this.menuRef}
           {...positioning}
@@ -484,7 +491,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
           ) : (
             <List>
               {items.map((item, index) => {
-                if (item.name === "separator") {
+                if (item.name === 'separator') {
                   return (
                     <ListItem key={index}>
                       <hr />
@@ -576,10 +583,11 @@ export const Wrapper = styled.div<{
   ${props => props.top !== undefined && `top: ${props.top}px`};
   ${props => props.bottom !== undefined && `bottom: ${props.bottom}px`};
   left: ${props => props.left}px;
-  background-color: ${props => props.theme.blockToolbarBackground};
-  border-radius: 4px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px,
-    rgba(0, 0, 0, 0.08) 0px 4px 8px, rgba(0, 0, 0, 0.08) 0px 2px 4px;
+  backdrop-filter: var(--backdrop-filter);
+  color: var(--text-color-dimmer);
+  background-color: ${props => props.theme.toolbarBackground};
+  border-radius: ${props => props.theme.toolbarBorderRadius};
+  box-shadow: ${props => props.theme.toolbarShadow};
   opacity: 0;
   transform: scale(0.95);
   transition: opacity 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
@@ -607,7 +615,7 @@ export const Wrapper = styled.div<{
   ${({ active, isAbove }) =>
     active &&
     `
-    transform: translateY(${isAbove ? "6px" : "-6px"}) scale(1);
+    transform: translateY(${isAbove ? '6px' : '-6px'}) scale(1);
     pointer-events: all;
     opacity: 1;
   `};

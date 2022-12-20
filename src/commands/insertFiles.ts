@@ -8,7 +8,7 @@ import { NodeSelection } from 'prosemirror-state';
 
 let uploadId = 0;
 
-const insertFiles = function(
+const insertFiles = function (
   view: EditorView,
   event: Event,
   pos: number,

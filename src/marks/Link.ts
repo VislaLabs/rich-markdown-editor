@@ -1,7 +1,7 @@
-import { toggleMark } from "prosemirror-commands";
-import { Plugin } from "prosemirror-state";
-import { InputRule } from "prosemirror-inputrules";
-import Mark from "./Mark";
+import { toggleMark } from 'prosemirror-commands';
+import { Plugin } from 'prosemirror-state';
+import { InputRule } from 'prosemirror-inputrules';
+import Mark from './Mark';
 
 const LINK_INPUT_REGEX = /\[([^[]+)]\((\S+)\)$/;
 
@@ -29,30 +29,30 @@ function isPlainURL(link, parent, index, side) {
 
 export default class Link extends Mark {
   get name() {
-    return "link";
+    return 'link';
   }
 
   get schema() {
     return {
       attrs: {
         href: {
-          default: "",
+          default: '',
         },
       },
       inclusive: false,
       parseDOM: [
         {
-          tag: "a[href]",
+          tag: 'a[href]',
           getAttrs: (dom: HTMLElement) => ({
-            href: dom.getAttribute("href"),
+            href: dom.getAttribute('href'),
           }),
         },
       ],
       toDOM: node => [
-        "a",
+        'a',
         {
           ...node.attrs,
-          rel: "noopener noreferrer nofollow",
+          rel: 'noopener noreferrer nofollow',
         },
         0,
       ],
@@ -69,7 +69,7 @@ export default class Link extends Mark {
           tr.replaceWith(start, end, this.editor.schema.text(alt)).addMark(
             start,
             start + alt.length,
-            type.create({ href })
+            type.create({ href }),
           );
         }
 
@@ -79,18 +79,18 @@ export default class Link extends Mark {
   }
 
   commands({ type }) {
-    return ({ href } = { href: "" }) => toggleMark(type, { href });
+    return ({ href } = { href: '' }) => toggleMark(type, { href });
   }
 
   keys({ type }) {
     return {
-      "Mod-k": (state, dispatch) => {
+      'Mod-k': (state, dispatch) => {
         if (state.selection.empty) {
           this.options.onKeyboardShortcut();
           return true;
         }
 
-        return toggleMark(type, { href: "" })(state, dispatch);
+        return toggleMark(type, { href: '' })(state, dispatch);
       },
     };
   }
@@ -103,7 +103,7 @@ export default class Link extends Mark {
             mouseover: (_view, event: MouseEvent) => {
               if (
                 event.target instanceof HTMLAnchorElement &&
-                !event.target.className.includes("ProseMirror-widget")
+                !event.target.className.includes('ProseMirror-widget')
               ) {
                 if (this.options.onHoverLink) {
                   return this.options.onHoverLink(event);
@@ -117,19 +117,19 @@ export default class Link extends Mark {
                   event.target.href ||
                   (event.target.parentNode instanceof HTMLAnchorElement
                     ? event.target.parentNode.href
-                    : "");
+                    : '');
 
-                const isHashtag = href.startsWith("#");
+                const isHashtag = href.startsWith('#');
                 if (isHashtag && this.options.onClickHashtag) {
-                  event.stopPropagation();
-                  event.preventDefault();
+                  // event.stopPropagation();
+                  // event.preventDefault();
                   this.options.onClickHashtag(href, event);
                   return true;
                 }
 
                 if (this.options.onClickLink) {
-                  event.stopPropagation();
-                  event.preventDefault();
+                  // event.stopPropagation();
+                  // event.preventDefault();
                   this.options.onClickLink(href, event);
                   return true;
                 }
@@ -146,25 +146,25 @@ export default class Link extends Mark {
   get toMarkdown() {
     return {
       open(_state, mark, parent, index) {
-        return isPlainURL(mark, parent, index, 1) ? "<" : "[";
+        return isPlainURL(mark, parent, index, 1) ? '<' : '[';
       },
       close(state, mark, parent, index) {
         return isPlainURL(mark, parent, index, -1)
-          ? ">"
-          : "](" +
+          ? '>'
+          : '](' +
               state.esc(mark.attrs.href) +
-              (mark.attrs.title ? " " + state.quote(mark.attrs.title) : "") +
-              ")";
+              (mark.attrs.title ? ' ' + state.quote(mark.attrs.title) : '') +
+              ')';
       },
     };
   }
 
   parseMarkdown() {
     return {
-      mark: "link",
+      mark: 'link',
       getAttrs: tok => ({
-        href: tok.attrGet("href"),
-        title: tok.attrGet("title") || null,
+        href: tok.attrGet('href'),
+        title: tok.attrGet('title') || null,
       }),
     };
   }

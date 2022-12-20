@@ -4,10 +4,10 @@ import ReactShadowRoot from 'react-shadow-root';
 import { ThemeProvider } from 'styled-components';
 import { EditorView, Decoration } from 'prosemirror-view';
 import { default as GlobalStyle, SetTheme } from 'app/GlobalStyle';
-import Extension from '../lib/Extension';
+import Extension from './Extension';
 import Node from '../nodes/Node';
 import { light as lightTheme, dark as darkTheme } from '../styles/theme';
-import Editor from '../';
+import Editor from '..';
 
 type Component = (options: {
   node: Node;
@@ -15,6 +15,7 @@ type Component = (options: {
   isSelected: boolean;
   isEditable: boolean;
   getPos: () => number;
+  query: any;
 }) => React.ReactElement;
 
 export default class ComponentView {
@@ -24,6 +25,7 @@ export default class ComponentView {
   node: Node;
   view: EditorView;
   getPos: () => number;
+  query: any;
   decorations: Decoration<{ [key: string]: any }>[];
   isSelected = false;
   dom: HTMLElement | null;
@@ -32,7 +34,7 @@ export default class ComponentView {
   // See https://prosemirror.net/docs/ref/#view.NodeView
   constructor(
     component,
-    { editor, extension, node, view, getPos, decorations },
+    { editor, extension, node, view, getPos, decorations, query },
   ) {
     this.component = component;
     this.editor = editor;
@@ -41,6 +43,7 @@ export default class ComponentView {
     this.decorations = decorations;
     this.node = node;
     this.view = view;
+    this.query = query;
     this.dom = node.type.spec.inline
       ? document.createElement('span')
       : document.createElement('div');
@@ -49,7 +52,7 @@ export default class ComponentView {
   }
 
   renderElement() {
-    const { dark } = this.editor.props;
+    const { dark, query } = this.editor.props;
     const theme = this.editor.props.theme || (dark ? darkTheme : lightTheme);
 
     const children = this.component({
@@ -58,6 +61,7 @@ export default class ComponentView {
       isSelected: this.isSelected,
       isEditable: this.view.editable,
       getPos: this.getPos,
+      query: this.view.props.query,
     });
 
     this.root.render(

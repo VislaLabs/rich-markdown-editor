@@ -124,15 +124,17 @@ export default class Embed extends Node {
           },
         },
       ],
-      toDOM: node => [
-        'iframe',
-        {
-          class: 'modules',
-          src: node.attrs.href,
-          contentEditable: false,
-        },
-        0,
-      ],
+      toDOM: node => {
+        return [
+          'iframe',
+          {
+            class: 'modules',
+            src: node.attrs.href,
+            contentEditable: true,
+          },
+          0,
+        ];
+      },
     };
   }
 
@@ -141,7 +143,7 @@ export default class Embed extends Node {
   }
 
   component({ isEditable, isSelected, theme, node }) {
-    const { embeds, navigate } = this.editor.props as any;
+    const { embeds, navigate, location } = this.editor.props as any;
     if (!node.ref) {
       node.ref = React.createRef();
     }
@@ -191,6 +193,7 @@ export default class Embed extends Node {
           }
         }}
         navigate={navigate}
+        location={location}
         isEditable={isEditable}
         isSelected={isSelected}
         theme={theme}

@@ -1,12 +1,12 @@
-import * as React from "react";
-import { Portal } from "react-portal";
-import { EditorView } from "prosemirror-view";
-import useComponentSize from "../hooks/useComponentSize";
-import useMediaQuery from "../hooks/useMediaQuery";
-import useViewportHeight from "../hooks/useViewportHeight";
-import styled from "styled-components";
+import * as React from 'react';
+import { Portal } from 'react-portal';
+import { EditorView } from 'prosemirror-view';
+import useComponentSize from '../hooks/useComponentSize';
+import useMediaQuery from '../hooks/useMediaQuery';
+import useViewportHeight from '../hooks/useViewportHeight';
+import styled from 'styled-components';
 
-const SSR = typeof window === "undefined";
+const SSR = typeof window === 'undefined';
 
 type Props = {
   active?: boolean;
@@ -27,7 +27,7 @@ function usePosition({ menuRef, isSelectingText, props }) {
   const { selection } = view.state;
   const { width: menuWidth, height: menuHeight } = useComponentSize(menuRef);
   const viewportHeight = useViewportHeight();
-  const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
+  const isTouchDevice = useMediaQuery('(hover: none) and (pointer: coarse)');
 
   if (!active || !menuWidth || !menuHeight || SSR || isSelectingText) {
     return defaultPosition;
@@ -81,14 +81,14 @@ function usePosition({ menuRef, isSelectingText, props }) {
   }
 
   const isImageSelection =
-    selection.node && selection.node.type.name === "image";
+    selection.node && selection.node.type.name === 'image';
   // Images need their own positioning to get the toolbar in the center
   if (isImageSelection) {
     const element = view.nodeDOM(selection.from);
 
     // Images are wrapped which impacts positioning - need to traverse through
     // p > span > div.image
-    const imageElement = element.getElementsByTagName("img")[0];
+    const imageElement = element.getElementsByTagName('img')[0];
     const { left, top, width } = imageElement.getBoundingClientRect();
 
     return {
@@ -109,11 +109,11 @@ function usePosition({ menuRef, isSelectingText, props }) {
     const margin = 12;
     const left = Math.min(
       window.innerWidth - menuWidth - margin,
-      Math.max(margin, centerOfSelection - menuWidth / 2)
+      Math.max(margin, centerOfSelection - menuWidth / 2),
     );
     const top = Math.min(
       window.innerHeight - menuHeight - margin,
-      Math.max(margin, selectionBounds.top - menuHeight)
+      Math.max(margin, selectionBounds.top - menuHeight),
     );
 
     // if the menu has been offset to not extend offscreen then we should adjust
@@ -150,12 +150,12 @@ function FloatingToolbar(props) {
       setSelectingText(false);
     };
 
-    window.addEventListener("mousedown", handleMouseDown);
-    window.addEventListener("mouseup", handleMouseUp);
+    window.addEventListener('mousedown', handleMouseDown);
+    window.addEventListener('mouseup', handleMouseUp);
 
     return () => {
-      window.removeEventListener("mousedown", handleMouseDown);
-      window.removeEventListener("mouseup", handleMouseUp);
+      window.removeEventListener('mousedown', handleMouseDown);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
   }, [props.active]);
 
@@ -187,8 +187,11 @@ const Wrapper = styled.div<{
   position: absolute;
   z-index: ${props => props.theme.zIndex + 100};
   opacity: 0;
+  color: var(--text-color-dimmer);
+  backdrop-filter: var(--backdrop-filter);
   background-color: ${props => props.theme.toolbarBackground};
-  border-radius: 4px;
+  border-radius: ${props => props.theme.toolbarBorderRadius || '4px'};
+  box-shadow: ${props => props.theme.toolbarShadow};
   transform: scale(0.95);
   transition: opacity 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275),
     transform 150ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -200,7 +203,7 @@ const Wrapper = styled.div<{
   white-space: nowrap;
 
   &::before {
-    content: "";
+    content: '';
     display: block;
     width: 24px;
     height: 24px;
@@ -244,7 +247,7 @@ const Wrapper = styled.div<{
 
 export default React.forwardRef(function FloatingToolbarWithForwardedRef(
   props: Props,
-  ref: React.RefObject<HTMLDivElement>
+  ref: React.RefObject<HTMLDivElement>,
 ) {
   return <FloatingToolbar {...props} forwardedRef={ref} />;
 });

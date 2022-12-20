@@ -1,26 +1,27 @@
-import * as React from "react";
-import { Portal } from "react-portal";
-import some from "lodash/some";
-import { EditorView } from "prosemirror-view";
-import { TextSelection } from "prosemirror-state";
-import getTableColMenuItems from "../menus/tableCol";
-import getTableRowMenuItems from "../menus/tableRow";
-import getTableMenuItems from "../menus/table";
-import getFormattingMenuItems from "../menus/formatting";
-import getImageMenuItems from "../menus/image";
-import getDividerMenuItems from "../menus/divider";
-import FloatingToolbar from "./FloatingToolbar";
-import LinkEditor, { SearchResult } from "./LinkEditor";
-import ToolbarMenu from "./ToolbarMenu";
-import filterExcessSeparators from "../lib/filterExcessSeparators";
-import isMarkActive from "../queries/isMarkActive";
-import getMarkRange from "../queries/getMarkRange";
-import isNodeActive from "../queries/isNodeActive";
-import getColumnIndex from "../queries/getColumnIndex";
-import getRowIndex from "../queries/getRowIndex";
-import createAndInsertLink from "../commands/createAndInsertLink";
-import { MenuItem } from "../types";
-import baseDictionary from "../dictionary";
+import * as React from 'react';
+import { Portal } from 'react-portal';
+import some from 'lodash/some';
+import { EditorView } from 'prosemirror-view';
+import { TextSelection } from 'prosemirror-state';
+import getTableColMenuItems from '../menus/tableCol';
+import getTableRowMenuItems from '../menus/tableRow';
+import getTableMenuItems from '../menus/table';
+import getFormattingMenuItems from '../menus/formatting';
+import getEmbedMenuItems from '../menus/embed';
+import getImageMenuItems from '../menus/image';
+import getDividerMenuItems from '../menus/divider';
+import FloatingToolbar from './FloatingToolbar';
+import LinkEditor, { SearchResult } from './LinkEditor';
+import ToolbarMenu from './ToolbarMenu';
+import filterExcessSeparators from '../lib/filterExcessSeparators';
+import isMarkActive from '../queries/isMarkActive';
+import getMarkRange from '../queries/getMarkRange';
+import isNodeActive from '../queries/isNodeActive';
+import getColumnIndex from '../queries/getColumnIndex';
+import getRowIndex from '../queries/getRowIndex';
+import createAndInsertLink from '../commands/createAndInsertLink';
+import { MenuItem } from '../types';
+import baseDictionary from '../dictionary';
 
 type Props = {
   dictionary: typeof baseDictionary;
@@ -43,10 +44,13 @@ function isVisible(props) {
 
   if (!selection) return false;
   if (selection.empty) return false;
-  if (selection.node && selection.node.type.name === "hr") {
+  if (selection.node && selection.node.type.name === 'hr') {
     return true;
   }
-  if (selection.node && selection.node.type.name === "image") {
+  if (selection.node && selection.node.type.name === 'image') {
+    return true;
+  }
+  if (selection.node && selection.node.type.name === 'embed') {
     return true;
   }
   if (selection.node) return false;
@@ -75,11 +79,11 @@ export default class SelectionToolbar extends React.Component<Props> {
   }
 
   componentDidMount(): void {
-    window.addEventListener("mouseup", this.handleClickOutside);
+    window.addEventListener('mouseup', this.handleClickOutside);
   }
 
   componentWillUnmount(): void {
-    window.removeEventListener("mouseup", this.handleClickOutside);
+    window.removeEventListener('mouseup', this.handleClickOutside);
   }
 
   handleClickOutside = (ev: MouseEvent): void => {
@@ -103,7 +107,7 @@ export default class SelectionToolbar extends React.Component<Props> {
     const { dispatch } = view;
 
     dispatch(
-      view.state.tr.setSelection(new TextSelection(view.state.doc.resolve(0)))
+      view.state.tr.setSelection(new TextSelection(view.state.doc.resolve(0))),
     );
   };
 
@@ -128,7 +132,7 @@ export default class SelectionToolbar extends React.Component<Props> {
     dispatch(
       view.state.tr
         .removeMark(from, to, markType)
-        .addMark(from, to, markType.create({ href }))
+        .addMark(from, to, markType.create({ href })),
     );
 
     createAndInsertLink(view, title, href, {
@@ -155,7 +159,7 @@ export default class SelectionToolbar extends React.Component<Props> {
     dispatch(
       state.tr
         .removeMark(from, to, markType)
-        .addMark(from, to, markType.create({ href }))
+        .addMark(from, to, markType.create({ href })),
     );
   };
 
@@ -166,6 +170,7 @@ export default class SelectionToolbar extends React.Component<Props> {
     const { selection }: { selection: any } = state;
     const isCodeSelection = isNodeActive(state.schema.nodes.code_block)(state);
     const isDividerSelection = isNodeActive(state.schema.nodes.hr)(state);
+    const isEmbedSelection = isNodeActive(state.schema.nodes.embed)(state);
 
     // toolbar is disabled in code blocks, no bold / italic etc
     if (isCodeSelection) {
@@ -178,7 +183,7 @@ export default class SelectionToolbar extends React.Component<Props> {
     const link = isMarkActive(state.schema.marks.link)(state);
     const range = getMarkRange(selection.$from, state.schema.marks.link);
     const isImageSelection =
-      selection.node && selection.node.type.name === "image";
+      selection.node && selection.node.type.name === 'image';
     let isTextSelection = false;
 
     let items: MenuItem[] = [];
@@ -190,6 +195,8 @@ export default class SelectionToolbar extends React.Component<Props> {
       items = getTableRowMenuItems(state, rowIndex, dictionary);
     } else if (isImageSelection) {
       items = getImageMenuItems(state, dictionary);
+    } else if (isEmbedSelection) {
+      items = getEmbedMenuItems(state, dictionary);
     } else if (isDividerSelection) {
       items = getDividerMenuItems(state, dictionary);
     } else {
@@ -199,7 +206,7 @@ export default class SelectionToolbar extends React.Component<Props> {
 
     // Some extensions may be disabled, remove corresponding items
     items = items.filter(item => {
-      if (item.name === "separator") return true;
+      if (item.name === 'separator') return true;
       if (item.name && !this.props.commands[item.name]) return false;
       return true;
     });
@@ -211,7 +218,7 @@ export default class SelectionToolbar extends React.Component<Props> {
 
     const selectionText = state.doc.cut(
       state.selection.from,
-      state.selection.to
+      state.selection.to,
     ).textContent;
 
     if (isTextSelection && !selectionText) {

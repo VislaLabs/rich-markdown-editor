@@ -1,7 +1,12 @@
 /* global window File Promise */
 import * as React from 'react';
 import memoize from 'lodash/memoize';
-import { EditorState, Selection, Plugin } from 'prosemirror-state';
+import {
+  EditorState,
+  NodeSelection,
+  Selection,
+  Plugin,
+} from 'prosemirror-state';
 import { dropCursor } from 'prosemirror-dropcursor';
 import { gapCursor } from 'prosemirror-gapcursor';
 import { MarkdownParser, MarkdownSerializer } from 'prosemirror-markdown';
@@ -78,6 +83,7 @@ import SmartText from './plugins/SmartText';
 import TrailingNode from './plugins/TrailingNode';
 import PasteHandler from './plugins/PasteHandler';
 import { PluginSimple } from 'markdown-it';
+import { getHref, getQuery } from '../nodes/Embed';
 
 export { schema, parser, serializer, renderToHtml } from './server';
 
@@ -88,6 +94,7 @@ export const theme = lightTheme;
 export type Props = {
   id?: string;
   value?: string;
+  query?: any;
   defaultValue: string;
   placeholder: string;
   extensions?: Extension[];
@@ -181,9 +188,9 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     onImageUploadStop: () => {
       // no default behavior
     },
-    onClickLink: href => {
-      window.open(href, '_blank');
-    },
+    // onClickLink: href => {
+    //   window.open(href, '_blank');
+    // },
     embeds: [],
     extensions: [],
     tooltip: Tooltip,
@@ -217,7 +224,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   marks: { [name: string]: MarkSpec };
   commands: Record<string, any>;
   rulePlugins: PluginSimple[];
-  unmounted = false;
+  unmounted? = false;
 
   constructor(props) {
     super(props);
@@ -256,9 +263,105 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
     const prevProps = this.props;
     // Allow changes to the 'value' prop to update the editor from outside
-    if (nextProps.value && prevProps.value !== nextProps.value) {
+    if (nextProps.value !== undefined && prevProps.value !== nextProps.value) {
       const newState = this.createState(nextProps.value);
       this.view.updateState(newState);
+    }
+
+    if (nextProps.query !== prevProps.query) {
+      // const newState = EditorState.fromJSON(
+      //   this.view.state.config,
+      //   this.view.state.toJSON(),
+      // );
+      // newState.doc.content.content[1].content.content[0].attrs.updatedHref =
+      //   newState.doc.content.content[1].content.content[0].attrs.href.replace(
+      //     'f2b18d3e1c793a67894137141691ff7a943c5e1e27d8df3f845102e2a43c3e4f/dcb24a1d01f09f5aa32fd1f7aa2021aa131db3ded8fe27dee21f53a3a211c76b',
+      //     '3bb086d60a95edb4bbff62ee03283a7a0db6d6dd259f9123d7aa8ba764c4121e',
+      //   );
+      // this.view.updateState(newState);
+      // const prevSelected = prevProps.query.selected;
+      // const selected = nextProps.query.selected;
+      // if (prevSelected.anchor !== selected.anchor) {
+      //   this.view.state.doc.descendants((node, pos) => {
+      //     if (node.type === this.schema.nodes.embed) {
+      //       const query = getQuery(node.attrs.href, nextProps.query);
+      //       if (query.module.id === selected.anchor) {
+      //         const element = node.ref.current;
+      //         if (element) {
+      //           element.scrollIntoView({ behavior: 'smooth' });
+      //         }
+      //       }
+      //     }
+      //   });
+      // }
+      this.view.state.doc.descendants((node, pos) => {
+        if (node.type === this.schema.nodes.embed) {
+          const moduleQuery = getQuery(node.attrs.href, nextProps.query);
+          const depth = [nextProps.query.depth, moduleQuery.module.id].join(
+            '.',
+          );
+          const { href: nextHref, query: nextModuleQuery } = getHref(
+            node.attrs.href,
+            nextProps.query,
+            true,
+          );
+          // const nextHref = nextProps.query._selected[depth]?.expand.url.href;
+          if (nextHref && nextHref !== node.attrs.href) {
+            const $pos = this.view.state.doc.resolve(pos);
+            const attrs = {
+              ...node.attrs,
+              href: nextHref,
+              // ...(!nextProps.readOnly
+              //   ? { href: nextHref }
+              //   : { updatedHref: nextHref }),
+            };
+            this.view.dispatch(
+              this.view.state.tr.setNodeMarkup(pos, undefined, attrs),
+            );
+            // const { selection } = state;
+            // dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
+          }
+        }
+      });
+      // for (const key of Object.keys(nextProps.query._selected)) {
+      //   if (
+      //     prevProps.query._selected[key]?.url.to !==
+      //     nextProps.query._selected[key].url.to
+      //   ) {
+      //     let stop = false;
+      //     this.view.state.doc.descendants((node, pos) => {
+      //       if (node.type === this.schema.nodes.embed) {
+      //         const query = getQuery(node.attrs.href, nextProps.query);
+      //         const queries = query.modules?.length
+      //           ? [query, ...Array.from(query)]
+      //           : [query];
+      //         for (const viewQuery of queries) {
+      //           if (
+      //             viewQuery.selectedId &&
+      //             viewQuery.selectedId.endsWith(
+      //               nextProps.query._selected[key].selectedId,
+      //             )
+      //           ) {
+      //             const element = node.ref.current;
+      //             if (element) {
+      //               element.scrollIntoViewIfNeeded({ behavior: 'smooth' });
+      //               const $pos = this.view.state.doc.resolve(pos);
+      //               const transaction = this.view.state.tr.setSelection(
+      //                 new NodeSelection($pos),
+      //               );
+      //               this.view.dispatch(transaction);
+      //               stop = true;
+      //               break;
+      //             }
+      //           }
+      //         }
+      //       }
+      //       if (stop) {
+      //         return false;
+      //       }
+      //     });
+      //   }
+      // }
     }
 
     // pass readOnly changes through to underlying editor instance
@@ -359,7 +462,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new CheckboxList(),
           new CheckboxItem(),
           new BulletList(),
-          new Embed({ embeds: this.props.embeds }),
+          // new Embed({ embeds: this.props.embeds }),
           new ListItem(),
           new Notice({
             dictionary,
@@ -384,15 +487,15 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             onImageUploadStop: this.props.onImageUploadStop,
             onShowToast: this.props.onShowToast,
           }),
-          // new Table(),
-          // new TableCell({
-          //   onSelectTable: this.handleSelectTable,
-          //   onSelectRow: this.handleSelectRow,
-          // }),
-          // new TableHeadCell({
-          //   onSelectColumn: this.handleSelectColumn,
-          // }),
-          // new TableRow(),
+          new Table(),
+          new TableCell({
+            onSelectTable: this.handleSelectTable,
+            onSelectRow: this.handleSelectRow,
+          }),
+          new TableHeadCell({
+            onSelectColumn: this.handleSelectColumn,
+          }),
+          new TableRow(),
           new Bold(),
           new Code(),
           new Highlight(),
@@ -578,11 +681,11 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       editable: () => !this.props.readOnly,
       nodeViews: this.nodeViews,
       handleDOMEvents: this.props.handleDOMEvents,
-      dispatchTransaction: function(transaction) {
+      query: this.props.query,
+      dispatchTransaction: function (transaction) {
         // callback is bound to have the view instance as its this binding
-        const { state, transactions } = this.state.applyTransaction(
-          transaction,
-        );
+        const { state, transactions } =
+          this.state.applyTransaction(transaction);
 
         this.updateState(state);
 

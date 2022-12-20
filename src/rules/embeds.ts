@@ -1,25 +1,25 @@
-import MarkdownIt from "markdown-it";
-import Token from "markdown-it/lib/token";
+import MarkdownIt from 'markdown-it';
+import Token from 'markdown-it/lib/token';
 
 function isParagraph(token: Token) {
-  return token.type === "paragraph_open";
+  return token.type === 'paragraph_open';
 }
 
 function isInline(token: Token) {
-  return token.type === "inline" && token.level === 1;
+  return token.type === 'inline' && token.level === 1;
 }
 
 function isLinkOpen(token: Token) {
-  return token.type === "link_open";
+  return token.type === 'link_open';
 }
 
 function isLinkClose(token: Token) {
-  return token.type === "link_close";
+  return token.type === 'link_close';
 }
 
-export default function(embeds) {
+export default function (embeds) {
   function isEmbed(token: Token, link: Token) {
-    const href = link.attrs ? link.attrs[0][1] : "";
+    const href = link.attrs ? link.attrs[0][1] : '';
     const simpleLink = href === token.content;
 
     if (!simpleLink) return false;
@@ -37,7 +37,7 @@ export default function(embeds) {
   }
 
   return function markdownEmbeds(md: MarkdownIt) {
-    md.core.ruler.after("inline", "embeds", state => {
+    md.core.ruler.after('inline', 'embeds', state => {
       const tokens = state.tokens;
       let insideLink;
 
@@ -68,8 +68,8 @@ export default function(embeds) {
                 const { content } = current;
 
                 // convert to embed token
-                const token = new Token("embed", "iframe", 0);
-                token.attrSet("href", content);
+                const token = new Token('embed', 'iframe', 0);
+                token.attrSet('href', content);
 
                 // delete the inline link – this makes the assumption that the
                 // embed is the only thing in the para.

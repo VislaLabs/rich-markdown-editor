@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 type Props = { active?: boolean; disabled?: boolean };
 
@@ -13,7 +13,6 @@ export default styled.button<Props>`
   background: none;
   transition: opacity 100ms ease-in-out;
   padding: 0;
-  opacity: 0.7;
   outline: none;
   pointer-events: all;
   position: relative;
@@ -23,7 +22,7 @@ export default styled.button<Props>`
   }
 
   &:hover {
-    opacity: 1;
+    color: var(---tool-color-active);
   }
 
   &:disabled {
@@ -33,12 +32,12 @@ export default styled.button<Props>`
 
   &:before {
     position: absolute;
-    content: "";
+    content: '';
     top: -4px;
     right: -4px;
     left: -4px;
     bottom: -4px;
   }
 
-  ${props => props.active && "opacity: 1;"};
+  ${props => props.active && 'color: var(--text-color);'};
 `;
