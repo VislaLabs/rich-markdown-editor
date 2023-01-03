@@ -83,7 +83,7 @@ import SmartText from './plugins/SmartText';
 import TrailingNode from './plugins/TrailingNode';
 import PasteHandler from './plugins/PasteHandler';
 import { PluginSimple } from 'markdown-it';
-import { getHref, getQuery } from '../nodes/Embed';
+// import { getHref, getQuery } from '../nodes/Embed';
 
 export { schema, parser, serializer, renderToHtml } from './server';
 
@@ -145,7 +145,7 @@ export type Props = {
   uploadImage?: (file: File) => Promise<string>;
   onBlur?: () => void;
   onFocus?: () => void;
-  onSave?: ({ done: boolean }) => void;
+  onSave?: ({ done }) => void;
   onCancel?: () => void;
   onChange?: (value: () => string) => void;
   onImageUploadStart?: () => void;
@@ -294,35 +294,35 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       //     }
       //   });
       // }
-      this.view.state.doc.descendants((node, pos) => {
-        if (node.type === this.schema.nodes.embed) {
-          const moduleQuery = getQuery(node.attrs.href, nextProps.query);
-          const depth = [nextProps.query.depth, moduleQuery.module.id].join(
-            '.',
-          );
-          const { href: nextHref, query: nextModuleQuery } = getHref(
-            node.attrs.href,
-            nextProps.query,
-            true,
-          );
-          // const nextHref = nextProps.query._selected[depth]?.expand.url.href;
-          if (nextHref && nextHref !== node.attrs.href) {
-            const $pos = this.view.state.doc.resolve(pos);
-            const attrs = {
-              ...node.attrs,
-              href: nextHref,
-              // ...(!nextProps.readOnly
-              //   ? { href: nextHref }
-              //   : { updatedHref: nextHref }),
-            };
-            this.view.dispatch(
-              this.view.state.tr.setNodeMarkup(pos, undefined, attrs),
-            );
-            // const { selection } = state;
-            // dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
-          }
-        }
-      });
+      // this.view.state.doc.descendants((node, pos) => {
+      //   if (node.type === this.schema.nodes.embed) {
+      //     const moduleQuery = getQuery(node.attrs.href, nextProps.query);
+      //     const depth = [nextProps.query.depth, moduleQuery.module.id].join(
+      //       '.',
+      //     );
+      //     const { href: nextHref, query: nextModuleQuery } = getHref(
+      //       node.attrs.href,
+      //       nextProps.query,
+      //       true,
+      //     );
+      //     // const nextHref = nextProps.query._selected[depth]?.expand.url.href;
+      //     if (nextHref && nextHref !== node.attrs.href) {
+      //       const $pos = this.view.state.doc.resolve(pos);
+      //       const attrs = {
+      //         ...node.attrs,
+      //         href: nextHref,
+      //         // ...(!nextProps.readOnly
+      //         //   ? { href: nextHref }
+      //         //   : { updatedHref: nextHref }),
+      //       };
+      //       this.view.dispatch(
+      //         this.view.state.tr.setNodeMarkup(pos, undefined, attrs),
+      //       );
+      //       // const { selection } = state;
+      //       // dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
+      //     }
+      //   }
+      // });
       // for (const key of Object.keys(nextProps.query._selected)) {
       //   if (
       //     prevProps.query._selected[key]?.url.to !==
@@ -588,7 +588,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             view,
             getPos,
             decorations,
-          });
+          } as any);
         };
 
         return {

@@ -11,6 +11,8 @@ const colors = {
   grey: '#E8EBED',
   greyMid: '#C5CCD3',
   greyDark: '#DAE1E9',
+  textHighlight: '#b3e7ff',
+  codeEntity: '#22a2c9',
 };
 
 export const base = {
