@@ -13,7 +13,7 @@ const colors = {
   greyDark: '#DAE1E9',
   textHighlight: '#b3e7ff',
   codeEntity: '#22a2c9',
-};
+} as any;
 
 export const base = {
   ...colors,

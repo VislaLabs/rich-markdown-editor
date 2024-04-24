@@ -1,24 +1,25 @@
-import Editor from "./index";
-import debounce from "lodash/debounce";
-import { Props } from "..";
-import React from "react";
-import { Story, Meta } from "@storybook/react/types-6-0";
+import Editor from './index';
+import debounce from 'lodash/debounce';
+import { Props } from '..';
+import React from 'react';
+// @ts-ignore
+import { Story, Meta } from '@storybook/react/types-6-0';
 
 export default {
-  title: "Editor",
+  title: 'Editor',
   component: Editor,
   argTypes: {
-    value: { control: "text" },
-    readOnly: { control: "boolean" },
-    onSave: { action: "save" },
-    onCancel: { action: "cancel" },
-    onClickHashtag: { action: "hashtag clicked" },
-    onClickLink: { action: "link clicked" },
-    onHoverLink: { action: "link hovered" },
-    onShowToast: { action: "toast" },
-    onFocus: { action: "focused" },
-    onBlur: { action: "blurred" },
-    disableExtensions: { control: "array" },
+    value: { control: 'text' },
+    readOnly: { control: 'boolean' },
+    onSave: { action: 'save' },
+    onCancel: { action: 'cancel' },
+    onClickHashtag: { action: 'hashtag clicked' },
+    onClickLink: { action: 'link clicked' },
+    onHoverLink: { action: 'link hovered' },
+    onShowToast: { action: 'toast' },
+    onFocus: { action: 'focused' },
+    onBlur: { action: 'blurred' },
+    disableExtensions: { control: 'array' },
   },
   args: {
     disableExtensions: [],
@@ -185,20 +186,20 @@ ReadOnlyWriteCheckboxes.args = {
 export const Persisted = Template.bind({});
 Persisted.args = {
   defaultValue:
-    localStorage.getItem("saved") ||
+    localStorage.getItem('saved') ||
     `# Persisted
   
 The contents of this editor are persisted to local storage on change (edit and reload)`,
   onChange: debounce(value => {
     const text = value();
-    localStorage.setItem("saved", text);
+    localStorage.setItem('saved', text);
   }, 250),
 };
 
 export const Placeholder = Template.bind({});
 Placeholder.args = {
-  defaultValue: "",
-  placeholder: "This is a custom placeholder…",
+  defaultValue: '',
+  placeholder: 'This is a custom placeholder…',
 };
 
 export const Images = Template.bind({});
@@ -225,7 +226,7 @@ There's a customizable dark theme too`,
 
 export const RTL = Template.bind({});
 RTL.args = {
-  dir: "rtl",
+  dir: 'rtl',
   defaultValue: `# خوش آمدید
 
 متن نمونه برای نمایش پشتیبانی از زبان‌های RTL نظیر فارسی، عربی، عبری و ...
