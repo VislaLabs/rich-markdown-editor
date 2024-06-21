@@ -24,7 +24,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.run = void 0;
 const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const react_dom_1 = __importDefault(require("react-dom"));
+const client_1 = __importDefault(require("react-dom/client"));
 const React = __importStar(require("react"));
 const prosemirror_state_1 = require("prosemirror-state");
 const prosemirror_tables_1 = require("prosemirror-tables");
@@ -60,7 +60,8 @@ class BlockMenuTrigger extends Extension_1.default {
         const button = document.createElement("button");
         button.className = "block-menu-trigger";
         button.type = "button";
-        react_dom_1.default.render(React.createElement(outline_icons_1.PlusIcon, { color: "currentColor" }), button);
+        const root = client_1.default.createRoot(button);
+        root.render(React.createElement(outline_icons_1.PlusIcon, { color: "currentColor" }));
         return [
             new prosemirror_state_1.Plugin({
                 props: {
@@ -94,8 +95,8 @@ class BlockMenuTrigger extends Extension_1.default {
                         }
                         return false;
                     },
-                    decorations: state => {
-                        const parent = prosemirror_utils_1.findParentNode(node => node.type.name === "paragraph")(state.selection);
+                    decorations: (state) => {
+                        const parent = prosemirror_utils_1.findParentNode((node) => node.type.name === "paragraph")(state.selection);
                         if (!parent) {
                             return;
                         }

@@ -26,13 +26,13 @@ const prosemirror_inputrules_1 = require("prosemirror-inputrules");
 const toggleWrap_1 = __importDefault(require("../commands/toggleWrap"));
 const outline_icons_1 = require("outline-icons");
 const React = __importStar(require("react"));
-const react_dom_1 = __importDefault(require("react-dom"));
+const client_1 = __importDefault(require("react-dom/client"));
 const Node_1 = __importDefault(require("./Node"));
 const notices_1 = __importDefault(require("../rules/notices"));
 class Notice extends Node_1.default {
     constructor() {
         super(...arguments);
-        this.handleStyleChange = event => {
+        this.handleStyleChange = (event) => {
             const { view } = this.editor;
             const { tr } = view.state;
             const element = event.target;
@@ -84,7 +84,7 @@ class Notice extends Node_1.default {
                     }),
                 },
             ],
-            toDOM: node => {
+            toDOM: (node) => {
                 const select = document.createElement("select");
                 select.addEventListener("change", this.handleStyleChange);
                 this.styleOptions.forEach(([key, label]) => {
@@ -106,7 +106,8 @@ class Notice extends Node_1.default {
                 }
                 const icon = document.createElement("div");
                 icon.className = "icon";
-                react_dom_1.default.render(component, icon);
+                const root = client_1.default.createRoot(icon);
+                root.render(component);
                 return [
                     "div",
                     { class: `notice-block ${node.attrs.style}` },
@@ -118,7 +119,7 @@ class Notice extends Node_1.default {
         };
     }
     commands({ type }) {
-        return attrs => toggleWrap_1.default(type, attrs);
+        return (attrs) => toggleWrap_1.default(type, attrs);
     }
     inputRules({ type }) {
         return [prosemirror_inputrules_1.wrappingInputRule(/^:::$/, type)];
@@ -133,7 +134,7 @@ class Notice extends Node_1.default {
     parseMarkdown() {
         return {
             block: "container_notice",
-            getAttrs: tok => ({ style: tok.info }),
+            getAttrs: (tok) => ({ style: tok.info }),
         };
     }
 }
