@@ -19,7 +19,7 @@ export default class TrailingNode extends Extension {
       .map(([, value]) => value)
       .filter((node) => this.options.notAfter.includes((node as any).name));
 
-    return [git
+    return [
       new Plugin({
         key: plugin,
         view: () => ({
