@@ -20,7 +20,7 @@ class TrailingNode extends Extension_1.default {
         const disabledNodes = Object.entries(this.editor.schema.nodes)
             .map(([, value]) => value)
             .filter((node) => this.options.notAfter.includes(node.name));
-        return [git,
+        return [
             new prosemirror_state_1.Plugin({
                 key: plugin,
                 view: () => ({
