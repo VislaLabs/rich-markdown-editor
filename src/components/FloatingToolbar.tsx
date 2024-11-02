@@ -171,6 +171,7 @@ function FloatingToolbar(props) {
           top: `${position.top}px`,
           left: `${position.left}px`,
         }}
+        className="floating-toolbar"
       >
         {position.visible && props.children}
       </Wrapper>
