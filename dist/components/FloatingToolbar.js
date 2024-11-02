@@ -135,7 +135,7 @@ function FloatingToolbar(props) {
         React.createElement(Wrapper, { active: props.active && position.visible, ref: menuRef, offset: position.offset, style: {
                 top: `${position.top}px`,
                 left: `${position.left}px`,
-            } }, position.visible && props.children)));
+            }, className: "floating-toolbar" }, position.visible && props.children)));
 }
 const Wrapper = styled_components_1.default.div `
   will-change: opacity, transform;
