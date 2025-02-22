@@ -1,5 +1,6 @@
+import { EditorView } from "prosemirror-view";
 import baseDictionary from "../dictionary";
-declare const createAndInsertLink: (view: any, title: string, href: string, options: {
+declare const createAndInsertLink: (view: EditorView, title: string, href: string, options: {
     dictionary: typeof baseDictionary;
     onCreateLink: (title: string) => Promise<string>;
     onShowToast?: ((message: string, code: string) => void) | undefined;

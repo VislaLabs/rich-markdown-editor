@@ -1,5 +1,6 @@
+import { EditorView } from "prosemirror-view";
 import baseDictionary from "../dictionary";
-declare const insertFiles: (view: any, event: Event, pos: number, files: File[], options: {
+declare const insertFiles: (view: EditorView, event: Event, pos: number, files: File[], options: {
     dictionary: typeof baseDictionary;
     replaceExisting?: boolean | undefined;
     uploadImage: (file: File) => Promise<string>;

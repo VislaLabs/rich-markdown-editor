@@ -1,5 +1,6 @@
 import Node from "./Node";
 import { addColumnAfter, addColumnBefore, deleteColumn, deleteRow, deleteTable, fixTables, setCellAttr, toggleHeaderCell, toggleHeaderColumn, toggleHeaderRow } from "prosemirror-tables";
+import { Plugin } from "prosemirror-state";
 import tablesRule from "../rules/tables";
 export default class Table extends Node {
     get name(): string;
@@ -46,14 +47,14 @@ export default class Table extends Node {
         fixTables: () => typeof fixTables;
     };
     keys(): {
-        Tab: (state: any, dispatch?: ((tr: any) => void) | undefined) => boolean;
-        "Shift-Tab": (state: any, dispatch?: ((tr: any) => void) | undefined) => boolean;
+        Tab: (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
+        "Shift-Tab": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
         Enter: (state: any, dispatch: any) => boolean;
     };
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {
         block: string;
     };
-    get plugins(): any[];
+    get plugins(): Plugin<any, any>[];
 }
 //# sourceMappingURL=Table.d.ts.map

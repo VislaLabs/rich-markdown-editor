@@ -39,7 +39,7 @@ export default class Heading extends Node {
     commands({ type, schema }: {
         type: any;
         schema: any;
-    }): (attrs: Record<string, any>) => (state: any, dispatch: any) => any;
+    }): (attrs: Record<string, any>) => (state: any, dispatch: any) => boolean;
     handleFoldContent: (event: any) => void;
     handleCopyLink: (event: any) => void;
     keys({ type, schema }: {

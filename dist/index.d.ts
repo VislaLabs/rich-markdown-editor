@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Plugin } from "prosemirror-state";
+import { EditorState, Plugin } from "prosemirror-state";
 import { MarkdownParser, MarkdownSerializer } from "prosemirror-markdown";
 import { EditorView } from "prosemirror-view";
 import { Schema, NodeSpec, MarkSpec } from "prosemirror-model";
@@ -12,6 +12,7 @@ import Extension from "./lib/Extension";
 import ExtensionManager from "./lib/ExtensionManager";
 import ComponentView from "./lib/ComponentView";
 import { PluginSimple } from "markdown-it";
+import ElementView from "./lib/ElementView";
 export { schema, parser, serializer, renderToHtml } from "./server";
 export { default as Extension } from "./lib/Extension";
 export declare const theme: {
@@ -96,6 +97,7 @@ export declare type Props = {
     defaultValue: string;
     placeholder: string;
     extensions?: Extension[];
+    menus: React.FC<MenuProps>[];
     disableExtensions?: ("strong" | "code_inline" | "highlight" | "em" | "link" | "placeholder" | "strikethrough" | "underline" | "blockquote" | "bullet_list" | "checkbox_item" | "checkbox_list" | "code_block" | "code_fence" | "embed" | "br" | "heading" | "hr" | "image" | "list_item" | "container_notice" | "ordered_list" | "paragraph" | "table" | "td" | "th" | "tr" | "emoji")[];
     autoFocus?: boolean;
     readOnly?: boolean;
@@ -114,8 +116,8 @@ export declare type Props = {
     uploadImage?: (file: File) => Promise<string>;
     onBlur?: () => void;
     onFocus?: () => void;
-    onSave?: ({ done: boolean }: {
-        done: any;
+    onSave?: ({ done }: {
+        done: boolean;
     }) => void;
     onCancel?: () => void;
     onChange?: (value: () => string) => void;
@@ -142,6 +144,16 @@ declare type State = {
     blockMenuSearch: string;
     emojiMenuOpen: boolean;
 };
+export declare type MenuProps = {
+    rtl: boolean;
+    isActive: boolean;
+    commands: Record<string, any>;
+    view: EditorView;
+    search: string;
+    onClose: () => void;
+    onClearSearch: () => void;
+    filterable?: boolean;
+};
 declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     static defaultProps: {
         defaultValue: string;
@@ -152,6 +164,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         onClickLink: (href: any) => void;
         embeds: never[];
         extensions: never[];
+        menus: never[];
         tooltip: typeof Tooltip;
     };
     state: {
@@ -166,6 +179,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     isBlurred: boolean;
     extensions: ExtensionManager;
     element?: HTMLElement | null;
+    menus: React.FC<MenuProps>[];
     view: EditorView;
     schema: Schema;
     serializer: MarkdownSerializer;
@@ -186,6 +200,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     commands: Record<string, any>;
     rulePlugins: PluginSimple[];
     unmounted: boolean;
+    nodeViewsMap: Set<ElementView>;
     constructor(props: any);
     UNSAFE_componentWillMount(): void;
     componentDidMount(): void;
@@ -193,21 +208,23 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     componentWillUnmount(): void;
     init(): void;
     createExtensions(): ExtensionManager;
-    createPlugins(): any[];
+    createPlugins(): Plugin<any, any>[];
     createRulePlugins(): PluginSimple[];
-    createKeymaps(): any[];
-    createInputRules(): any[];
+    createKeymaps(): Plugin<any, any>[];
+    createInputRules(): InputRule<any>[];
     createNodeViews(): {};
+    scheduleNodeViewUpdate(ev: ElementView): void;
+    removeNodeView(ev: ElementView): void;
     createCommands(): {};
     createNodes(): {};
     createMarks(): {};
-    createSchema(): any;
+    createSchema(): Schema<string, string>;
     createSerializer(): import("./lib/markdown/serializer").MarkdownSerializer;
-    createParser(): any;
-    createPasteParser(): any;
-    createState(value?: string): any;
-    createDocument(content: string): any;
-    createView(): any;
+    createParser(): MarkdownParser<any>;
+    createPasteParser(): MarkdownParser<any>;
+    createState(value?: string): EditorState<any>;
+    createDocument(content: string): import("prosemirror-model").Node<any>;
+    createView(): EditorView<any>;
     scrollToAnchor(hash: string): void;
     calculateDir: () => void;
     value: () => string;
@@ -222,9 +239,9 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
     handleCloseLinkMenu: () => void;
     handleOpenBlockMenu: (search: string) => void;
     handleCloseBlockMenu: () => void;
-    handleSelectRow: (index: number, state: any) => void;
-    handleSelectColumn: (index: number, state: any) => void;
-    handleSelectTable: (state: any) => void;
+    handleSelectRow: (index: number, state: EditorState) => void;
+    handleSelectColumn: (index: number, state: EditorState) => void;
+    handleSelectTable: (state: EditorState) => void;
     focusAtStart: () => void;
     focusAtEnd: () => void;
     getHeadings: () => {
@@ -308,6 +325,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         greyMid: string;
         greyDark: string;
     };
+    get menuOpen(): string | undefined;
     dictionary: ((providedDictionary?: Partial<{
         addColumnAfter: string;
         addColumnBefore: string;
@@ -431,6 +449,7 @@ declare class RichMarkdownEditor extends React.PureComponent<Props, State> {
         warning: string;
         warningNotice: string;
     }) & import("lodash").MemoizedFunction;
+    renderNodeViewPortals(): React.ReactPortal[];
     render(): React.JSX.Element;
 }
 export default RichMarkdownEditor;

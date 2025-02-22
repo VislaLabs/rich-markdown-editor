@@ -39,21 +39,21 @@ export default class CodeFence extends Node {
     commands({ type, schema }: {
         type: any;
         schema: any;
-    }): (attrs: any) => (state: any, dispatch: any) => any;
+    }): (attrs: any) => (state: any, dispatch: any) => boolean;
     keys({ type, schema }: {
         type: any;
         schema: any;
     }): {
-        "Shift-Ctrl-\\": (state: any, dispatch: any) => any;
+        "Shift-Ctrl-\\": (state: any, dispatch: any) => boolean;
         "Shift-Enter": (state: any, dispatch: any) => boolean;
         Tab: (state: any, dispatch: any) => boolean;
     };
     handleCopyToClipboard: (event: any) => void;
     handleLanguageChange: (event: any) => void;
-    get plugins(): any[];
+    get plugins(): import("prosemirror-state").Plugin<any, any>[];
     inputRules({ type }: {
         type: any;
-    }): any[];
+    }): import("prosemirror-inputrules").InputRule<any>[];
     toMarkdown(state: any, node: any): void;
     get markdownToken(): string;
     parseMarkdown(): {

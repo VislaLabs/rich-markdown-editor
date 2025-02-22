@@ -17,11 +17,11 @@ export default class Underline extends Mark {
     get rulePlugins(): (typeof underlinesRule)[];
     inputRules({ type }: {
         type: any;
-    }): any[];
+    }): import("prosemirror-inputrules").InputRule<any>[];
     keys({ type }: {
         type: any;
     }): {
-        "Mod-u": any;
+        "Mod-u": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
     };
     get toMarkdown(): {
         open: string;

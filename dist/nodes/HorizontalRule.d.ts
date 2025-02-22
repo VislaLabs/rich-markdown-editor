@@ -1,3 +1,4 @@
+import { InputRule } from "prosemirror-inputrules";
 import Node from "./Node";
 export default class HorizontalRule extends Node {
     get name(): string;
@@ -25,7 +26,7 @@ export default class HorizontalRule extends Node {
     };
     inputRules({ type }: {
         type: any;
-    }): any[];
+    }): InputRule<any>[];
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {
         node: string;

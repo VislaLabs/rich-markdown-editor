@@ -9,11 +9,11 @@ export default class Highlight extends Mark {
     };
     inputRules({ type }: {
         type: any;
-    }): any[];
+    }): import("prosemirror-inputrules").InputRule<any>[];
     keys({ type }: {
         type: any;
     }): {
-        "Mod-Ctrl-h": any;
+        "Mod-Ctrl-h": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
     };
     get rulePlugins(): ((md: any) => void)[];
     get toMarkdown(): {

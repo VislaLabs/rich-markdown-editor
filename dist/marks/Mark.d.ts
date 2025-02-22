@@ -7,6 +7,6 @@ export default abstract class Mark extends Extension {
     parseMarkdown(): {};
     commands({ type }: {
         type: any;
-    }): () => any;
+    }): () => (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
 }
 //# sourceMappingURL=Mark.d.ts.map

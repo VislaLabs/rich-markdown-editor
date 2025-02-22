@@ -1,3 +1,5 @@
+import { Plugin } from "prosemirror-state";
+import { InputRule } from "prosemirror-inputrules";
 import Mark from "./Mark";
 export default class Link extends Mark {
     get name(): string;
@@ -18,18 +20,18 @@ export default class Link extends Mark {
     };
     inputRules({ type }: {
         type: any;
-    }): any[];
+    }): InputRule<any>[];
     commands({ type }: {
         type: any;
     }): ({ href }?: {
         href: string;
-    }) => any;
+    }) => (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
     keys({ type }: {
         type: any;
     }): {
-        "Mod-k": (state: any, dispatch: any) => any;
+        "Mod-k": (state: any, dispatch: any) => boolean;
     };
-    get plugins(): any[];
+    get plugins(): Plugin<any, any>[];
     get toMarkdown(): {
         open(_state: any, mark: any, parent: any, index: any): "[" | "<";
         close(state: any, mark: any, parent: any, index: any): string;

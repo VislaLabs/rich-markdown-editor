@@ -32,11 +32,11 @@ export default class Notice extends Node {
     };
     commands({ type }: {
         type: any;
-    }): (attrs: any) => (state: any, dispatch: any) => any;
+    }): (attrs: any) => (state: any, dispatch: any) => boolean;
     handleStyleChange: (event: any) => void;
     inputRules({ type }: {
         type: any;
-    }): any[];
+    }): import("prosemirror-inputrules").InputRule<any>[];
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {
         block: string;

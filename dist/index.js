@@ -47,6 +47,7 @@ const ExtensionManager_1 = __importDefault(require("./lib/ExtensionManager"));
 const ComponentView_1 = __importDefault(require("./lib/ComponentView"));
 const headingToSlug_1 = __importDefault(require("./lib/headingToSlug"));
 const editor_1 = require("./styles/editor");
+const ReactNode_1 = __importDefault(require("./nodes/ReactNode"));
 const Doc_1 = __importDefault(require("./nodes/Doc"));
 const Text_1 = __importDefault(require("./nodes/Text"));
 const Blockquote_1 = __importDefault(require("./nodes/Blockquote"));
@@ -87,6 +88,8 @@ const Placeholder_2 = __importDefault(require("./plugins/Placeholder"));
 const SmartText_1 = __importDefault(require("./plugins/SmartText"));
 const TrailingNode_1 = __importDefault(require("./plugins/TrailingNode"));
 const PasteHandler_1 = __importDefault(require("./plugins/PasteHandler"));
+const ReactElement_1 = __importDefault(require("./nodes/ReactElement"));
+const ElementView_1 = __importDefault(require("./lib/ElementView"));
 var server_1 = require("./server");
 Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return server_1.schema; } });
 Object.defineProperty(exports, "parser", { enumerable: true, get: function () { return server_1.parser; } });
@@ -108,6 +111,7 @@ class RichMarkdownEditor extends React.PureComponent {
             emojiMenuOpen: false,
         };
         this.unmounted = false;
+        this.nodeViewsMap = new Set();
         this.calculateDir = () => {
             if (!this.element)
                 return;
@@ -280,9 +284,10 @@ class RichMarkdownEditor extends React.PureComponent {
         this.unmounted = false;
     }
     componentWillUnmount() {
+        var _a;
         this.unmounted = true;
         const newState = this.createState("");
-        this.view.updateState(newState);
+        (_a = this.view) === null || _a === void 0 ? void 0 : _a.updateState(newState);
     }
     init() {
         this.extensions = this.createExtensions();
@@ -420,20 +425,38 @@ class RichMarkdownEditor extends React.PureComponent {
     }
     createNodeViews() {
         return this.extensions.extensions
-            .filter((extension) => extension.component)
+            .filter((extension) => extension instanceof ReactElement_1.default || extension instanceof ReactNode_1.default)
             .reduce((nodeViews, extension) => {
             const nodeView = (node, view, getPos, decorations) => {
-                return new ComponentView_1.default(extension.component, {
+                const options = {
                     editor: this,
                     extension,
                     node,
                     view,
                     getPos,
                     decorations,
-                });
+                };
+                if (extension instanceof ReactNode_1.default) {
+                    return new ComponentView_1.default(extension.component, options);
+                }
+                else {
+                    const ev = new ElementView_1.default(extension.element, options);
+                    this.nodeViewsMap.add(ev);
+                    return ev;
+                }
             };
             return Object.assign(Object.assign({}, nodeViews), { [extension.name]: nodeView });
         }, {});
+    }
+    scheduleNodeViewUpdate(ev) {
+        if (!this.nodeViewsMap.has(ev)) {
+            this.nodeViewsMap.add(ev);
+        }
+        this.forceUpdate();
+    }
+    removeNodeView(ev) {
+        this.nodeViewsMap.delete(ev);
+        this.forceUpdate();
     }
     createCommands() {
         return this.extensions.commands({
@@ -534,6 +557,19 @@ class RichMarkdownEditor extends React.PureComponent {
             console.warn(`Attempted to scroll to invalid hash: ${hash}`, err);
         }
     }
+    get menuOpen() {
+        return Object.keys(this.state).find(key => key.endsWith("MenuOpen") && this.state[key]);
+    }
+    renderNodeViewPortals() {
+        const portals = [];
+        this.nodeViewsMap.forEach((ev) => {
+            const portal = ev.render();
+            if (portal) {
+                portals.push(portal);
+            }
+        });
+        return portals;
+    }
     render() {
         const { dir, readOnly, readOnlyWriteCheckboxes, style, tooltip, className, onKeyDown, } = this.props;
         const { isRTL } = this.state;
@@ -549,7 +585,13 @@ class RichMarkdownEditor extends React.PureComponent {
                         React.createElement(SelectionToolbar_1.default, { view: this.view, dictionary: dictionary, commands: this.commands, rtl: isRTL, isTemplate: this.props.template === true, onOpen: this.handleOpenSelectionMenu, onClose: this.handleCloseSelectionMenu, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onCreateLink: this.props.onCreateLink, tooltip: tooltip }),
                         React.createElement(LinkToolbar_1.default, { view: this.view, dictionary: dictionary, isActive: this.state.linkMenuOpen, onCreateLink: this.props.onCreateLink, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onShowToast: this.props.onShowToast, onClose: this.handleCloseLinkMenu, tooltip: tooltip }),
                         React.createElement(EmojiMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.emojiMenuOpen, search: this.state.blockMenuSearch, onClose: () => this.setState({ emojiMenuOpen: false }) }),
-                        React.createElement(BlockMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.blockMenuOpen, search: this.state.blockMenuSearch, onClose: this.handleCloseBlockMenu, uploadImage: this.props.uploadImage, onLinkToolbarOpen: this.handleOpenLinkMenu, onImageUploadStart: this.props.onImageUploadStart, onImageUploadStop: this.props.onImageUploadStop, onShowToast: this.props.onShowToast, embeds: this.props.embeds })))))));
+                        React.createElement(BlockMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.blockMenuOpen, search: this.state.blockMenuSearch, onClose: this.handleCloseBlockMenu, uploadImage: this.props.uploadImage, onLinkToolbarOpen: this.handleOpenLinkMenu, onImageUploadStart: this.props.onImageUploadStart, onImageUploadStop: this.props.onImageUploadStop, onShowToast: this.props.onShowToast, embeds: this.props.embeds }),
+                        this.element &&
+                            this.props.menus.map((Menu, index) => {
+                                const menuName = Menu.name.charAt(0).toLowerCase() + Menu.name.slice(1);
+                                return (React.createElement(Menu, { key: index, view: this.view, rtl: isRTL, isActive: this.state[menuName + "Open"], commands: this.commands, search: this.state[menuName + "Search"], onClose: () => this.setState({ [menuName + "Open"]: false }), onClearSearch: () => this.setState({ [menuName + "Search"]: "" }) }));
+                            }))),
+                    this.renderNodeViewPortals()))));
     }
 }
 RichMarkdownEditor.defaultProps = {
@@ -565,6 +607,7 @@ RichMarkdownEditor.defaultProps = {
     },
     embeds: [],
     extensions: [],
+    menus: [],
     tooltip: Tooltip_1.default,
 };
 exports.default = RichMarkdownEditor;

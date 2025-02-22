@@ -1,3 +1,4 @@
+import { Plugin } from "prosemirror-state";
 import Mark from "./Mark";
 export default class Placeholder extends Mark {
     get name(): string;
@@ -19,6 +20,6 @@ export default class Placeholder extends Mark {
     parseMarkdown(): {
         mark: string;
     };
-    get plugins(): any[];
+    get plugins(): Plugin<any, any>[];
 }
 //# sourceMappingURL=Placeholder.d.ts.map

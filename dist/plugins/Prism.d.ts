@@ -1,3 +1,4 @@
+import { Plugin } from "prosemirror-state";
 export declare const LANGUAGES: {
     none: string;
     bash: string;
@@ -22,5 +23,5 @@ export declare const LANGUAGES: {
 };
 export default function Prism({ name }: {
     name: any;
-}): any;
+}): Plugin<any, any>;
 //# sourceMappingURL=Prism.d.ts.map
