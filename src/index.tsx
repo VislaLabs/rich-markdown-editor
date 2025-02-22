@@ -140,7 +140,7 @@ export type Props = {
   uploadImage?: (file: File) => Promise<string>;
   onBlur?: () => void;
   onFocus?: () => void;
-  onSave?: ({ done: boolean }) => void;
+  onSave?: ({ done }: { done: boolean }) => void;
   onCancel?: () => void;
   onChange?: (value: () => string) => void;
   onImageUploadStart?: () => void;
@@ -331,7 +331,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   componentWillUnmount() {
     this.unmounted = true;
     const newState = this.createState("");
-    this.view.updateState(newState);
+    this.view?.updateState(newState);
   }
 
   init() {
