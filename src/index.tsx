@@ -834,7 +834,19 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     const dictionary = this.dictionary(this.props.dictionary);
 
     if (this.unmounted) {
-      return <div ref={(ref) => (this.element = ref)} />;
+      return (
+        <Flex
+          onKeyDown={onKeyDown}
+          style={style}
+          className={className}
+          align="flex-start"
+          justify="center"
+          dir={dir}
+          column
+        >
+          <div ref={ref => (this.element = ref)} />
+        </Flex>
+      );
     }
 
     return (
