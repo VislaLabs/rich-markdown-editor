@@ -576,7 +576,8 @@ class RichMarkdownEditor extends React.PureComponent {
         const { isRTL } = this.state;
         const dictionary = this.dictionary(this.props.dictionary);
         if (this.unmounted) {
-            return React.createElement("div", { ref: (ref) => (this.element = ref) });
+            return (React.createElement(Flex_1.default, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
+                React.createElement("div", { ref: ref => (this.element = ref) })));
         }
         return (React.createElement(Flex_1.default, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
             React.createElement(styled_components_1.ThemeProvider, { theme: this.theme() },
