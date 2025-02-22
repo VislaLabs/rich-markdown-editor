@@ -77,6 +77,8 @@ import SmartText from "./plugins/SmartText";
 import TrailingNode from "./plugins/TrailingNode";
 import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
+import ReactElement from "./nodes/ReactElement";
+import ElementView from "./lib/ElementView";
 
 export { schema, parser, serializer, renderToHtml } from "./server";
 
@@ -217,6 +219,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   commands: Record<string, any>;
   rulePlugins: PluginSimple[];
   unmounted = false;
+  nodeViewsMap = new Set<ElementView>();
 
   constructor(props) {
     super(props);
@@ -467,17 +470,27 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   createNodeViews() {
     return this.extensions.extensions
-      .filter((extension: ReactNode) => extension.component)
-      .reduce((nodeViews, extension: ReactNode) => {
+      .filter(
+        (extension: Extension) =>
+          extension instanceof ReactElement || extension instanceof ReactNode
+      )
+      .reduce((nodeViews, extension: ReactElement | ReactNode) => {
         const nodeView = (node, view, getPos, decorations) => {
-          return new ComponentView(extension.component, {
+          const options = {
             editor: this,
             extension,
             node,
             view,
             getPos,
             decorations,
-          });
+          };
+          if (extension instanceof ReactNode) {
+            return new ComponentView(extension.component, options);
+          } else {
+            const ev = new ElementView(extension.element, options);
+            this.nodeViewsMap.add(ev);
+            return ev;
+          }
         };
 
         return {
@@ -485,6 +498,22 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           [extension.name]: nodeView,
         };
       }, {});
+  }
+
+  // Called by ComponentView to trigger a re-render
+  scheduleNodeViewUpdate(ev: ElementView) {
+    // Ensure we still have this node view in our set
+    if (!this.nodeViewsMap.has(ev)) {
+      this.nodeViewsMap.add(ev);
+    }
+    // Rerun our React render
+    this.forceUpdate();
+  }
+
+  // Called by ComponentView when destroyed
+  removeNodeView(ev: ElementView) {
+    this.nodeViewsMap.delete(ev);
+    this.forceUpdate();
   }
 
   createCommands() {
@@ -757,6 +786,18 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
   );
 
+  renderNodeViewPortals() {
+    // For each active nodeView, create a portal into its `.dom`
+    const portals: React.ReactPortal[] = [];
+    this.nodeViewsMap.forEach((ev) => {
+      const portal = ev.render();
+      if (portal) {
+        portals.push(portal);
+      }
+    });
+    return portals;
+  }
+
   render() {
     const {
       dir,
@@ -845,6 +886,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
                 />
               </React.Fragment>
             )}
+            {this.renderNodeViewPortals()}
           </React.Fragment>
         </ThemeProvider>
       </Flex>
