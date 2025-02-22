@@ -84,6 +84,8 @@ export { schema, parser, serializer, renderToHtml } from "./server";
 
 export { default as Extension } from "./lib/Extension";
 
+export { ReactElement };
+
 export const theme = lightTheme;
 
 export type Props = {
