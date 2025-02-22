@@ -22,7 +22,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.theme = exports.Extension = exports.renderToHtml = exports.serializer = exports.parser = exports.schema = void 0;
+exports.theme = exports.ReactElement = exports.Extension = exports.renderToHtml = exports.serializer = exports.parser = exports.schema = void 0;
 const React = __importStar(require("react"));
 const memoize_1 = __importDefault(require("lodash/memoize"));
 const prosemirror_state_1 = require("prosemirror-state");
@@ -89,6 +89,7 @@ const SmartText_1 = __importDefault(require("./plugins/SmartText"));
 const TrailingNode_1 = __importDefault(require("./plugins/TrailingNode"));
 const PasteHandler_1 = __importDefault(require("./plugins/PasteHandler"));
 const ReactElement_1 = __importDefault(require("./nodes/ReactElement"));
+exports.ReactElement = ReactElement_1.default;
 const ElementView_1 = __importDefault(require("./lib/ElementView"));
 var server_1 = require("./server");
 Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return server_1.schema; } });

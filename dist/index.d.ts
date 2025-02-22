@@ -12,9 +12,11 @@ import Extension from "./lib/Extension";
 import ExtensionManager from "./lib/ExtensionManager";
 import ComponentView from "./lib/ComponentView";
 import { PluginSimple } from "markdown-it";
+import ReactElement from "./nodes/ReactElement";
 import ElementView from "./lib/ElementView";
 export { schema, parser, serializer, renderToHtml } from "./server";
 export { default as Extension } from "./lib/Extension";
+export { ReactElement };
 export declare const theme: {
     background: string;
     text: string;
