@@ -92,6 +92,7 @@ export type Props = {
   defaultValue: string;
   placeholder: string;
   extensions?: Extension[];
+  menus: React.FC<MenuProps>[];
   disableExtensions?: (
     | "strong"
     | "code_inline"
@@ -167,6 +168,17 @@ type State = {
   emojiMenuOpen: boolean;
 };
 
+export type MenuProps = {
+  rtl: boolean;
+  isActive: boolean;
+  commands: Record<string, any>;
+  view: EditorView;
+  search: string;
+  onClose: () => void;
+  onClearSearch: () => void;
+  filterable?: boolean;
+};
+
 type Step = {
   slice?: Slice;
 };
@@ -187,6 +199,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     },
     embeds: [],
     extensions: [],
+    menus: [],
     tooltip: Tooltip,
   };
 
@@ -203,6 +216,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   isBlurred: boolean;
   extensions: ExtensionManager;
   element?: HTMLElement | null;
+  menus: React.FC<MenuProps>[];
   view: EditorView;
   schema: Schema;
   serializer: MarkdownSerializer;
@@ -780,6 +794,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     return this.props.theme || (this.props.dark ? darkTheme : lightTheme);
   };
 
+  get menuOpen() {
+    return Object.keys(this.state).find(
+      key => key.endsWith("MenuOpen") && this.state[key]
+    );
+  }
+
   dictionary = memoize(
     (providedDictionary?: Partial<typeof baseDictionary>) => {
       return { ...baseDictionary, ...providedDictionary };
@@ -884,6 +904,27 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
                   onShowToast={this.props.onShowToast}
                   embeds={this.props.embeds}
                 />
+                {this.element &&
+                  this.props.menus.map((Menu, index) => {
+                    const menuName =
+                      Menu.name.charAt(0).toLowerCase() + Menu.name.slice(1);
+                    return (
+                      <Menu
+                        key={index}
+                        view={this.view}
+                        rtl={isRTL}
+                        isActive={this.state[menuName + "Open"]}
+                        commands={this.commands}
+                        search={this.state[menuName + "Search"]}
+                        onClose={() =>
+                          this.setState({ [menuName + "Open"]: false } as any)
+                        }
+                        onClearSearch={() =>
+                          this.setState({ [menuName + "Search"]: "" } as any)
+                        }
+                      />
+                    );
+                  })}
               </React.Fragment>
             )}
             {this.renderNodeViewPortals()}
