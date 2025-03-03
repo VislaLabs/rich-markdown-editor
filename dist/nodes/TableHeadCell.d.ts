@@ -1,4 +1,3 @@
-import { Plugin } from "prosemirror-state";
 import Node from "./Node";
 export default class TableHeadCell extends Node {
     get name(): string;
@@ -33,6 +32,6 @@ export default class TableHeadCell extends Node {
             alignment: any;
         };
     };
-    get plugins(): Plugin<any, any>[];
+    get plugins(): any[];
 }
 //# sourceMappingURL=TableHeadCell.d.ts.map

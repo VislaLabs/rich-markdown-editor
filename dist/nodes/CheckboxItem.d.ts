@@ -29,11 +29,11 @@ export default class CheckboxItem extends Node {
     keys({ type }: {
         type: any;
     }): {
-        Enter: (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
-        Tab: (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
-        "Shift-Tab": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
-        "Mod-]": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
-        "Mod-[": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
+        Enter: any;
+        Tab: any;
+        "Shift-Tab": any;
+        "Mod-]": any;
+        "Mod-[": any;
     };
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {

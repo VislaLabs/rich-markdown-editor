@@ -10,11 +10,11 @@ export default class Strikethrough extends Mark {
     keys({ type }: {
         type: any;
     }): {
-        "Mod-d": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
+        "Mod-d": any;
     };
     inputRules({ type }: {
         type: any;
-    }): import("prosemirror-inputrules").InputRule<any>[];
+    }): any[];
     get toMarkdown(): {
         open: string;
         close: string;

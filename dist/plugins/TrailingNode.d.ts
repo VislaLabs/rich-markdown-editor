@@ -1,4 +1,3 @@
-import { Plugin } from "prosemirror-state";
 import Extension from "../lib/Extension";
 export default class TrailingNode extends Extension {
     get name(): string;
@@ -6,6 +5,6 @@ export default class TrailingNode extends Extension {
         node: string;
         notAfter: string[];
     };
-    get plugins(): Plugin<any, any>[];
+    get plugins(): any[];
 }
 //# sourceMappingURL=TrailingNode.d.ts.map

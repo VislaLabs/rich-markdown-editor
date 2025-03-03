@@ -1,4 +1,4 @@
 import { NodeType } from "prosemirror-model";
-import { EditorState, Transaction } from "prosemirror-state";
-export default function toggleList(listType: NodeType, itemType: NodeType): (state: EditorState, dispatch: (tr: Transaction) => void) => boolean;
+import { Transaction } from "prosemirror-state";
+export default function toggleList(listType: NodeType, itemType: NodeType): (state: any, dispatch: (tr: any) => void) => any;
 //# sourceMappingURL=toggleList.d.ts.map

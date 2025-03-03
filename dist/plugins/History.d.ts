@@ -1,14 +1,12 @@
-import { undoInputRule } from "prosemirror-inputrules";
-import { undo, redo } from "prosemirror-history";
 import Extension from "../lib/Extension";
 export default class History extends Extension {
     get name(): string;
     keys(): {
-        "Mod-z": typeof undo;
-        "Mod-y": typeof redo;
-        "Shift-Mod-z": typeof redo;
-        Backspace: typeof undoInputRule;
+        "Mod-z": any;
+        "Mod-y": any;
+        "Shift-Mod-z": any;
+        Backspace: any;
     };
-    get plugins(): import("prosemirror-state").Plugin<any, any>[];
+    get plugins(): any[];
 }
 //# sourceMappingURL=History.d.ts.map

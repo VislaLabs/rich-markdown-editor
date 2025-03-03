@@ -13,13 +13,13 @@ export default class Code extends Mark {
     };
     inputRules({ type }: {
         type: any;
-    }): import("prosemirror-inputrules").InputRule<any>[];
+    }): any[];
     keys({ type }: {
         type: any;
     }): {
-        "Mod`": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
-        ArrowLeft: (state: import("prosemirror-state").EditorState<any>, dispatch: (tr: import("prosemirror-state").Transaction<any>) => void) => boolean;
-        ArrowRight: (state: import("prosemirror-state").EditorState<any>, dispatch: (tr: import("prosemirror-state").Transaction<any>) => void) => boolean;
+        "Mod`": any;
+        ArrowLeft: (state: any, dispatch: (tr: any) => void) => boolean;
+        ArrowRight: (state: any, dispatch: (tr: any) => void) => boolean;
     };
     get toMarkdown(): {
         open(_state: any, _mark: any, parent: any, index: any): string;

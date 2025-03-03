@@ -15,12 +15,12 @@ export default class Italic extends Mark {
     };
     inputRules({ type }: {
         type: any;
-    }): import("prosemirror-inputrules").InputRule<any>[];
+    }): any[];
     keys({ type }: {
         type: any;
     }): {
-        "Mod-i": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
-        "Mod-I": (state: import("prosemirror-state").EditorState<any>, dispatch?: ((tr: import("prosemirror-state").Transaction<any>) => void) | undefined) => boolean;
+        "Mod-i": any;
+        "Mod-I": any;
     };
     get toMarkdown(): {
         open: string;

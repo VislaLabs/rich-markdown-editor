@@ -12,15 +12,15 @@ export default class Blockquote extends Node {
     };
     inputRules({ type }: {
         type: any;
-    }): import("prosemirror-inputrules").InputRule<any>[];
+    }): any[];
     commands({ type }: {
         type: any;
-    }): () => (state: any, dispatch: any) => boolean;
+    }): () => (state: any, dispatch: any) => any;
     keys({ type }: {
         type: any;
     }): {
-        "Ctrl->": (state: any, dispatch: any) => boolean;
-        "Mod-]": (state: any, dispatch: any) => boolean;
+        "Ctrl->": (state: any, dispatch: any) => any;
+        "Mod-]": (state: any, dispatch: any) => any;
         "Shift-Enter": (state: any, dispatch: any) => boolean;
     };
     toMarkdown(state: any, node: any): void;

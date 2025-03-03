@@ -32,7 +32,7 @@ const getDataTransferFiles_1 = __importDefault(require("../lib/getDataTransferFi
 const uploadPlaceholder_1 = __importDefault(require("../lib/uploadPlaceholder"));
 const insertFiles_1 = __importDefault(require("../commands/insertFiles"));
 const Node_1 = __importDefault(require("./Node"));
-const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
+const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)/;
 const uploadPlugin = options => new prosemirror_state_1.Plugin({
     props: {
         handleDOMEvents: {
@@ -79,7 +79,7 @@ const uploadPlugin = options => new prosemirror_state_1.Plugin({
         },
     },
 });
-const IMAGE_CLASSES = ["right-50", "left-50"];
+const IMAGE_CLASSES = ['right-50', 'left-50'];
 const getLayoutAndTitle = tokenTitle => {
     if (!tokenTitle)
         return {};
@@ -98,9 +98,9 @@ const downloadImageNode = async (node) => {
     const image = await fetch(node.attrs.src);
     const imageBlob = await image.blob();
     const imageURL = URL.createObjectURL(imageBlob);
-    const extension = imageBlob.type.split("/")[1];
-    const potentialName = node.attrs.alt || "image";
-    const link = document.createElement("a");
+    const extension = imageBlob.type.split('/')[1];
+    const potentialName = node.attrs.alt || 'image';
+    const link = document.createElement('a');
     link.href = imageURL;
     link.download = `${potentialName}.${extension}`;
     document.body.appendChild(link);
@@ -111,7 +111,7 @@ class Image extends Node_1.default {
     constructor() {
         super(...arguments);
         this.handleKeyDown = ({ node, getPos }) => event => {
-            if (event.key === "Enter") {
+            if (event.key === 'Enter') {
                 event.preventDefault();
                 const { view } = this.editor;
                 const $pos = view.state.doc.resolve(getPos() + node.nodeSize);
@@ -119,7 +119,7 @@ class Image extends Node_1.default {
                 view.focus();
                 return;
             }
-            if (event.key === "Backspace" && event.target.innerText === "") {
+            if (event.key === 'Backspace' && event.target.innerText === '') {
                 const { view } = this.editor;
                 const $pos = view.state.doc.resolve(getPos());
                 const tr = view.state.tr.setSelection(new prosemirror_state_1.NodeSelection($pos));
@@ -159,9 +159,9 @@ class Image extends Node_1.default {
         this.component = props => {
             const { theme, isSelected } = props;
             const { alt, src, title, layoutClass } = props.node.attrs;
-            const className = layoutClass ? `image image-${layoutClass}` : "image";
+            const className = layoutClass ? `image image-${layoutClass}` : 'image';
             return (React.createElement("div", { contentEditable: false, className: className },
-                React.createElement(ImageWrapper, { className: isSelected ? "ProseMirror-selectednode" : "", onClick: this.handleSelect(props) },
+                React.createElement(ImageWrapper, { className: isSelected ? 'ProseMirror-selectednode' : '', onClick: this.handleSelect(props) },
                     React.createElement(Button, null,
                         React.createElement(outline_icons_1.DownloadIcon, { color: "currentColor", onClick: this.handleDownload(props) })),
                     React.createElement(react_medium_image_zoom_1.default, { image: {
@@ -177,7 +177,7 @@ class Image extends Node_1.default {
         };
     }
     get name() {
-        return "image";
+        return 'image';
     }
     get schema() {
         return {
@@ -194,36 +194,36 @@ class Image extends Node_1.default {
                     default: null,
                 },
             },
-            content: "text*",
-            marks: "",
-            group: "inline",
+            content: 'text*',
+            marks: '',
+            group: 'inline',
             selectable: true,
             draggable: true,
             parseDOM: [
                 {
-                    tag: "div[class~=image]",
+                    tag: 'div[class~=image]',
                     getAttrs: (dom) => {
-                        const img = dom.getElementsByTagName("img")[0];
+                        const img = dom.getElementsByTagName('img')[0];
                         const className = dom.className;
                         const layoutClassMatched = className && className.match(/image-(.*)$/);
                         const layoutClass = layoutClassMatched
                             ? layoutClassMatched[1]
                             : null;
                         return {
-                            src: img === null || img === void 0 ? void 0 : img.getAttribute("src"),
-                            alt: img === null || img === void 0 ? void 0 : img.getAttribute("alt"),
-                            title: img === null || img === void 0 ? void 0 : img.getAttribute("title"),
+                            src: img === null || img === void 0 ? void 0 : img.getAttribute('src'),
+                            alt: img === null || img === void 0 ? void 0 : img.getAttribute('alt'),
+                            title: img === null || img === void 0 ? void 0 : img.getAttribute('title'),
                             layoutClass: layoutClass,
                         };
                     },
                 },
                 {
-                    tag: "img",
+                    tag: 'img',
                     getAttrs: (dom) => {
                         return {
-                            src: dom.getAttribute("src"),
-                            alt: dom.getAttribute("alt"),
-                            title: dom.getAttribute("title"),
+                            src: dom.getAttribute('src'),
+                            alt: dom.getAttribute('alt'),
+                            title: dom.getAttribute('title'),
                         };
                     },
                 },
@@ -231,22 +231,22 @@ class Image extends Node_1.default {
             toDOM: node => {
                 const className = node.attrs.layoutClass
                     ? `image image-${node.attrs.layoutClass}`
-                    : "image";
+                    : 'image';
                 return [
-                    "div",
+                    'div',
                     {
                         class: className,
                     },
-                    ["img", Object.assign(Object.assign({}, node.attrs), { contentEditable: false })],
-                    ["p", { class: "caption" }, 0],
+                    ['img', Object.assign(Object.assign({}, node.attrs), { contentEditable: false })],
+                    ['p', { class: 'caption' }, 0],
                 ];
             },
         };
     }
     toMarkdown(state, node) {
-        let markdown = " ![" +
-            state.esc((node.attrs.alt || "").replace("\n", "") || "") +
-            "](" +
+        let markdown = ' ![' +
+            state.esc((node.attrs.alt || '').replace('\n', '') || '') +
+            '](' +
             state.esc(node.attrs.src);
         if (node.attrs.layoutClass) {
             markdown += ' "' + state.esc(node.attrs.layoutClass) + '"';
@@ -254,14 +254,14 @@ class Image extends Node_1.default {
         else if (node.attrs.title) {
             markdown += ' "' + state.esc(node.attrs.title) + '"';
         }
-        markdown += ")";
+        markdown += ')';
         state.write(markdown);
     }
     parseMarkdown() {
         return {
-            node: "image",
+            node: 'image',
             getAttrs: token => {
-                return Object.assign({ src: token.attrGet("src"), alt: (token.children[0] && token.children[0].content) || null }, getLayoutAndTitle(token.attrGet("title")));
+                return Object.assign({ src: token.attrGet('src'), alt: (token.children[0] && token.children[0].content) || null }, getLayoutAndTitle(token.attrGet('title')));
             },
         };
     }
@@ -269,7 +269,7 @@ class Image extends Node_1.default {
         return {
             downloadImage: () => async (state) => {
                 const { node } = state.selection;
-                if (node.type.name !== "image") {
+                if (node.type.name !== 'image') {
                     return false;
                 }
                 downloadImageNode(node);
@@ -280,13 +280,13 @@ class Image extends Node_1.default {
                 return true;
             },
             alignRight: () => (state, dispatch) => {
-                const attrs = Object.assign(Object.assign({}, state.selection.node.attrs), { title: null, layoutClass: "right-50" });
+                const attrs = Object.assign(Object.assign({}, state.selection.node.attrs), { title: null, layoutClass: 'right-50' });
                 const { selection } = state;
                 dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
                 return true;
             },
             alignLeft: () => (state, dispatch) => {
-                const attrs = Object.assign(Object.assign({}, state.selection.node.attrs), { title: null, layoutClass: "left-50" });
+                const attrs = Object.assign(Object.assign({}, state.selection.node.attrs), { title: null, layoutClass: 'left-50' });
                 const { selection } = state;
                 dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
                 return true;
@@ -295,11 +295,11 @@ class Image extends Node_1.default {
                 const { view } = this.editor;
                 const { uploadImage, onImageUploadStart, onImageUploadStop, onShowToast, } = this.editor.props;
                 if (!uploadImage) {
-                    throw new Error("uploadImage prop is required to replace images");
+                    throw new Error('uploadImage prop is required to replace images');
                 }
-                const inputElement = document.createElement("input");
-                inputElement.type = "file";
-                inputElement.accept = "image/*";
+                const inputElement = document.createElement('input');
+                inputElement.type = 'file';
+                inputElement.accept = 'image/*';
                 inputElement.onchange = (event) => {
                     const files = getDataTransferFiles_1.default(event);
                     insertFiles_1.default(view, event, state.selection.from, files, {

@@ -1,4 +1,3 @@
-import { Plugin } from "prosemirror-state";
 import Extension from "../lib/Extension";
 export default class Placeholder extends Extension {
     get name(): string;
@@ -6,6 +5,6 @@ export default class Placeholder extends Extension {
         emptyNodeClass: string;
         placeholder: string;
     };
-    get plugins(): Plugin<any, any>[];
+    get plugins(): any[];
 }
 //# sourceMappingURL=Placeholder.d.ts.map

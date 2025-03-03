@@ -1,5 +1,3 @@
-import { Transaction, EditorState, Plugin } from "prosemirror-state";
-import { DecorationSet } from "prosemirror-view";
 import Node from "./Node";
 export default class ListItem extends Node {
     get name(): string;
@@ -12,15 +10,15 @@ export default class ListItem extends Node {
         }[];
         toDOM: () => (string | number)[];
     };
-    get plugins(): Plugin<DecorationSet<any>, any>[];
+    get plugins(): any[];
     keys({ type }: {
         type: any;
     }): {
-        Enter: (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
-        Tab: (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
-        "Shift-Tab": (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
-        "Mod-]": (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
-        "Mod-[": (state: EditorState<any>, dispatch?: ((tr: Transaction<any>) => void) | undefined) => boolean;
+        Enter: any;
+        Tab: any;
+        "Shift-Tab": any;
+        "Mod-]": any;
+        "Mod-[": any;
         "Shift-Enter": (state: any, dispatch: any) => boolean;
         "Alt-ArrowUp": (state: any, dispatch: any) => boolean;
         "Alt-ArrowDown": (state: any, dispatch: any) => boolean;

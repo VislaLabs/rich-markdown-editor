@@ -22,16 +22,16 @@ export default class OrderedList extends Node {
     commands({ type, schema }: {
         type: any;
         schema: any;
-    }): () => (state: import("prosemirror-state").EditorState<any>, dispatch: (tr: import("prosemirror-state").Transaction<any>) => void) => boolean;
+    }): () => (state: any, dispatch: (tr: any) => void) => any;
     keys({ type, schema }: {
         type: any;
         schema: any;
     }): {
-        "Shift-Ctrl-9": (state: import("prosemirror-state").EditorState<any>, dispatch: (tr: import("prosemirror-state").Transaction<any>) => void) => boolean;
+        "Shift-Ctrl-9": (state: any, dispatch: (tr: any) => void) => any;
     };
     inputRules({ type }: {
         type: any;
-    }): import("prosemirror-inputrules").InputRule<any>[];
+    }): any[];
     toMarkdown(state: any, node: any): void;
     parseMarkdown(): {
         block: string;
