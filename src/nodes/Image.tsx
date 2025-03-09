@@ -37,7 +37,7 @@ const uploadPlugin = options =>
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
             .map(dt => dt.getAsFile())
-            .filter(file => file);
+            .filter(file => file && /image/i.test(file.type));
 
           if (files.length === 0) return false;
 
