@@ -1,27 +1,6 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const uploadPlaceholder_1 = __importStar(require("../lib/uploadPlaceholder"));
-const types_1 = require("../types");
-const prosemirror_state_1 = require("prosemirror-state");
+import uploadPlaceholderPlugin, { findPlaceholder, } from "../lib/uploadPlaceholder";
+import { ToastType } from "../types";
+import { NodeSelection } from "prosemirror-state";
 let uploadId = 0;
 const insertFiles = function (view, event, pos, files, options) {
     const images = files.filter(file => /image/i.test(file.type));
@@ -40,7 +19,7 @@ const insertFiles = function (view, event, pos, files, options) {
     for (const file of images) {
         const id = `upload-${uploadId++}`;
         const { tr } = view.state;
-        tr.setMeta(uploadPlaceholder_1.default, {
+        tr.setMeta(uploadPlaceholderPlugin, {
             add: {
                 id,
                 file,
@@ -53,16 +32,16 @@ const insertFiles = function (view, event, pos, files, options) {
             .then(src => {
             const newImg = new Image();
             newImg.onload = () => {
-                const result = uploadPlaceholder_1.findPlaceholder(view.state, id);
+                const result = findPlaceholder(view.state, id);
                 if (result === null) {
                     return;
                 }
                 const [from, to] = result;
                 view.dispatch(view.state.tr
                     .replaceWith(from, to || from, schema.nodes.image.create({ src }))
-                    .setMeta(uploadPlaceholder_1.default, { remove: { id } }));
+                    .setMeta(uploadPlaceholderPlugin, { remove: { id } }));
                 if (view.state.selection.from === from) {
-                    view.dispatch(view.state.tr.setSelection(new prosemirror_state_1.NodeSelection(view.state.doc.resolve(from))));
+                    view.dispatch(view.state.tr.setSelection(new NodeSelection(view.state.doc.resolve(from))));
                 }
             };
             newImg.onerror = error => {
@@ -72,12 +51,12 @@ const insertFiles = function (view, event, pos, files, options) {
         })
             .catch(error => {
             console.error(error);
-            const transaction = view.state.tr.setMeta(uploadPlaceholder_1.default, {
+            const transaction = view.state.tr.setMeta(uploadPlaceholderPlugin, {
                 remove: { id },
             });
             view.dispatch(transaction);
             if (onShowToast) {
-                onShowToast(dictionary.imageUploadError, types_1.ToastType.Error);
+                onShowToast(dictionary.imageUploadError, ToastType.Error);
             }
         })
             .finally(() => {
@@ -88,5 +67,5 @@ const insertFiles = function (view, event, pos, files, options) {
         });
     }
 };
-exports.default = insertFiles;
+export default insertFiles;
 //# sourceMappingURL=insertFiles.js.map

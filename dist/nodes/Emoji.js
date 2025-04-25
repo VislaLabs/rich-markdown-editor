@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const name_to_emoji_json_1 = __importDefault(require("gemoji/name-to-emoji.json"));
-const Node_1 = __importDefault(require("./Node"));
-const emoji_1 = __importDefault(require("../rules/emoji"));
-class Emoji extends Node_1.default {
+import { InputRule } from "prosemirror-inputrules";
+import nameToEmoji from "gemoji/name-to-emoji.json";
+import Node from "./Node";
+import emojiRule from "../rules/emoji";
+export default class Emoji extends Node {
     get name() {
         return "emoji";
     }
@@ -36,8 +31,8 @@ class Emoji extends Node_1.default {
                 },
             ],
             toDOM: node => {
-                if (name_to_emoji_json_1.default[node.attrs["data-name"]]) {
-                    const text = document.createTextNode(name_to_emoji_json_1.default[node.attrs["data-name"]]);
+                if (nameToEmoji[node.attrs["data-name"]]) {
+                    const text = document.createTextNode(nameToEmoji[node.attrs["data-name"]]);
                     return [
                         "span",
                         {
@@ -53,7 +48,7 @@ class Emoji extends Node_1.default {
         };
     }
     get rulePlugins() {
-        return [emoji_1.default];
+        return [emojiRule];
     }
     commands({ type }) {
         return attrs => (state, dispatch) => {
@@ -69,7 +64,7 @@ class Emoji extends Node_1.default {
     }
     inputRules({ type }) {
         return [
-            new prosemirror_inputrules_1.InputRule(/^\:([a-zA-Z0-9_+-]+)\:$/, (state, match, start, end) => {
+            new InputRule(/^\:([a-zA-Z0-9_+-]+)\:$/, (state, match, start, end) => {
                 const [okay, markup] = match;
                 const { tr } = state;
                 if (okay) {
@@ -97,5 +92,4 @@ class Emoji extends Node_1.default {
         };
     }
 }
-exports.default = Emoji;
 //# sourceMappingURL=Emoji.js.map

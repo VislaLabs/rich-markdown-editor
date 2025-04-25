@@ -1,15 +1,10 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const Node_1 = __importDefault(require("./Node"));
-const prosemirror_view_1 = require("prosemirror-view");
-const prosemirror_tables_1 = require("prosemirror-tables");
-const prosemirror_utils_1 = require("prosemirror-utils");
-const prosemirror_state_1 = require("prosemirror-state");
-const tables_1 = __importDefault(require("../rules/tables"));
-class Table extends Node_1.default {
+import Node from "./Node";
+import { Decoration, DecorationSet } from "prosemirror-view";
+import { addColumnAfter, addColumnBefore, deleteColumn, deleteRow, deleteTable, fixTables, goToNextCell, isInTable, setCellAttr, tableEditing, toggleHeaderCell, toggleHeaderColumn, toggleHeaderRow, } from "prosemirror-tables";
+import { addRowAt, createTable, getCellsInColumn, moveRow, } from "prosemirror-utils";
+import { Plugin, TextSelection } from "prosemirror-state";
+import tablesRule from "../rules/tables";
+export default class Table extends Node {
     get name() {
         return "table";
     }
@@ -34,20 +29,20 @@ class Table extends Node_1.default {
         };
     }
     get rulePlugins() {
-        return [tables_1.default];
+        return [tablesRule];
     }
     commands({ schema }) {
         return {
             createTable: ({ rowsCount, colsCount }) => (state, dispatch) => {
                 const offset = state.tr.selection.anchor + 1;
-                const nodes = prosemirror_utils_1.createTable(schema, rowsCount, colsCount);
+                const nodes = createTable(schema, rowsCount, colsCount);
                 const tr = state.tr.replaceSelectionWith(nodes).scrollIntoView();
                 const resolvedPos = tr.doc.resolve(offset);
-                tr.setSelection(prosemirror_state_1.TextSelection.near(resolvedPos));
+                tr.setSelection(TextSelection.near(resolvedPos));
                 dispatch(tr);
             },
             setColumnAttr: ({ index, alignment }) => (state, dispatch) => {
-                const cells = prosemirror_utils_1.getCellsInColumn(index)(state.selection) || [];
+                const cells = getCellsInColumn(index)(state.selection) || [];
                 let transaction = state.tr;
                 cells.forEach(({ pos }) => {
                     transaction = transaction.setNodeMarkup(pos, null, {
@@ -56,36 +51,36 @@ class Table extends Node_1.default {
                 });
                 dispatch(transaction);
             },
-            addColumnBefore: () => prosemirror_tables_1.addColumnBefore,
-            addColumnAfter: () => prosemirror_tables_1.addColumnAfter,
-            deleteColumn: () => prosemirror_tables_1.deleteColumn,
+            addColumnBefore: () => addColumnBefore,
+            addColumnAfter: () => addColumnAfter,
+            deleteColumn: () => deleteColumn,
             addRowAfter: ({ index }) => (state, dispatch) => {
                 if (index === 0) {
-                    const tr = prosemirror_utils_1.addRowAt(index + 2, true)(state.tr);
-                    dispatch(prosemirror_utils_1.moveRow(index + 2, index + 1)(tr));
+                    const tr = addRowAt(index + 2, true)(state.tr);
+                    dispatch(moveRow(index + 2, index + 1)(tr));
                 }
                 else {
-                    dispatch(prosemirror_utils_1.addRowAt(index + 1, true)(state.tr));
+                    dispatch(addRowAt(index + 1, true)(state.tr));
                 }
             },
-            deleteRow: () => prosemirror_tables_1.deleteRow,
-            deleteTable: () => prosemirror_tables_1.deleteTable,
-            toggleHeaderColumn: () => prosemirror_tables_1.toggleHeaderColumn,
-            toggleHeaderRow: () => prosemirror_tables_1.toggleHeaderRow,
-            toggleHeaderCell: () => prosemirror_tables_1.toggleHeaderCell,
-            setCellAttr: () => prosemirror_tables_1.setCellAttr,
-            fixTables: () => prosemirror_tables_1.fixTables,
+            deleteRow: () => deleteRow,
+            deleteTable: () => deleteTable,
+            toggleHeaderColumn: () => toggleHeaderColumn,
+            toggleHeaderRow: () => toggleHeaderRow,
+            toggleHeaderCell: () => toggleHeaderCell,
+            setCellAttr: () => setCellAttr,
+            fixTables: () => fixTables,
         };
     }
     keys() {
         return {
-            Tab: prosemirror_tables_1.goToNextCell(1),
-            "Shift-Tab": prosemirror_tables_1.goToNextCell(-1),
+            Tab: goToNextCell(1),
+            "Shift-Tab": goToNextCell(-1),
             Enter: (state, dispatch) => {
-                if (!prosemirror_tables_1.isInTable(state))
+                if (!isInTable(state))
                     return false;
-                const cells = prosemirror_utils_1.getCellsInColumn(0)(state.selection) || [];
-                dispatch(prosemirror_utils_1.addRowAt(cells.length, true)(state.tr));
+                const cells = getCellsInColumn(0)(state.selection) || [];
+                dispatch(addRowAt(cells.length, true)(state.tr));
                 return true;
             },
         };
@@ -99,8 +94,8 @@ class Table extends Node_1.default {
     }
     get plugins() {
         return [
-            prosemirror_tables_1.tableEditing(),
-            new prosemirror_state_1.Plugin({
+            tableEditing(),
+            new Plugin({
                 props: {
                     decorations: state => {
                         const { doc } = state;
@@ -116,7 +111,7 @@ class Table extends Node_1.default {
                             const element = table.parentElement;
                             const shadowRight = !!(element && element.scrollWidth > element.clientWidth);
                             if (shadowRight) {
-                                decorations.push(prosemirror_view_1.Decoration.widget(pos + 1, () => {
+                                decorations.push(Decoration.widget(pos + 1, () => {
                                     const shadow = document.createElement("div");
                                     shadow.className = "scrollable-shadow right";
                                     return shadow;
@@ -124,12 +119,11 @@ class Table extends Node_1.default {
                             }
                             index++;
                         });
-                        return prosemirror_view_1.DecorationSet.create(doc, decorations);
+                        return DecorationSet.create(doc, decorations);
                     },
                 },
             }),
         ];
     }
 }
-exports.default = Table;
 //# sourceMappingURL=Table.js.map

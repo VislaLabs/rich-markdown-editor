@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function isUrl(text) {
+export default function isUrl(text) {
     if (text.match(/\n/)) {
         return false;
     }
@@ -12,5 +10,4 @@ function isUrl(text) {
         return false;
     }
 }
-exports.default = isUrl;
 //# sourceMappingURL=isUrl.js.map

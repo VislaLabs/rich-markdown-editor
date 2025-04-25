@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_keymap_1 = require("prosemirror-keymap");
-const prosemirror_markdown_1 = require("prosemirror-markdown");
-const serializer_1 = require("./markdown/serializer");
-const rules_1 = __importDefault(require("./markdown/rules"));
-class ExtensionManager {
+import { keymap } from "prosemirror-keymap";
+import { MarkdownParser } from "prosemirror-markdown";
+import { MarkdownSerializer } from "./markdown/serializer";
+import makeRules from "./markdown/rules";
+export default class ExtensionManager {
     constructor(extensions = [], editor) {
         if (editor) {
             extensions.forEach(extension => {
@@ -19,16 +14,25 @@ class ExtensionManager {
     get nodes() {
         return this.extensions
             .filter(extension => extension.type === "node")
-            .reduce((nodes, node) => (Object.assign(Object.assign({}, nodes), { [node.name]: node.schema })), {});
+            .reduce((nodes, node) => ({
+            ...nodes,
+            [node.name]: node.schema,
+        }), {});
     }
     serializer() {
         const nodes = this.extensions
             .filter(extension => extension.type === "node")
-            .reduce((nodes, extension) => (Object.assign(Object.assign({}, nodes), { [extension.name]: extension.toMarkdown })), {});
+            .reduce((nodes, extension) => ({
+            ...nodes,
+            [extension.name]: extension.toMarkdown,
+        }), {});
         const marks = this.extensions
             .filter(extension => extension.type === "mark")
-            .reduce((marks, extension) => (Object.assign(Object.assign({}, marks), { [extension.name]: extension.toMarkdown })), {});
-        return new serializer_1.MarkdownSerializer(nodes, marks);
+            .reduce((marks, extension) => ({
+            ...marks,
+            [extension.name]: extension.toMarkdown,
+        }), {});
+        return new MarkdownSerializer(nodes, marks);
     }
     parser({ schema, rules, plugins, }) {
         const tokens = this.extensions
@@ -37,14 +41,20 @@ class ExtensionManager {
             const md = extension.parseMarkdown();
             if (!md)
                 return nodes;
-            return Object.assign(Object.assign({}, nodes), { [extension.markdownToken || extension.name]: md });
+            return {
+                ...nodes,
+                [extension.markdownToken || extension.name]: md,
+            };
         }, {});
-        return new prosemirror_markdown_1.MarkdownParser(schema, rules_1.default({ rules, plugins }), tokens);
+        return new MarkdownParser(schema, makeRules({ rules, plugins }), tokens);
     }
     get marks() {
         return this.extensions
             .filter(extension => extension.type === "mark")
-            .reduce((marks, { name, schema }) => (Object.assign(Object.assign({}, marks), { [name]: schema })), {});
+            .reduce((marks, { name, schema }) => ({
+            ...marks,
+            [name]: schema,
+        }), {});
     }
     get plugins() {
         return this.extensions
@@ -74,7 +84,7 @@ class ExtensionManager {
         return [
             ...extensionKeymaps,
             ...nodeMarkKeymaps,
-        ].map((keys) => prosemirror_keymap_1.keymap(keys));
+        ].map((keys) => keymap(keys));
     }
     inputRules({ schema }) {
         const extensionInputRules = this.extensions
@@ -96,11 +106,14 @@ class ExtensionManager {
             .reduce((allCommands, extension) => {
             const { name, type } = extension;
             const commands = {};
-            const value = extension.commands(Object.assign({ schema }, (["node", "mark"].includes(type)
-                ? {
-                    type: schema[`${type}s`][name],
-                }
-                : {})));
+            const value = extension.commands({
+                schema,
+                ...(["node", "mark"].includes(type)
+                    ? {
+                        type: schema[`${type}s`][name],
+                    }
+                    : {}),
+            });
             const apply = (callback, attrs) => {
                 if (!view.editable) {
                     return false;
@@ -124,9 +137,11 @@ class ExtensionManager {
             else {
                 handle(name, value);
             }
-            return Object.assign(Object.assign({}, allCommands), commands);
+            return {
+                ...allCommands,
+                ...commands,
+            };
         }, {});
     }
 }
-exports.default = ExtensionManager;
 //# sourceMappingURL=ExtensionManager.js.map

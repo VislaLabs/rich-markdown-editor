@@ -1,32 +1,8 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(require("react"));
-const Node_1 = __importDefault(require("./Node"));
-const embeds_1 = __importDefault(require("../rules/embeds"));
+import * as React from "react";
+import Node from "./Node";
+import embedsRule from "../rules/embeds";
 const cache = {};
-class Embed extends Node_1.default {
+export default class Embed extends Node {
     get name() {
         return "embed";
     }
@@ -66,7 +42,7 @@ class Embed extends Node_1.default {
         };
     }
     get rulePlugins() {
-        return [embeds_1.default(this.options.embeds)];
+        return [embedsRule(this.options.embeds)];
     }
     component({ isEditable, isSelected, theme, node }) {
         const { embeds } = this.editor.props;
@@ -86,7 +62,7 @@ class Embed extends Node_1.default {
         if (!Component) {
             return null;
         }
-        return (React.createElement(Component, { attrs: Object.assign(Object.assign({}, node.attrs), { matches }), isEditable: isEditable, isSelected: isSelected, theme: theme }));
+        return (React.createElement(Component, { attrs: { ...node.attrs, matches }, isEditable: isEditable, isSelected: isSelected, theme: theme }));
     }
     commands({ type }) {
         return attrs => (state, dispatch) => {
@@ -108,5 +84,4 @@ class Embed extends Node_1.default {
         };
     }
 }
-exports.default = Embed;
 //# sourceMappingURL=Embed.js.map

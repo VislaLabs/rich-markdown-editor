@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_view_1 = require("prosemirror-view");
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_utils_1 = require("prosemirror-utils");
-const Node_1 = __importDefault(require("./Node"));
-class TableCell extends Node_1.default {
+import { DecorationSet, Decoration } from "prosemirror-view";
+import { Plugin } from "prosemirror-state";
+import { isTableSelected, isRowSelected, getCellsInColumn, } from "prosemirror-utils";
+import Node from "./Node";
+export default class TableCell extends Node {
     get name() {
         return "td";
     }
@@ -43,18 +38,18 @@ class TableCell extends Node_1.default {
     }
     get plugins() {
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 props: {
                     decorations: state => {
                         const { doc, selection } = state;
                         const decorations = [];
-                        const cells = prosemirror_utils_1.getCellsInColumn(0)(selection);
+                        const cells = getCellsInColumn(0)(selection);
                         if (cells) {
                             cells.forEach(({ pos }, index) => {
                                 if (index === 0) {
-                                    decorations.push(prosemirror_view_1.Decoration.widget(pos + 1, () => {
+                                    decorations.push(Decoration.widget(pos + 1, () => {
                                         let className = "grip-table";
-                                        const selected = prosemirror_utils_1.isTableSelected(selection);
+                                        const selected = isTableSelected(selection);
                                         if (selected) {
                                             className += " selected";
                                         }
@@ -68,8 +63,8 @@ class TableCell extends Node_1.default {
                                         return grip;
                                     }));
                                 }
-                                decorations.push(prosemirror_view_1.Decoration.widget(pos + 1, () => {
-                                    const rowSelected = prosemirror_utils_1.isRowSelected(index)(selection);
+                                decorations.push(Decoration.widget(pos + 1, () => {
+                                    const rowSelected = isRowSelected(index)(selection);
                                     let className = "grip-row";
                                     if (rowSelected) {
                                         className += " selected";
@@ -91,12 +86,11 @@ class TableCell extends Node_1.default {
                                 }));
                             });
                         }
-                        return prosemirror_view_1.DecorationSet.create(doc, decorations);
+                        return DecorationSet.create(doc, decorations);
                     },
                 },
             }),
         ];
     }
 }
-exports.default = TableCell;
 //# sourceMappingURL=TableCell.js.map

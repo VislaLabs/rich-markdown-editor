@@ -1,79 +1,55 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const core_1 = __importDefault(require("refractor/core"));
-const bash_1 = __importDefault(require("refractor/lang/bash"));
-const css_1 = __importDefault(require("refractor/lang/css"));
-const clike_1 = __importDefault(require("refractor/lang/clike"));
-const csharp_1 = __importDefault(require("refractor/lang/csharp"));
-const go_1 = __importDefault(require("refractor/lang/go"));
-const java_1 = __importDefault(require("refractor/lang/java"));
-const javascript_1 = __importDefault(require("refractor/lang/javascript"));
-const json_1 = __importDefault(require("refractor/lang/json"));
-const markup_1 = __importDefault(require("refractor/lang/markup"));
-const objectivec_1 = __importDefault(require("refractor/lang/objectivec"));
-const perl_1 = __importDefault(require("refractor/lang/perl"));
-const php_1 = __importDefault(require("refractor/lang/php"));
-const python_1 = __importDefault(require("refractor/lang/python"));
-const powershell_1 = __importDefault(require("refractor/lang/powershell"));
-const ruby_1 = __importDefault(require("refractor/lang/ruby"));
-const rust_1 = __importDefault(require("refractor/lang/rust"));
-const sql_1 = __importDefault(require("refractor/lang/sql"));
-const typescript_1 = __importDefault(require("refractor/lang/typescript"));
-const yaml_1 = __importDefault(require("refractor/lang/yaml"));
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const copy_to_clipboard_1 = __importDefault(require("copy-to-clipboard"));
-const Prism_1 = __importStar(require("../plugins/Prism"));
-const toggleBlockType_1 = __importDefault(require("../commands/toggleBlockType"));
-const isInCode_1 = __importDefault(require("../queries/isInCode"));
-const Node_1 = __importDefault(require("./Node"));
-const types_1 = require("../types");
+import refractor from "refractor/core";
+import bash from "refractor/lang/bash";
+import css from "refractor/lang/css";
+import clike from "refractor/lang/clike";
+import csharp from "refractor/lang/csharp";
+import go from "refractor/lang/go";
+import java from "refractor/lang/java";
+import javascript from "refractor/lang/javascript";
+import json from "refractor/lang/json";
+import markup from "refractor/lang/markup";
+import objectivec from "refractor/lang/objectivec";
+import perl from "refractor/lang/perl";
+import php from "refractor/lang/php";
+import python from "refractor/lang/python";
+import powershell from "refractor/lang/powershell";
+import ruby from "refractor/lang/ruby";
+import rust from "refractor/lang/rust";
+import sql from "refractor/lang/sql";
+import typescript from "refractor/lang/typescript";
+import yaml from "refractor/lang/yaml";
+import { Selection } from "prosemirror-state";
+import { textblockTypeInputRule } from "prosemirror-inputrules";
+import copy from "copy-to-clipboard";
+import Prism, { LANGUAGES } from "../plugins/Prism";
+import toggleBlockType from "../commands/toggleBlockType";
+import isInCode from "../queries/isInCode";
+import Node from "./Node";
+import { ToastType } from "../types";
 const PERSISTENCE_KEY = "rme-code-language";
 const DEFAULT_LANGUAGE = "javascript";
 [
-    bash_1.default,
-    css_1.default,
-    clike_1.default,
-    csharp_1.default,
-    go_1.default,
-    java_1.default,
-    javascript_1.default,
-    json_1.default,
-    markup_1.default,
-    objectivec_1.default,
-    perl_1.default,
-    php_1.default,
-    python_1.default,
-    powershell_1.default,
-    ruby_1.default,
-    rust_1.default,
-    sql_1.default,
-    typescript_1.default,
-    yaml_1.default,
-].forEach(core_1.default.register);
-class CodeFence extends Node_1.default {
+    bash,
+    css,
+    clike,
+    csharp,
+    go,
+    java,
+    javascript,
+    json,
+    markup,
+    objectivec,
+    perl,
+    php,
+    python,
+    powershell,
+    ruby,
+    rust,
+    sql,
+    typescript,
+    yaml,
+].forEach(refractor.register);
+export default class CodeFence extends Node {
     constructor() {
         super(...arguments);
         this.handleCopyToClipboard = event => {
@@ -84,9 +60,9 @@ class CodeFence extends Node_1.default {
             if (result) {
                 const node = view.state.doc.nodeAt(result.pos);
                 if (node) {
-                    copy_to_clipboard_1.default(node.textContent);
+                    copy(node.textContent);
                     if (this.options.onShowToast) {
-                        this.options.onShowToast(this.options.dictionary.codeCopied, types_1.ToastType.Info);
+                        this.options.onShowToast(this.options.dictionary.codeCopied, ToastType.Info);
                     }
                 }
             }
@@ -100,7 +76,7 @@ class CodeFence extends Node_1.default {
             if (result) {
                 const language = element.value;
                 const transaction = tr
-                    .setSelection(prosemirror_state_1.Selection.near(view.state.doc.resolve(result.inside)))
+                    .setSelection(Selection.near(view.state.doc.resolve(result.inside)))
                     .setNodeMarkup(result.inside, undefined, {
                     language,
                 });
@@ -110,7 +86,7 @@ class CodeFence extends Node_1.default {
         };
     }
     get languageOptions() {
-        return Object.entries(Prism_1.LANGUAGES);
+        return Object.entries(LANGUAGES);
     }
     get name() {
         return "code_fence";
@@ -166,14 +142,17 @@ class CodeFence extends Node_1.default {
         };
     }
     commands({ type, schema }) {
-        return attrs => toggleBlockType_1.default(type, schema.nodes.paragraph, Object.assign({ language: (localStorage === null || localStorage === void 0 ? void 0 : localStorage.getItem(PERSISTENCE_KEY)) || DEFAULT_LANGUAGE }, attrs));
+        return attrs => toggleBlockType(type, schema.nodes.paragraph, {
+            language: (localStorage === null || localStorage === void 0 ? void 0 : localStorage.getItem(PERSISTENCE_KEY)) || DEFAULT_LANGUAGE,
+            ...attrs,
+        });
     }
     keys({ type, schema }) {
         return {
-            "Shift-Ctrl-\\": toggleBlockType_1.default(type, schema.nodes.paragraph),
+            "Shift-Ctrl-\\": toggleBlockType(type, schema.nodes.paragraph),
             "Shift-Enter": (state, dispatch) => {
                 var _a, _b;
-                if (!isInCode_1.default(state))
+                if (!isInCode(state))
                     return false;
                 const { tr, selection, } = state;
                 const text = (_b = (_a = selection === null || selection === void 0 ? void 0 : selection.$anchor) === null || _a === void 0 ? void 0 : _a.nodeBefore) === null || _b === void 0 ? void 0 : _b.text;
@@ -187,7 +166,7 @@ class CodeFence extends Node_1.default {
                 return true;
             },
             Tab: (state, dispatch) => {
-                if (!isInCode_1.default(state))
+                if (!isInCode(state))
                     return false;
                 const { tr, selection } = state;
                 dispatch(tr.insertText("  ", selection.from, selection.to));
@@ -196,10 +175,10 @@ class CodeFence extends Node_1.default {
         };
     }
     get plugins() {
-        return [Prism_1.default({ name: this.name })];
+        return [Prism({ name: this.name })];
     }
     inputRules({ type }) {
-        return [prosemirror_inputrules_1.textblockTypeInputRule(/^```$/, type)];
+        return [textblockTypeInputRule(/^```$/, type)];
     }
     toMarkdown(state, node) {
         state.write("```" + (node.attrs.language || "") + "\n");
@@ -218,5 +197,4 @@ class CodeFence extends Node_1.default {
         };
     }
 }
-exports.default = CodeFence;
 //# sourceMappingURL=CodeFence.js.map

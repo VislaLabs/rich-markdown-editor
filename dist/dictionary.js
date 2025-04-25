@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.base = void 0;
-exports.base = {
+export const base = {
     addColumnAfter: "Insert column after",
     addColumnBefore: "Insert column before",
     addRowAfter: "Insert row after",
@@ -63,5 +60,5 @@ exports.base = {
     warning: "Warning",
     warningNotice: "Warning notice",
 };
-exports.default = exports.base;
+export default base;
 //# sourceMappingURL=dictionary.js.map

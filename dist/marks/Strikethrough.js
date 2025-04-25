@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const markInputRule_1 = __importDefault(require("../lib/markInputRule"));
-const Mark_1 = __importDefault(require("./Mark"));
-class Strikethrough extends Mark_1.default {
+import { toggleMark } from "prosemirror-commands";
+import markInputRule from "../lib/markInputRule";
+import Mark from "./Mark";
+export default class Strikethrough extends Mark {
     get name() {
         return "strikethrough";
     }
@@ -28,11 +23,11 @@ class Strikethrough extends Mark_1.default {
     }
     keys({ type }) {
         return {
-            "Mod-d": prosemirror_commands_1.toggleMark(type),
+            "Mod-d": toggleMark(type),
         };
     }
     inputRules({ type }) {
-        return [markInputRule_1.default(/~([^~]+)~$/, type)];
+        return [markInputRule(/~([^~]+)~$/, type)];
     }
     get toMarkdown() {
         return {
@@ -49,5 +44,4 @@ class Strikethrough extends Mark_1.default {
         return { mark: "strikethrough" };
     }
 }
-exports.default = Strikethrough;
 //# sourceMappingURL=Strikethrough.js.map

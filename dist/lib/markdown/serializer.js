@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MarkdownSerializerState = exports.MarkdownSerializer = void 0;
-class MarkdownSerializer {
+export class MarkdownSerializer {
     constructor(nodes, marks) {
         this.nodes = nodes;
         this.marks = marks;
@@ -12,8 +9,7 @@ class MarkdownSerializer {
         return state.out;
     }
 }
-exports.MarkdownSerializer = MarkdownSerializer;
-class MarkdownSerializerState {
+export class MarkdownSerializerState {
     constructor(nodes, marks, options) {
         this.nodes = nodes;
         this.marks = marks;
@@ -258,5 +254,4 @@ class MarkdownSerializerState {
         };
     }
 }
-exports.MarkdownSerializerState = MarkdownSerializerState;
 //# sourceMappingURL=serializer.js.map

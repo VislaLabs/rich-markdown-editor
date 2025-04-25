@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const toggleList_1 = __importDefault(require("../commands/toggleList"));
-const Node_1 = __importDefault(require("./Node"));
-class BulletList extends Node_1.default {
+import { wrappingInputRule } from "prosemirror-inputrules";
+import toggleList from "../commands/toggleList";
+import Node from "./Node";
+export default class BulletList extends Node {
     get name() {
         return "bullet_list";
     }
@@ -19,15 +14,15 @@ class BulletList extends Node_1.default {
         };
     }
     commands({ type, schema }) {
-        return () => toggleList_1.default(type, schema.nodes.list_item);
+        return () => toggleList(type, schema.nodes.list_item);
     }
     keys({ type, schema }) {
         return {
-            "Shift-Ctrl-8": toggleList_1.default(type, schema.nodes.list_item),
+            "Shift-Ctrl-8": toggleList(type, schema.nodes.list_item),
         };
     }
     inputRules({ type }) {
-        return [prosemirror_inputrules_1.wrappingInputRule(/^\s*([-+*])\s$/, type)];
+        return [wrappingInputRule(/^\s*([-+*])\s$/, type)];
     }
     toMarkdown(state, node) {
         state.renderList(node, "  ", () => (node.attrs.bullet || "*") + " ");
@@ -36,5 +31,4 @@ class BulletList extends Node_1.default {
         return { block: "bullet_list" };
     }
 }
-exports.default = BulletList;
 //# sourceMappingURL=BulletList.js.map

@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const Mark_1 = __importDefault(require("./Mark"));
+import { toggleMark } from "prosemirror-commands";
+import { Plugin } from "prosemirror-state";
+import { InputRule } from "prosemirror-inputrules";
+import Mark from "./Mark";
 const LINK_INPUT_REGEX = /\[([^[]+)]\((\S+)\)$/;
 function isPlainURL(link, parent, index, side) {
     if (link.attrs.title || !/^\w+:/.test(link.attrs.href)) {
@@ -24,7 +19,7 @@ function isPlainURL(link, parent, index, side) {
     const next = parent.child(index + (side < 0 ? -2 : 1));
     return !link.isInSet(next.marks);
 }
-class Link extends Mark_1.default {
+export default class Link extends Mark {
     get name() {
         return "link";
     }
@@ -46,14 +41,17 @@ class Link extends Mark_1.default {
             ],
             toDOM: node => [
                 "a",
-                Object.assign(Object.assign({}, node.attrs), { rel: "noopener noreferrer nofollow" }),
+                {
+                    ...node.attrs,
+                    rel: "noopener noreferrer nofollow",
+                },
                 0,
             ],
         };
     }
     inputRules({ type }) {
         return [
-            new prosemirror_inputrules_1.InputRule(LINK_INPUT_REGEX, (state, match, start, end) => {
+            new InputRule(LINK_INPUT_REGEX, (state, match, start, end) => {
                 const [okay, alt, href] = match;
                 const { tr } = state;
                 if (okay) {
@@ -64,7 +62,7 @@ class Link extends Mark_1.default {
         ];
     }
     commands({ type }) {
-        return ({ href } = { href: "" }) => prosemirror_commands_1.toggleMark(type, { href });
+        return ({ href } = { href: "" }) => toggleMark(type, { href });
     }
     keys({ type }) {
         return {
@@ -73,13 +71,13 @@ class Link extends Mark_1.default {
                     this.options.onKeyboardShortcut();
                     return true;
                 }
-                return prosemirror_commands_1.toggleMark(type, { href: "" })(state, dispatch);
+                return toggleMark(type, { href: "" })(state, dispatch);
             },
         };
     }
     get plugins() {
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 props: {
                     handleDOMEvents: {
                         mouseover: (_view, event) => {
@@ -143,5 +141,4 @@ class Link extends Mark_1.default {
         };
     }
 }
-exports.default = Link;
 //# sourceMappingURL=Link.js.map

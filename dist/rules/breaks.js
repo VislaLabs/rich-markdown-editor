@@ -1,10 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 function isHardbreak(token) {
     return (token.type === "hardbreak" ||
         (token.type === "text" && token.content === "\\"));
 }
-function markdownBreakToParagraphs(md) {
+export default function markdownBreakToParagraphs(md) {
     md.core.ruler.after("inline", "breaks", state => {
         const { Token } = state;
         const tokens = state.tokens;
@@ -38,5 +36,4 @@ function markdownBreakToParagraphs(md) {
         return false;
     });
 }
-exports.default = markdownBreakToParagraphs;
 //# sourceMappingURL=breaks.js.map

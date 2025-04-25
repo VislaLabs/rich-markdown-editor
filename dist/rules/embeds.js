@@ -1,9 +1,4 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const token_1 = __importDefault(require("markdown-it/lib/token"));
+import Token from "markdown-it/lib/token";
 function isParagraph(token) {
     return token.type === "paragraph_open";
 }
@@ -16,7 +11,7 @@ function isLinkOpen(token) {
 function isLinkClose(token) {
     return token.type === "link_close";
 }
-function default_1(embeds) {
+export default function (embeds) {
     function isEmbed(token, link) {
         const href = link.attrs ? link.attrs[0][1] : "";
         const simpleLink = href === token.content;
@@ -27,7 +22,10 @@ function default_1(embeds) {
         for (const embed of embeds) {
             const matches = embed.matcher(href);
             if (matches) {
-                return Object.assign(Object.assign({}, embed), { matches });
+                return {
+                    ...embed,
+                    matches,
+                };
             }
         }
     }
@@ -54,7 +52,7 @@ function default_1(embeds) {
                             const result = isEmbed(current, insideLink);
                             if (result) {
                                 const { content } = current;
-                                const token = new token_1.default("embed", "iframe", 0);
+                                const token = new Token("embed", "iframe", 0);
                                 token.attrSet("href", content);
                                 tokens.splice(i - 1, 3, token);
                                 break;
@@ -67,5 +65,4 @@ function default_1(embeds) {
         });
     };
 }
-exports.default = default_1;
 //# sourceMappingURL=embeds.js.map

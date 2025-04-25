@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_view_1 = require("prosemirror-view");
-const Extension_1 = __importDefault(require("../lib/Extension"));
-class Placeholder extends Extension_1.default {
+import { Plugin } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
+import Extension from "../lib/Extension";
+export default class Placeholder extends Extension {
     get name() {
         return "empty-placeholder";
     }
@@ -18,7 +13,7 @@ class Placeholder extends Extension_1.default {
     }
     get plugins() {
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 props: {
                     decorations: state => {
                         const { doc } = state;
@@ -33,18 +28,17 @@ class Placeholder extends Extension_1.default {
                             if (pos !== 0 || node.type.name !== "paragraph") {
                                 return;
                             }
-                            const decoration = prosemirror_view_1.Decoration.node(pos, pos + node.nodeSize, {
+                            const decoration = Decoration.node(pos, pos + node.nodeSize, {
                                 class: this.options.emptyNodeClass,
                                 "data-empty-text": this.options.placeholder,
                             });
                             decorations.push(decoration);
                         });
-                        return prosemirror_view_1.DecorationSet.create(doc, decorations);
+                        return DecorationSet.create(doc, decorations);
                     },
                 },
             }),
         ];
     }
 }
-exports.default = Placeholder;
 //# sourceMappingURL=Placeholder.js.map

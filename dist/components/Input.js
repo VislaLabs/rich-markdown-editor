@@ -1,10 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const styled_components_1 = __importDefault(require("styled-components"));
-const Input = styled_components_1.default.input `
+import styled from "styled-components";
+const Input = styled.input `
   font-size: 15px;
   background: ${props => props.theme.toolbarInput};
   color: ${props => props.theme.toolbarItem};
@@ -19,5 +14,5 @@ const Input = styled_components_1.default.input `
     font-size: 16px;
   }
 `;
-exports.default = Input;
+export default Input;
 //# sourceMappingURL=Input.js.map

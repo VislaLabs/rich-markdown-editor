@@ -1,11 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const Extension_1 = __importDefault(require("../lib/Extension"));
-class Mark extends Extension_1.default {
+import { toggleMark } from "prosemirror-commands";
+import Extension from "../lib/Extension";
+export default class Mark extends Extension {
     get type() {
         return "mark";
     }
@@ -19,8 +14,7 @@ class Mark extends Extension_1.default {
         return {};
     }
     commands({ type }) {
-        return () => prosemirror_commands_1.toggleMark(type);
+        return () => toggleMark(type);
     }
 }
-exports.default = Mark;
 //# sourceMappingURL=Mark.js.map

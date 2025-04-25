@@ -1,39 +1,34 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const outline_icons_1 = require("outline-icons");
-const isNodeActive_1 = __importDefault(require("../queries/isNodeActive"));
-function imageMenuItems(state, dictionary) {
+import { TrashIcon, DownloadIcon, ReplaceIcon, AlignImageLeftIcon, AlignImageRightIcon, AlignImageCenterIcon, } from "outline-icons";
+import isNodeActive from "../queries/isNodeActive";
+export default function imageMenuItems(state, dictionary) {
     const { schema } = state;
-    const isLeftAligned = isNodeActive_1.default(schema.nodes.image, {
+    const isLeftAligned = isNodeActive(schema.nodes.image, {
         layoutClass: "left-50",
     });
-    const isRightAligned = isNodeActive_1.default(schema.nodes.image, {
+    const isRightAligned = isNodeActive(schema.nodes.image, {
         layoutClass: "right-50",
     });
     return [
         {
             name: "alignLeft",
             tooltip: dictionary.alignLeft,
-            icon: outline_icons_1.AlignImageLeftIcon,
+            icon: AlignImageLeftIcon,
             visible: true,
             active: isLeftAligned,
         },
         {
             name: "alignCenter",
             tooltip: dictionary.alignCenter,
-            icon: outline_icons_1.AlignImageCenterIcon,
+            icon: AlignImageCenterIcon,
             visible: true,
-            active: state => isNodeActive_1.default(schema.nodes.image)(state) &&
+            active: state => isNodeActive(schema.nodes.image)(state) &&
                 !isLeftAligned(state) &&
                 !isRightAligned(state),
         },
         {
             name: "alignRight",
             tooltip: dictionary.alignRight,
-            icon: outline_icons_1.AlignImageRightIcon,
+            icon: AlignImageRightIcon,
             visible: true,
             active: isRightAligned,
         },
@@ -44,25 +39,24 @@ function imageMenuItems(state, dictionary) {
         {
             name: "downloadImage",
             tooltip: dictionary.downloadImage,
-            icon: outline_icons_1.DownloadIcon,
+            icon: DownloadIcon,
             visible: !!fetch,
             active: () => false,
         },
         {
             name: "replaceImage",
             tooltip: dictionary.replaceImage,
-            icon: outline_icons_1.ReplaceIcon,
+            icon: ReplaceIcon,
             visible: true,
             active: () => false,
         },
         {
             name: "deleteImage",
             tooltip: dictionary.deleteImage,
-            icon: outline_icons_1.TrashIcon,
+            icon: TrashIcon,
             visible: true,
             active: () => false,
         },
     ];
 }
-exports.default = imageMenuItems;
 //# sourceMappingURL=image.js.map

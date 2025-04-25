@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const markInputRule_1 = __importDefault(require("../lib/markInputRule"));
-const Mark_1 = __importDefault(require("./Mark"));
-class Italic extends Mark_1.default {
+import { toggleMark } from "prosemirror-commands";
+import markInputRule from "../lib/markInputRule";
+import Mark from "./Mark";
+export default class Italic extends Mark {
     get name() {
         return "em";
     }
@@ -22,14 +17,14 @@ class Italic extends Mark_1.default {
     }
     inputRules({ type }) {
         return [
-            markInputRule_1.default(/(?:^|[\s])(_([^_]+)_)$/, type),
-            markInputRule_1.default(/(?:^|[^*])(\*([^*]+)\*)$/, type),
+            markInputRule(/(?:^|[\s])(_([^_]+)_)$/, type),
+            markInputRule(/(?:^|[^*])(\*([^*]+)\*)$/, type),
         ];
     }
     keys({ type }) {
         return {
-            "Mod-i": prosemirror_commands_1.toggleMark(type),
-            "Mod-I": prosemirror_commands_1.toggleMark(type),
+            "Mod-i": toggleMark(type),
+            "Mod-I": toggleMark(type),
         };
     }
     get toMarkdown() {
@@ -44,5 +39,4 @@ class Italic extends Mark_1.default {
         return { mark: "em" };
     }
 }
-exports.default = Italic;
 //# sourceMappingURL=Italic.js.map

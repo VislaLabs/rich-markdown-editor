@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const toggleList_1 = __importDefault(require("../commands/toggleList"));
-const Node_1 = __importDefault(require("./Node"));
-class CheckboxList extends Node_1.default {
+import { wrappingInputRule } from "prosemirror-inputrules";
+import toggleList from "../commands/toggleList";
+import Node from "./Node";
+export default class CheckboxList extends Node {
     get name() {
         return "checkbox_list";
     }
@@ -24,14 +19,14 @@ class CheckboxList extends Node_1.default {
     }
     keys({ type, schema }) {
         return {
-            "Shift-Ctrl-7": toggleList_1.default(type, schema.nodes.checkbox_item),
+            "Shift-Ctrl-7": toggleList(type, schema.nodes.checkbox_item),
         };
     }
     commands({ type, schema }) {
-        return () => toggleList_1.default(type, schema.nodes.checkbox_item);
+        return () => toggleList(type, schema.nodes.checkbox_item);
     }
     inputRules({ type }) {
-        return [prosemirror_inputrules_1.wrappingInputRule(/^-?\s*(\[ \])\s$/i, type)];
+        return [wrappingInputRule(/^-?\s*(\[ \])\s$/i, type)];
     }
     toMarkdown(state, node) {
         state.renderList(node, "  ", () => "- ");
@@ -40,5 +35,4 @@ class CheckboxList extends Node_1.default {
         return { block: "checkbox_list" };
     }
 }
-exports.default = CheckboxList;
 //# sourceMappingURL=CheckboxList.js.map

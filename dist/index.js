@@ -1,104 +1,74 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.theme = exports.ReactElement = exports.Extension = exports.renderToHtml = exports.serializer = exports.parser = exports.schema = void 0;
-const React = __importStar(require("react"));
-const memoize_1 = __importDefault(require("lodash/memoize"));
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_dropcursor_1 = require("prosemirror-dropcursor");
-const prosemirror_gapcursor_1 = require("prosemirror-gapcursor");
-const prosemirror_view_1 = require("prosemirror-view");
-const prosemirror_model_1 = require("prosemirror-model");
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const prosemirror_keymap_1 = require("prosemirror-keymap");
-const prosemirror_commands_1 = require("prosemirror-commands");
-const prosemirror_utils_1 = require("prosemirror-utils");
-const styled_components_1 = require("styled-components");
-const theme_1 = require("./styles/theme");
-const dictionary_1 = __importDefault(require("./dictionary"));
-const Flex_1 = __importDefault(require("./components/Flex"));
-const SelectionToolbar_1 = __importDefault(require("./components/SelectionToolbar"));
-const BlockMenu_1 = __importDefault(require("./components/BlockMenu"));
-const EmojiMenu_1 = __importDefault(require("./components/EmojiMenu"));
-const LinkToolbar_1 = __importDefault(require("./components/LinkToolbar"));
-const Tooltip_1 = __importDefault(require("./components/Tooltip"));
-const ExtensionManager_1 = __importDefault(require("./lib/ExtensionManager"));
-const ComponentView_1 = __importDefault(require("./lib/ComponentView"));
-const headingToSlug_1 = __importDefault(require("./lib/headingToSlug"));
-const editor_1 = require("./styles/editor");
-const ReactNode_1 = __importDefault(require("./nodes/ReactNode"));
-const Doc_1 = __importDefault(require("./nodes/Doc"));
-const Text_1 = __importDefault(require("./nodes/Text"));
-const Blockquote_1 = __importDefault(require("./nodes/Blockquote"));
-const BulletList_1 = __importDefault(require("./nodes/BulletList"));
-const CodeBlock_1 = __importDefault(require("./nodes/CodeBlock"));
-const CodeFence_1 = __importDefault(require("./nodes/CodeFence"));
-const CheckboxList_1 = __importDefault(require("./nodes/CheckboxList"));
-const Emoji_1 = __importDefault(require("./nodes/Emoji"));
-const CheckboxItem_1 = __importDefault(require("./nodes/CheckboxItem"));
-const Embed_1 = __importDefault(require("./nodes/Embed"));
-const HardBreak_1 = __importDefault(require("./nodes/HardBreak"));
-const Heading_1 = __importDefault(require("./nodes/Heading"));
-const HorizontalRule_1 = __importDefault(require("./nodes/HorizontalRule"));
-const Image_1 = __importDefault(require("./nodes/Image"));
-const ListItem_1 = __importDefault(require("./nodes/ListItem"));
-const Notice_1 = __importDefault(require("./nodes/Notice"));
-const OrderedList_1 = __importDefault(require("./nodes/OrderedList"));
-const Paragraph_1 = __importDefault(require("./nodes/Paragraph"));
-const Table_1 = __importDefault(require("./nodes/Table"));
-const TableCell_1 = __importDefault(require("./nodes/TableCell"));
-const TableHeadCell_1 = __importDefault(require("./nodes/TableHeadCell"));
-const TableRow_1 = __importDefault(require("./nodes/TableRow"));
-const Bold_1 = __importDefault(require("./marks/Bold"));
-const Code_1 = __importDefault(require("./marks/Code"));
-const Highlight_1 = __importDefault(require("./marks/Highlight"));
-const Italic_1 = __importDefault(require("./marks/Italic"));
-const Link_1 = __importDefault(require("./marks/Link"));
-const Strikethrough_1 = __importDefault(require("./marks/Strikethrough"));
-const Placeholder_1 = __importDefault(require("./marks/Placeholder"));
-const Underline_1 = __importDefault(require("./marks/Underline"));
-const BlockMenuTrigger_1 = __importDefault(require("./plugins/BlockMenuTrigger"));
-const EmojiTrigger_1 = __importDefault(require("./plugins/EmojiTrigger"));
-const Folding_1 = __importDefault(require("./plugins/Folding"));
-const History_1 = __importDefault(require("./plugins/History"));
-const Keys_1 = __importDefault(require("./plugins/Keys"));
-const MaxLength_1 = __importDefault(require("./plugins/MaxLength"));
-const Placeholder_2 = __importDefault(require("./plugins/Placeholder"));
-const SmartText_1 = __importDefault(require("./plugins/SmartText"));
-const TrailingNode_1 = __importDefault(require("./plugins/TrailingNode"));
-const PasteHandler_1 = __importDefault(require("./plugins/PasteHandler"));
-const ReactElement_1 = __importDefault(require("./nodes/ReactElement"));
-exports.ReactElement = ReactElement_1.default;
-const ElementView_1 = __importDefault(require("./lib/ElementView"));
-var server_1 = require("./server");
-Object.defineProperty(exports, "schema", { enumerable: true, get: function () { return server_1.schema; } });
-Object.defineProperty(exports, "parser", { enumerable: true, get: function () { return server_1.parser; } });
-Object.defineProperty(exports, "serializer", { enumerable: true, get: function () { return server_1.serializer; } });
-Object.defineProperty(exports, "renderToHtml", { enumerable: true, get: function () { return server_1.renderToHtml; } });
-var Extension_1 = require("./lib/Extension");
-Object.defineProperty(exports, "Extension", { enumerable: true, get: function () { return __importDefault(Extension_1).default; } });
-exports.theme = theme_1.light;
+import * as React from "react";
+import memoize from "lodash/memoize";
+import { EditorState, Selection } from "prosemirror-state";
+import { dropCursor } from "prosemirror-dropcursor";
+import { gapCursor } from "prosemirror-gapcursor";
+import { EditorView } from "prosemirror-view";
+import { Schema } from "prosemirror-model";
+import { inputRules } from "prosemirror-inputrules";
+import { keymap } from "prosemirror-keymap";
+import { baseKeymap } from "prosemirror-commands";
+import { selectColumn, selectRow, selectTable } from "prosemirror-utils";
+import { ThemeProvider } from "styled-components";
+import { light as lightTheme, dark as darkTheme } from "./styles/theme";
+import baseDictionary from "./dictionary";
+import Flex from "./components/Flex";
+import SelectionToolbar from "./components/SelectionToolbar";
+import BlockMenu from "./components/BlockMenu";
+import EmojiMenu from "./components/EmojiMenu";
+import LinkToolbar from "./components/LinkToolbar";
+import Tooltip from "./components/Tooltip";
+import ExtensionManager from "./lib/ExtensionManager";
+import ComponentView from "./lib/ComponentView";
+import headingToSlug from "./lib/headingToSlug";
+import { StyledEditor } from "./styles/editor";
+import ReactNode from "./nodes/ReactNode";
+import Doc from "./nodes/Doc";
+import Text from "./nodes/Text";
+import Blockquote from "./nodes/Blockquote";
+import BulletList from "./nodes/BulletList";
+import CodeBlock from "./nodes/CodeBlock";
+import CodeFence from "./nodes/CodeFence";
+import CheckboxList from "./nodes/CheckboxList";
+import Emoji from "./nodes/Emoji";
+import CheckboxItem from "./nodes/CheckboxItem";
+import Embed from "./nodes/Embed";
+import HardBreak from "./nodes/HardBreak";
+import Heading from "./nodes/Heading";
+import HorizontalRule from "./nodes/HorizontalRule";
+import Image from "./nodes/Image";
+import ListItem from "./nodes/ListItem";
+import Notice from "./nodes/Notice";
+import OrderedList from "./nodes/OrderedList";
+import Paragraph from "./nodes/Paragraph";
+import Table from "./nodes/Table";
+import TableCell from "./nodes/TableCell";
+import TableHeadCell from "./nodes/TableHeadCell";
+import TableRow from "./nodes/TableRow";
+import Bold from "./marks/Bold";
+import Code from "./marks/Code";
+import Highlight from "./marks/Highlight";
+import Italic from "./marks/Italic";
+import Link from "./marks/Link";
+import Strikethrough from "./marks/Strikethrough";
+import TemplatePlaceholder from "./marks/Placeholder";
+import Underline from "./marks/Underline";
+import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
+import EmojiTrigger from "./plugins/EmojiTrigger";
+import Folding from "./plugins/Folding";
+import History from "./plugins/History";
+import Keys from "./plugins/Keys";
+import MaxLength from "./plugins/MaxLength";
+import Placeholder from "./plugins/Placeholder";
+import SmartText from "./plugins/SmartText";
+import TrailingNode from "./plugins/TrailingNode";
+import PasteHandler from "./plugins/PasteHandler";
+import ReactElement from "./nodes/ReactElement";
+import ElementView from "./lib/ElementView";
+export { schema, parser, serializer, renderToHtml } from "./server";
+export { default as Extension } from "./lib/Extension";
+export { ReactElement };
+export const theme = lightTheme;
 class RichMarkdownEditor extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -171,22 +141,22 @@ class RichMarkdownEditor extends React.PureComponent {
             this.setState({ blockMenuOpen: false });
         };
         this.handleSelectRow = (index, state) => {
-            this.view.dispatch(prosemirror_utils_1.selectRow(index)(state.tr));
+            this.view.dispatch(selectRow(index)(state.tr));
         };
         this.handleSelectColumn = (index, state) => {
-            this.view.dispatch(prosemirror_utils_1.selectColumn(index)(state.tr));
+            this.view.dispatch(selectColumn(index)(state.tr));
         };
         this.handleSelectTable = (state) => {
-            this.view.dispatch(prosemirror_utils_1.selectTable(state.tr));
+            this.view.dispatch(selectTable(state.tr));
         };
         this.focusAtStart = () => {
-            const selection = prosemirror_state_1.Selection.atStart(this.view.state.doc);
+            const selection = Selection.atStart(this.view.state.doc);
             const transaction = this.view.state.tr.setSelection(selection);
             this.view.dispatch(transaction);
             this.view.focus();
         };
         this.focusAtEnd = () => {
-            const selection = prosemirror_state_1.Selection.atEnd(this.view.state.doc);
+            const selection = Selection.atEnd(this.view.state.doc);
             const transaction = this.view.state.tr.setSelection(selection);
             this.view.dispatch(transaction);
             this.view.focus();
@@ -196,10 +166,10 @@ class RichMarkdownEditor extends React.PureComponent {
             const previouslySeen = {};
             this.view.state.doc.forEach((node) => {
                 if (node.type.name === "heading") {
-                    const slug = headingToSlug_1.default(node);
+                    const slug = headingToSlug(node);
                     let id = slug;
                     if (previouslySeen[slug] > 0) {
-                        id = headingToSlug_1.default(node, previouslySeen[slug]);
+                        id = headingToSlug(node, previouslySeen[slug]);
                     }
                     previouslySeen[slug] =
                         previouslySeen[slug] !== undefined ? previouslySeen[slug] + 1 : 1;
@@ -213,10 +183,10 @@ class RichMarkdownEditor extends React.PureComponent {
             return headings;
         };
         this.theme = () => {
-            return this.props.theme || (this.props.dark ? theme_1.dark : theme_1.light);
+            return this.props.theme || (this.props.dark ? darkTheme : lightTheme);
         };
-        this.dictionary = memoize_1.default((providedDictionary) => {
-            return Object.assign(Object.assign({}, dictionary_1.default), providedDictionary);
+        this.dictionary = memoize((providedDictionary) => {
+            return { ...baseDictionary, ...providedDictionary };
         });
         this.view = null;
         this.nodeViews = null;
@@ -251,7 +221,10 @@ class RichMarkdownEditor extends React.PureComponent {
             this.view.updateState(newState);
         }
         if (prevProps.readOnly !== nextProps.readOnly) {
-            this.view.update(Object.assign(Object.assign({}, this.view.props), { editable: () => !nextProps.readOnly }));
+            this.view.update({
+                ...this.view.props,
+                editable: () => !nextProps.readOnly,
+            });
         }
         if (nextProps.scrollTo && nextProps.scrollTo !== prevProps.scrollTo) {
             this.scrollToAnchor(nextProps.scrollTo);
@@ -308,84 +281,84 @@ class RichMarkdownEditor extends React.PureComponent {
     }
     createExtensions() {
         const dictionary = this.dictionary(this.props.dictionary);
-        return new ExtensionManager_1.default([
+        return new ExtensionManager([
             ...[
-                new Doc_1.default(),
-                new HardBreak_1.default(),
-                new Paragraph_1.default(),
-                new Blockquote_1.default(),
-                new CodeBlock_1.default({
+                new Doc(),
+                new HardBreak(),
+                new Paragraph(),
+                new Blockquote(),
+                new CodeBlock({
                     dictionary,
                     onShowToast: this.props.onShowToast,
                 }),
-                new CodeFence_1.default({
+                new CodeFence({
                     dictionary,
                     onShowToast: this.props.onShowToast,
                 }),
-                new Emoji_1.default(),
-                new Text_1.default(),
-                new CheckboxList_1.default(),
-                new CheckboxItem_1.default(),
-                new BulletList_1.default(),
-                new Embed_1.default({ embeds: this.props.embeds }),
-                new ListItem_1.default(),
-                new Notice_1.default({
+                new Emoji(),
+                new Text(),
+                new CheckboxList(),
+                new CheckboxItem(),
+                new BulletList(),
+                new Embed({ embeds: this.props.embeds }),
+                new ListItem(),
+                new Notice({
                     dictionary,
                 }),
-                new Heading_1.default({
+                new Heading({
                     dictionary,
                     onShowToast: this.props.onShowToast,
                     offset: this.props.headingsOffset,
                 }),
-                new HorizontalRule_1.default(),
-                new Image_1.default({
+                new HorizontalRule(),
+                new Image({
                     dictionary,
                     uploadImage: this.props.uploadImage,
                     onImageUploadStart: this.props.onImageUploadStart,
                     onImageUploadStop: this.props.onImageUploadStop,
                     onShowToast: this.props.onShowToast,
                 }),
-                new Table_1.default(),
-                new TableCell_1.default({
+                new Table(),
+                new TableCell({
                     onSelectTable: this.handleSelectTable,
                     onSelectRow: this.handleSelectRow,
                 }),
-                new TableHeadCell_1.default({
+                new TableHeadCell({
                     onSelectColumn: this.handleSelectColumn,
                 }),
-                new TableRow_1.default(),
-                new Bold_1.default(),
-                new Code_1.default(),
-                new Highlight_1.default(),
-                new Italic_1.default(),
-                new Placeholder_1.default(),
-                new Underline_1.default(),
-                new Link_1.default({
+                new TableRow(),
+                new Bold(),
+                new Code(),
+                new Highlight(),
+                new Italic(),
+                new TemplatePlaceholder(),
+                new Underline(),
+                new Link({
                     onKeyboardShortcut: this.handleOpenLinkMenu,
                     onClickLink: this.props.onClickLink,
                     onClickHashtag: this.props.onClickHashtag,
                     onHoverLink: this.props.onHoverLink,
                 }),
-                new Strikethrough_1.default(),
-                new OrderedList_1.default(),
-                new History_1.default(),
-                new Folding_1.default(),
-                new SmartText_1.default(),
-                new TrailingNode_1.default(),
-                new PasteHandler_1.default(),
-                new Keys_1.default({
+                new Strikethrough(),
+                new OrderedList(),
+                new History(),
+                new Folding(),
+                new SmartText(),
+                new TrailingNode(),
+                new PasteHandler(),
+                new Keys({
                     onBlur: this.handleEditorBlur,
                     onFocus: this.handleEditorFocus,
                     onSave: this.handleSave,
                     onSaveAndExit: this.handleSaveAndExit,
                     onCancel: this.props.onCancel,
                 }),
-                new BlockMenuTrigger_1.default({
+                new BlockMenuTrigger({
                     dictionary,
                     onOpen: this.handleOpenBlockMenu,
                     onClose: this.handleCloseBlockMenu,
                 }),
-                new EmojiTrigger_1.default({
+                new EmojiTrigger({
                     onOpen: (search) => {
                         this.setState({ emojiMenuOpen: true, blockMenuSearch: search });
                     },
@@ -393,10 +366,10 @@ class RichMarkdownEditor extends React.PureComponent {
                         this.setState({ emojiMenuOpen: false });
                     },
                 }),
-                new Placeholder_2.default({
+                new Placeholder({
                     placeholder: this.props.placeholder,
                 }),
-                new MaxLength_1.default({
+                new MaxLength({
                     maxLength: this.props.maxLength,
                 }),
             ].filter((extension) => {
@@ -426,7 +399,7 @@ class RichMarkdownEditor extends React.PureComponent {
     }
     createNodeViews() {
         return this.extensions.extensions
-            .filter((extension) => extension instanceof ReactElement_1.default || extension instanceof ReactNode_1.default)
+            .filter((extension) => extension instanceof ReactElement || extension instanceof ReactNode)
             .reduce((nodeViews, extension) => {
             const nodeView = (node, view, getPos, decorations) => {
                 const options = {
@@ -437,16 +410,19 @@ class RichMarkdownEditor extends React.PureComponent {
                     getPos,
                     decorations,
                 };
-                if (extension instanceof ReactNode_1.default) {
-                    return new ComponentView_1.default(extension.component, options);
+                if (extension instanceof ReactNode) {
+                    return new ComponentView(extension.component, options);
                 }
                 else {
-                    const ev = new ElementView_1.default(extension.element, options);
+                    const ev = new ElementView(extension.element, options);
                     this.nodeViewsMap.add(ev);
                     return ev;
                 }
             };
-            return Object.assign(Object.assign({}, nodeViews), { [extension.name]: nodeView });
+            return {
+                ...nodeViews,
+                [extension.name]: nodeView,
+            };
         }, {});
     }
     scheduleNodeViewUpdate(ev) {
@@ -472,7 +448,7 @@ class RichMarkdownEditor extends React.PureComponent {
         return this.extensions.marks;
     }
     createSchema() {
-        return new prosemirror_model_1.Schema({
+        return new Schema({
             nodes: this.nodes,
             marks: this.marks,
         });
@@ -495,18 +471,18 @@ class RichMarkdownEditor extends React.PureComponent {
     }
     createState(value) {
         const doc = this.createDocument(value || this.props.defaultValue);
-        return prosemirror_state_1.EditorState.create({
+        return EditorState.create({
             schema: this.schema,
             doc,
             plugins: [
                 ...this.plugins,
                 ...this.keymaps,
-                prosemirror_dropcursor_1.dropCursor({ color: this.theme().cursor }),
-                prosemirror_gapcursor_1.gapCursor(),
-                prosemirror_inputrules_1.inputRules({
+                dropCursor({ color: this.theme().cursor }),
+                gapCursor(),
+                inputRules({
                     rules: this.inputRules,
                 }),
-                prosemirror_keymap_1.keymap(prosemirror_commands_1.baseKeymap),
+                keymap(baseKeymap),
             ],
         });
     }
@@ -525,7 +501,7 @@ class RichMarkdownEditor extends React.PureComponent {
             });
         };
         const self = this;
-        const view = new prosemirror_view_1.EditorView(this.element, {
+        const view = new EditorView(this.element, {
             state: this.createState(this.props.value),
             editable: () => !this.props.readOnly,
             nodeViews: this.nodeViews,
@@ -576,18 +552,18 @@ class RichMarkdownEditor extends React.PureComponent {
         const { isRTL } = this.state;
         const dictionary = this.dictionary(this.props.dictionary);
         if (this.unmounted) {
-            return (React.createElement(Flex_1.default, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
+            return (React.createElement(Flex, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
                 React.createElement("div", { ref: ref => (this.element = ref) })));
         }
-        return (React.createElement(Flex_1.default, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
-            React.createElement(styled_components_1.ThemeProvider, { theme: this.theme() },
+        return (React.createElement(Flex, { onKeyDown: onKeyDown, style: style, className: className, align: "flex-start", justify: "center", dir: dir, column: true },
+            React.createElement(ThemeProvider, { theme: this.theme() },
                 React.createElement(React.Fragment, null,
-                    React.createElement(editor_1.StyledEditor, { dir: dir, rtl: isRTL, readOnly: readOnly, readOnlyWriteCheckboxes: readOnlyWriteCheckboxes, ref: (ref) => (this.element = ref) }),
+                    React.createElement(StyledEditor, { dir: dir, rtl: isRTL, readOnly: readOnly, readOnlyWriteCheckboxes: readOnlyWriteCheckboxes, ref: (ref) => (this.element = ref) }),
                     !readOnly && this.view && (React.createElement(React.Fragment, null,
-                        React.createElement(SelectionToolbar_1.default, { view: this.view, dictionary: dictionary, commands: this.commands, rtl: isRTL, isTemplate: this.props.template === true, onOpen: this.handleOpenSelectionMenu, onClose: this.handleCloseSelectionMenu, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onCreateLink: this.props.onCreateLink, tooltip: tooltip }),
-                        React.createElement(LinkToolbar_1.default, { view: this.view, dictionary: dictionary, isActive: this.state.linkMenuOpen, onCreateLink: this.props.onCreateLink, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onShowToast: this.props.onShowToast, onClose: this.handleCloseLinkMenu, tooltip: tooltip }),
-                        React.createElement(EmojiMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.emojiMenuOpen, search: this.state.blockMenuSearch, onClose: () => this.setState({ emojiMenuOpen: false }) }),
-                        React.createElement(BlockMenu_1.default, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.blockMenuOpen, search: this.state.blockMenuSearch, onClose: this.handleCloseBlockMenu, uploadImage: this.props.uploadImage, onLinkToolbarOpen: this.handleOpenLinkMenu, onImageUploadStart: this.props.onImageUploadStart, onImageUploadStop: this.props.onImageUploadStop, onShowToast: this.props.onShowToast, embeds: this.props.embeds }),
+                        React.createElement(SelectionToolbar, { view: this.view, dictionary: dictionary, commands: this.commands, rtl: isRTL, isTemplate: this.props.template === true, onOpen: this.handleOpenSelectionMenu, onClose: this.handleCloseSelectionMenu, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onCreateLink: this.props.onCreateLink, tooltip: tooltip }),
+                        React.createElement(LinkToolbar, { view: this.view, dictionary: dictionary, isActive: this.state.linkMenuOpen, onCreateLink: this.props.onCreateLink, onSearchLink: this.props.onSearchLink, onClickLink: this.props.onClickLink, onShowToast: this.props.onShowToast, onClose: this.handleCloseLinkMenu, tooltip: tooltip }),
+                        React.createElement(EmojiMenu, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.emojiMenuOpen, search: this.state.blockMenuSearch, onClose: () => this.setState({ emojiMenuOpen: false }) }),
+                        React.createElement(BlockMenu, { view: this.view, commands: this.commands, dictionary: dictionary, rtl: isRTL, isActive: this.state.blockMenuOpen, search: this.state.blockMenuSearch, onClose: this.handleCloseBlockMenu, uploadImage: this.props.uploadImage, onLinkToolbarOpen: this.handleOpenLinkMenu, onImageUploadStart: this.props.onImageUploadStart, onImageUploadStop: this.props.onImageUploadStop, onShowToast: this.props.onShowToast, embeds: this.props.embeds }),
                         this.element &&
                             this.props.menus.map((Menu, index) => {
                                 const menuName = Menu.name.charAt(0).toLowerCase() + Menu.name.slice(1);
@@ -610,7 +586,7 @@ RichMarkdownEditor.defaultProps = {
     embeds: [],
     extensions: [],
     menus: [],
-    tooltip: Tooltip_1.default,
+    tooltip: Tooltip,
 };
-exports.default = RichMarkdownEditor;
+export default RichMarkdownEditor;
 //# sourceMappingURL=index.js.map

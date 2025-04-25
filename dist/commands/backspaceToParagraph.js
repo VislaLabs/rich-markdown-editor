@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function backspaceToParagraph(type) {
+export default function backspaceToParagraph(type) {
     return (state, dispatch) => {
         const { $from, from, to, empty } = state.selection;
         if (!empty)
@@ -16,5 +14,4 @@ function backspaceToParagraph(type) {
         return true;
     };
 }
-exports.default = backspaceToParagraph;
 //# sourceMappingURL=backspaceToParagraph.js.map

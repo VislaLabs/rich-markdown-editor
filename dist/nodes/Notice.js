@@ -1,35 +1,11 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const toggleWrap_1 = __importDefault(require("../commands/toggleWrap"));
-const outline_icons_1 = require("outline-icons");
-const React = __importStar(require("react"));
-const client_1 = __importDefault(require("react-dom/client"));
-const Node_1 = __importDefault(require("./Node"));
-const notices_1 = __importDefault(require("../rules/notices"));
-class Notice extends Node_1.default {
+import { wrappingInputRule } from "prosemirror-inputrules";
+import toggleWrap from "../commands/toggleWrap";
+import { WarningIcon, InfoIcon, StarredIcon } from "outline-icons";
+import * as React from "react";
+import ReactDOM from "react-dom/client";
+import Node from "./Node";
+import noticesRule from "../rules/notices";
+export default class Notice extends Node {
     constructor() {
         super(...arguments);
         this.handleStyleChange = (event) => {
@@ -57,7 +33,7 @@ class Notice extends Node_1.default {
         return "container_notice";
     }
     get rulePlugins() {
-        return [notices_1.default];
+        return [noticesRule];
     }
     get schema() {
         return {
@@ -96,17 +72,17 @@ class Notice extends Node_1.default {
                 });
                 let component;
                 if (node.attrs.style === "tip") {
-                    component = React.createElement(outline_icons_1.StarredIcon, { color: "currentColor" });
+                    component = React.createElement(StarredIcon, { color: "currentColor" });
                 }
                 else if (node.attrs.style === "warning") {
-                    component = React.createElement(outline_icons_1.WarningIcon, { color: "currentColor" });
+                    component = React.createElement(WarningIcon, { color: "currentColor" });
                 }
                 else {
-                    component = React.createElement(outline_icons_1.InfoIcon, { color: "currentColor" });
+                    component = React.createElement(InfoIcon, { color: "currentColor" });
                 }
                 const icon = document.createElement("div");
                 icon.className = "icon";
-                const root = client_1.default.createRoot(icon);
+                const root = ReactDOM.createRoot(icon);
                 root.render(component);
                 return [
                     "div",
@@ -119,10 +95,10 @@ class Notice extends Node_1.default {
         };
     }
     commands({ type }) {
-        return (attrs) => toggleWrap_1.default(type, attrs);
+        return (attrs) => toggleWrap(type, attrs);
     }
     inputRules({ type }) {
-        return [prosemirror_inputrules_1.wrappingInputRule(/^:::$/, type)];
+        return [wrappingInputRule(/^:::$/, type)];
     }
     toMarkdown(state, node) {
         state.write("\n:::" + (node.attrs.style || "info") + "\n");
@@ -138,5 +114,4 @@ class Notice extends Node_1.default {
         };
     }
 }
-exports.default = Notice;
 //# sourceMappingURL=Notice.js.map

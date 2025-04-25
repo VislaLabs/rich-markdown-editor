@@ -1,50 +1,14 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Wrapper = void 0;
-const React = __importStar(require("react"));
-const capitalize_1 = __importDefault(require("lodash/capitalize"));
-const react_portal_1 = require("react-portal");
-const prosemirror_utils_1 = require("prosemirror-utils");
-const styled_components_1 = __importDefault(require("styled-components"));
-const types_1 = require("../types");
-const Input_1 = __importDefault(require("./Input"));
-const VisuallyHidden_1 = __importDefault(require("./VisuallyHidden"));
-const getDataTransferFiles_1 = __importDefault(require("../lib/getDataTransferFiles"));
-const filterExcessSeparators_1 = __importDefault(require("../lib/filterExcessSeparators"));
-const insertFiles_1 = __importDefault(require("../commands/insertFiles"));
+import * as React from "react";
+import capitalize from "lodash/capitalize";
+import { Portal } from "react-portal";
+import { findDomRefAtPos, findParentNode } from "prosemirror-utils";
+import styled from "styled-components";
+import { ToastType } from "../types";
+import Input from "./Input";
+import VisuallyHidden from "./VisuallyHidden";
+import getDataTransferFiles from "../lib/getDataTransferFiles";
+import filterExcessSeparators from "../lib/filterExcessSeparators";
+import insertFiles from "../commands/insertFiles";
 const SSR = typeof window === "undefined";
 const defaultPosition = {
     left: -1000,
@@ -148,7 +112,7 @@ class CommandMenu extends React.Component {
                 const href = event.currentTarget.value;
                 const matches = this.state.insertItem.matcher(href);
                 if (!matches && this.props.onShowToast) {
-                    this.props.onShowToast(this.props.dictionary.embedInvalidLink, types_1.ToastType.Error);
+                    this.props.onShowToast(this.props.dictionary.embedInvalidLink, ToastType.Error);
                     return;
                 }
                 this.insertBlock({
@@ -190,16 +154,16 @@ class CommandMenu extends React.Component {
             this.setState({ insertItem: item });
         };
         this.handleImagePicked = event => {
-            const files = getDataTransferFiles_1.default(event);
+            const files = getDataTransferFiles(event);
             const { view, uploadImage, onImageUploadStart, onImageUploadStop, onShowToast, } = this.props;
             const { state } = view;
-            const parent = prosemirror_utils_1.findParentNode(node => !!node)(state.selection);
+            const parent = findParentNode(node => !!node)(state.selection);
             this.clearSearch();
             if (!uploadImage) {
                 throw new Error("uploadImage prop is required to replace images");
             }
             if (parent) {
-                insertFiles_1.default(view, event, parent.pos, files, {
+                insertFiles(view, event, parent.pos, files, {
                     uploadImage,
                     onImageUploadStart,
                     onImageUploadStop,
@@ -229,7 +193,11 @@ class CommandMenu extends React.Component {
     componentDidUpdate(prevProps) {
         if (!prevProps.isActive && this.props.isActive) {
             const position = this.calculatePosition(this.props);
-            this.setState(Object.assign({ insertItem: undefined, selectedIndex: 0 }, position));
+            this.setState({
+                insertItem: undefined,
+                selectedIndex: 0,
+                ...position,
+            });
         }
         else if (prevProps.search !== this.props.search) {
             this.setState({ selectedIndex: 0 });
@@ -247,7 +215,7 @@ class CommandMenu extends React.Component {
             command(item.attrs);
         }
         else {
-            this.props.commands[`create${capitalize_1.default(item.name)}`](item.attrs);
+            this.props.commands[`create${capitalize(item.name)}`](item.attrs);
         }
         this.props.onClose();
     }
@@ -288,7 +256,7 @@ class CommandMenu extends React.Component {
         const domAtPos = view.domAtPos.bind(view);
         const ref = this.menuRef.current;
         const offsetHeight = ref ? ref.offsetHeight : 0;
-        const node = prosemirror_utils_1.findDomRefAtPos(selection.from, domAtPos);
+        const node = findDomRefAtPos(selection.from, domAtPos);
         const paragraph = { node };
         if (!props.isActive ||
             !paragraph.node ||
@@ -326,7 +294,10 @@ class CommandMenu extends React.Component {
         const embedItems = [];
         for (const embed of embeds) {
             if (embed.title && embed.icon) {
-                embedItems.push(Object.assign(Object.assign({}, embed), { name: "embed" }));
+                embedItems.push({
+                    ...embed,
+                    name: "embed",
+                });
             }
         }
         if (embedItems.length) {
@@ -340,7 +311,7 @@ class CommandMenu extends React.Component {
                 return true;
             if (item.name &&
                 !commands[item.name] &&
-                !commands[`create${capitalize_1.default(item.name)}`]) {
+                !commands[`create${capitalize(item.name)}`]) {
                 return false;
             }
             if (!uploadImage && item.name === "image")
@@ -354,14 +325,14 @@ class CommandMenu extends React.Component {
             return ((item.title || "").toLowerCase().includes(n) ||
                 (item.keywords || "").toLowerCase().includes(n));
         });
-        return filterExcessSeparators_1.default(filtered);
+        return filterExcessSeparators(filtered);
     }
     render() {
         const { dictionary, isActive, uploadImage } = this.props;
         const items = this.filtered;
-        const _a = this.state, { insertItem } = _a, positioning = __rest(_a, ["insertItem"]);
-        return (React.createElement(react_portal_1.Portal, null,
-            React.createElement(exports.Wrapper, Object.assign({ id: this.props.id || "block-menu-container", active: isActive, ref: this.menuRef }, positioning),
+        const { insertItem, ...positioning } = this.state;
+        return (React.createElement(Portal, null,
+            React.createElement(Wrapper, Object.assign({ id: this.props.id || "block-menu-container", active: isActive, ref: this.menuRef }, positioning),
                 insertItem ? (React.createElement(LinkInputWrapper, null,
                     React.createElement(LinkInput, { type: "text", placeholder: insertItem.title
                             ? dictionary.pasteLinkWithTitle(insertItem.title)
@@ -382,30 +353,30 @@ class CommandMenu extends React.Component {
                     }),
                     items.length === 0 && (React.createElement(ListItem, null,
                         React.createElement(Empty, null, dictionary.noResults))))),
-                uploadImage && (React.createElement(VisuallyHidden_1.default, null,
+                uploadImage && (React.createElement(VisuallyHidden, null,
                     React.createElement("input", { type: "file", ref: this.inputRef, onChange: this.handleImagePicked, accept: "image/*" }))))));
     }
 }
-const LinkInputWrapper = styled_components_1.default.div `
+const LinkInputWrapper = styled.div `
   margin: 8px;
 `;
-const LinkInput = styled_components_1.default(Input_1.default) `
+const LinkInput = styled(Input) `
   height: 36px;
   width: 100%;
   color: ${props => props.theme.blockToolbarText};
 `;
-const List = styled_components_1.default.ol `
+const List = styled.ol `
   list-style: none;
   text-align: left;
   height: 100%;
   padding: 8px 0;
   margin: 0;
 `;
-const ListItem = styled_components_1.default.li `
+const ListItem = styled.li `
   padding: 0;
   margin: 0;
 `;
-const Empty = styled_components_1.default.div `
+const Empty = styled.div `
   display: flex;
   align-items: center;
   color: ${props => props.theme.textSecondary};
@@ -414,7 +385,7 @@ const Empty = styled_components_1.default.div `
   height: 36px;
   padding: 0 16px;
 `;
-exports.Wrapper = styled_components_1.default.div `
+export const Wrapper = styled.div `
   color: ${props => props.theme.text};
   font-family: ${props => props.theme.fontFamily};
   position: absolute;
@@ -461,5 +432,5 @@ exports.Wrapper = styled_components_1.default.div `
     display: none;
   }
 `;
-exports.default = CommandMenu;
+export default CommandMenu;
 //# sourceMappingURL=CommandMenu.js.map

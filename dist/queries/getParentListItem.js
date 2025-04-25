@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function getParentListItem(state) {
+export default function getParentListItem(state) {
     const $head = state.selection.$head;
     for (let d = $head.depth; d > 0; d--) {
         const node = $head.node(d);
@@ -9,5 +7,4 @@ function getParentListItem(state) {
         }
     }
 }
-exports.default = getParentListItem;
 //# sourceMappingURL=getParentListItem.js.map

@@ -1,12 +1,10 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const outline_icons_1 = require("outline-icons");
-function tableRowMenuItems(state, index, dictionary) {
+import { TrashIcon, InsertAboveIcon, InsertBelowIcon } from "outline-icons";
+export default function tableRowMenuItems(state, index, dictionary) {
     return [
         {
             name: "addRowAfter",
             tooltip: dictionary.addRowBefore,
-            icon: outline_icons_1.InsertAboveIcon,
+            icon: InsertAboveIcon,
             attrs: { index: index - 1 },
             active: () => false,
             visible: index !== 0,
@@ -14,7 +12,7 @@ function tableRowMenuItems(state, index, dictionary) {
         {
             name: "addRowAfter",
             tooltip: dictionary.addRowAfter,
-            icon: outline_icons_1.InsertBelowIcon,
+            icon: InsertBelowIcon,
             attrs: { index },
             active: () => false,
         },
@@ -24,10 +22,9 @@ function tableRowMenuItems(state, index, dictionary) {
         {
             name: "deleteRow",
             tooltip: dictionary.deleteRow,
-            icon: outline_icons_1.TrashIcon,
+            icon: TrashIcon,
             active: () => false,
         },
     ];
 }
-exports.default = tableRowMenuItems;
 //# sourceMappingURL=tableRow.js.map

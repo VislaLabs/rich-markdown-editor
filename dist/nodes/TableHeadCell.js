@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_view_1 = require("prosemirror-view");
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_utils_1 = require("prosemirror-utils");
-const Node_1 = __importDefault(require("./Node"));
-class TableHeadCell extends Node_1.default {
+import { DecorationSet, Decoration } from "prosemirror-view";
+import { Plugin } from "prosemirror-state";
+import { isColumnSelected, getCellsInRow } from "prosemirror-utils";
+import Node from "./Node";
+export default class TableHeadCell extends Node {
     get name() {
         return "th";
     }
@@ -43,16 +38,16 @@ class TableHeadCell extends Node_1.default {
     }
     get plugins() {
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 props: {
                     decorations: state => {
                         const { doc, selection } = state;
                         const decorations = [];
-                        const cells = prosemirror_utils_1.getCellsInRow(0)(selection);
+                        const cells = getCellsInRow(0)(selection);
                         if (cells) {
                             cells.forEach(({ pos }, index) => {
-                                decorations.push(prosemirror_view_1.Decoration.widget(pos + 1, () => {
-                                    const colSelected = prosemirror_utils_1.isColumnSelected(index)(selection);
+                                decorations.push(Decoration.widget(pos + 1, () => {
+                                    const colSelected = isColumnSelected(index)(selection);
                                     let className = "grip-column";
                                     if (colSelected) {
                                         className += " selected";
@@ -74,12 +69,11 @@ class TableHeadCell extends Node_1.default {
                                 }));
                             });
                         }
-                        return prosemirror_view_1.DecorationSet.create(doc, decorations);
+                        return DecorationSet.create(doc, decorations);
                     },
                 },
             }),
         ];
     }
 }
-exports.default = TableHeadCell;
 //# sourceMappingURL=TableHeadCell.js.map

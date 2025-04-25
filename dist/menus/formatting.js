@@ -1,24 +1,19 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const outline_icons_1 = require("outline-icons");
-const prosemirror_tables_1 = require("prosemirror-tables");
-const isInList_1 = __importDefault(require("../queries/isInList"));
-const isMarkActive_1 = __importDefault(require("../queries/isMarkActive"));
-const isNodeActive_1 = __importDefault(require("../queries/isNodeActive"));
-function formattingMenuItems(state, isTemplate, dictionary) {
+import { BoldIcon, CodeIcon, Heading1Icon, Heading2Icon, BlockQuoteIcon, LinkIcon, StrikethroughIcon, OrderedListIcon, BulletedListIcon, TodoListIcon, InputIcon, HighlightIcon, } from "outline-icons";
+import { isInTable } from "prosemirror-tables";
+import isInList from "../queries/isInList";
+import isMarkActive from "../queries/isMarkActive";
+import isNodeActive from "../queries/isNodeActive";
+export default function formattingMenuItems(state, isTemplate, dictionary) {
     const { schema } = state;
-    const isTable = prosemirror_tables_1.isInTable(state);
-    const isList = isInList_1.default(state);
+    const isTable = isInTable(state);
+    const isList = isInList(state);
     const allowBlocks = !isTable && !isList;
     return [
         {
             name: "placeholder",
             tooltip: dictionary.placeholder,
-            icon: outline_icons_1.InputIcon,
-            active: isMarkActive_1.default(schema.marks.placeholder),
+            icon: InputIcon,
+            active: isMarkActive(schema.marks.placeholder),
             visible: isTemplate,
         },
         {
@@ -28,27 +23,27 @@ function formattingMenuItems(state, isTemplate, dictionary) {
         {
             name: "strong",
             tooltip: dictionary.strong,
-            icon: outline_icons_1.BoldIcon,
-            active: isMarkActive_1.default(schema.marks.strong),
+            icon: BoldIcon,
+            active: isMarkActive(schema.marks.strong),
         },
         {
             name: "strikethrough",
             tooltip: dictionary.strikethrough,
-            icon: outline_icons_1.StrikethroughIcon,
-            active: isMarkActive_1.default(schema.marks.strikethrough),
+            icon: StrikethroughIcon,
+            active: isMarkActive(schema.marks.strikethrough),
         },
         {
             name: "highlight",
             tooltip: dictionary.mark,
-            icon: outline_icons_1.HighlightIcon,
-            active: isMarkActive_1.default(schema.marks.highlight),
+            icon: HighlightIcon,
+            active: isMarkActive(schema.marks.highlight),
             visible: !isTemplate,
         },
         {
             name: "code_inline",
             tooltip: dictionary.codeInline,
-            icon: outline_icons_1.CodeIcon,
-            active: isMarkActive_1.default(schema.marks.code_inline),
+            icon: CodeIcon,
+            active: isMarkActive(schema.marks.code_inline),
         },
         {
             name: "separator",
@@ -57,24 +52,24 @@ function formattingMenuItems(state, isTemplate, dictionary) {
         {
             name: "heading",
             tooltip: dictionary.heading,
-            icon: outline_icons_1.Heading1Icon,
-            active: isNodeActive_1.default(schema.nodes.heading, { level: 1 }),
+            icon: Heading1Icon,
+            active: isNodeActive(schema.nodes.heading, { level: 1 }),
             attrs: { level: 1 },
             visible: allowBlocks,
         },
         {
             name: "heading",
             tooltip: dictionary.subheading,
-            icon: outline_icons_1.Heading2Icon,
-            active: isNodeActive_1.default(schema.nodes.heading, { level: 2 }),
+            icon: Heading2Icon,
+            active: isNodeActive(schema.nodes.heading, { level: 2 }),
             attrs: { level: 2 },
             visible: allowBlocks,
         },
         {
             name: "blockquote",
             tooltip: dictionary.quote,
-            icon: outline_icons_1.BlockQuoteIcon,
-            active: isNodeActive_1.default(schema.nodes.blockquote),
+            icon: BlockQuoteIcon,
+            active: isNodeActive(schema.nodes.blockquote),
             attrs: { level: 2 },
             visible: allowBlocks,
         },
@@ -85,23 +80,23 @@ function formattingMenuItems(state, isTemplate, dictionary) {
         {
             name: "checkbox_list",
             tooltip: dictionary.checkboxList,
-            icon: outline_icons_1.TodoListIcon,
+            icon: TodoListIcon,
             keywords: "checklist checkbox task",
-            active: isNodeActive_1.default(schema.nodes.checkbox_list),
+            active: isNodeActive(schema.nodes.checkbox_list),
             visible: allowBlocks || isList,
         },
         {
             name: "bullet_list",
             tooltip: dictionary.bulletList,
-            icon: outline_icons_1.BulletedListIcon,
-            active: isNodeActive_1.default(schema.nodes.bullet_list),
+            icon: BulletedListIcon,
+            active: isNodeActive(schema.nodes.bullet_list),
             visible: allowBlocks || isList,
         },
         {
             name: "ordered_list",
             tooltip: dictionary.orderedList,
-            icon: outline_icons_1.OrderedListIcon,
-            active: isNodeActive_1.default(schema.nodes.ordered_list),
+            icon: OrderedListIcon,
+            active: isNodeActive(schema.nodes.ordered_list),
             visible: allowBlocks || isList,
         },
         {
@@ -110,11 +105,10 @@ function formattingMenuItems(state, isTemplate, dictionary) {
         {
             name: "link",
             tooltip: dictionary.createLink,
-            icon: outline_icons_1.LinkIcon,
-            active: isMarkActive_1.default(schema.marks.link),
+            icon: LinkIcon,
+            active: isMarkActive(schema.marks.link),
             attrs: { href: "" },
         },
     ];
 }
-exports.default = formattingMenuItems;
 //# sourceMappingURL=formatting.js.map

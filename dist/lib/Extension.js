@@ -1,8 +1,9 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-class Extension {
+export default class Extension {
     constructor(options = {}) {
-        this.options = Object.assign(Object.assign({}, this.defaultOptions), options);
+        this.options = {
+            ...this.defaultOptions,
+            ...options,
+        };
     }
     bindEditor(editor) {
         this.editor = editor;
@@ -32,5 +33,4 @@ class Extension {
         return {};
     }
 }
-exports.default = Extension;
 //# sourceMappingURL=Extension.js.map

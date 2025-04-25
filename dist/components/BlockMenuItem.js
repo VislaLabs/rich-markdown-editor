@@ -1,36 +1,12 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(require("react"));
-const smooth_scroll_into_view_if_needed_1 = __importDefault(require("smooth-scroll-into-view-if-needed"));
-const styled_components_1 = __importStar(require("styled-components"));
-const theme_1 = __importDefault(require("../styles/theme"));
+import * as React from "react";
+import scrollIntoView from "smooth-scroll-into-view-if-needed";
+import styled, { withTheme } from "styled-components";
+import theme from "../styles/theme";
 function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, containerId = "block-menu-container", }) {
     const Icon = icon;
     const ref = React.useCallback(node => {
         if (selected && node) {
-            smooth_scroll_into_view_if_needed_1.default(node, {
+            scrollIntoView(node, {
                 scrollMode: "if-needed",
                 block: "center",
                 boundary: parent => {
@@ -41,12 +17,12 @@ function BlockMenuItem({ selected, disabled, onClick, title, shortcut, icon, con
     }, [selected, containerId]);
     return (React.createElement(MenuItem, { selected: selected, onClick: disabled ? undefined : onClick, ref: ref },
         Icon && (React.createElement(React.Fragment, null,
-            React.createElement(Icon, { color: selected ? theme_1.default.blockToolbarIconSelected : theme_1.default.blockToolbarIcon }),
+            React.createElement(Icon, { color: selected ? theme.blockToolbarIconSelected : theme.blockToolbarIcon }),
             "\u00A0\u00A0")),
         title,
         shortcut && React.createElement(Shortcut, null, shortcut)));
 }
-const MenuItem = styled_components_1.default.button `
+const MenuItem = styled.button `
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -77,10 +53,10 @@ const MenuItem = styled_components_1.default.button `
     : props.theme.blockToolbarHoverBackground};
   }
 `;
-const Shortcut = styled_components_1.default.span `
+const Shortcut = styled.span `
   color: ${props => props.theme.textSecondary};
   flex-grow: 1;
   text-align: right;
 `;
-exports.default = styled_components_1.withTheme(BlockMenuItem);
+export default withTheme(BlockMenuItem);
 //# sourceMappingURL=BlockMenuItem.js.map

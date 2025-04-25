@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_utils_1 = require("prosemirror-utils");
-function findCollapsedNodes(doc) {
-    const blocks = prosemirror_utils_1.findBlockNodes(doc);
+import { findBlockNodes } from "prosemirror-utils";
+export default function findCollapsedNodes(doc) {
+    const blocks = findBlockNodes(doc);
     const nodes = [];
     let withinCollapsedHeading;
     for (const block of blocks) {
@@ -26,5 +24,4 @@ function findCollapsedNodes(doc) {
     }
     return nodes;
 }
-exports.default = findCollapsedNodes;
 //# sourceMappingURL=findCollapsedNodes.js.map

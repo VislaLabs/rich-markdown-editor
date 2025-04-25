@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
+import { InputRule } from "prosemirror-inputrules";
 function getMarksBetween(start, end, state) {
     let marks = [];
     state.doc.nodesBetween(start, end, (node, pos) => {
@@ -15,8 +13,8 @@ function getMarksBetween(start, end, state) {
     });
     return marks;
 }
-function default_1(regexp, markType, getAttrs) {
-    return new prosemirror_inputrules_1.InputRule(regexp, (state, match, start, end) => {
+export default function (regexp, markType, getAttrs) {
+    return new InputRule(regexp, (state, match, start, end) => {
         const attrs = getAttrs instanceof Function ? getAttrs(match) : getAttrs;
         const { tr } = state;
         const m = match.length - 1;
@@ -47,5 +45,4 @@ function default_1(regexp, markType, getAttrs) {
         return tr;
     });
 }
-exports.default = default_1;
 //# sourceMappingURL=markInputRule.js.map

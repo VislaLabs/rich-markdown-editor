@@ -1,5 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
 const CHECKBOX_REGEX = /\[(X|\s|_|-)\]\s(.*)?/i;
 function matches(token) {
     return token && token.content.match(CHECKBOX_REGEX);
@@ -20,7 +18,7 @@ function looksLikeChecklist(tokens, index) {
         isParagraph(tokens[index - 1]) &&
         matches(tokens[index]));
 }
-function markdownItCheckbox(md) {
+export default function markdownItCheckbox(md) {
     function render(tokens, idx) {
         const token = tokens[idx];
         const checked = !!token.attrGet("checked");
@@ -69,5 +67,4 @@ function markdownItCheckbox(md) {
         return false;
     });
 }
-exports.default = markdownItCheckbox;
 //# sourceMappingURL=checkboxes.js.map

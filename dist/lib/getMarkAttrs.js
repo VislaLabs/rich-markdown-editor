@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function getMarkAttrs(state, type) {
+export default function getMarkAttrs(state, type) {
     const { from, to } = state.selection;
     let marks = [];
     state.doc.nodesBetween(from, to, (node) => {
@@ -17,5 +15,4 @@ function getMarkAttrs(state, type) {
     }
     return {};
 }
-exports.default = getMarkAttrs;
 //# sourceMappingURL=getMarkAttrs.js.map

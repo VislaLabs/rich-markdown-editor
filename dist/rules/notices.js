@@ -1,11 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const markdown_it_container_1 = __importDefault(require("markdown-it-container"));
-function notice(md) {
-    return markdown_it_container_1.default(md, "notice", {
+import customFence from "markdown-it-container";
+export default function notice(md) {
+    return customFence(md, "notice", {
         marker: ":",
         validate: () => true,
         render: function (tokens, idx) {
@@ -19,5 +14,4 @@ function notice(md) {
         },
     });
 }
-exports.default = notice;
 //# sourceMappingURL=notices.js.map

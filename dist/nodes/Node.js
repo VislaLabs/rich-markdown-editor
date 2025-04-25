@@ -1,10 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const Extension_1 = __importDefault(require("../lib/Extension"));
-class Node extends Extension_1.default {
+import Extension from "../lib/Extension";
+export default class Node extends Extension {
     get type() {
         return "node";
     }
@@ -18,5 +13,4 @@ class Node extends Extension_1.default {
         return;
     }
 }
-exports.default = Node;
 //# sourceMappingURL=Node.js.map

@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function filterExcessSeparators(items) {
+export default function filterExcessSeparators(items) {
     return items.reduce((acc, item, index) => {
         if (item.name === "separator" && index === 0)
             return acc;
@@ -15,5 +13,4 @@ function filterExcessSeparators(items) {
         return [...acc, item];
     }, []);
 }
-exports.default = filterExcessSeparators;
 //# sourceMappingURL=filterExcessSeparators.js.map

@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const react_dom_1 = require("react-dom");
-const theme_1 = require("../styles/theme");
-class ElementView {
+import { createPortal } from 'react-dom';
+import { light as lightTheme, dark as darkTheme } from '../styles/theme';
+export default class ElementView {
     constructor(component, { editor, extension, node, view, getPos, decorations }) {
         this.isSelected = false;
         this.component = component;
@@ -21,7 +19,7 @@ class ElementView {
             return null;
         }
         const { dark } = this.editor.props;
-        const theme = this.editor.props.theme || (dark ? theme_1.dark : theme_1.light);
+        const theme = this.editor.props.theme || (dark ? darkTheme : lightTheme);
         const children = this.component({
             theme,
             node: this.node,
@@ -29,7 +27,7 @@ class ElementView {
             isEditable: this.view.editable,
             getPos: this.getPos,
         });
-        return react_dom_1.createPortal(children, this.dom);
+        return createPortal(children, this.dom);
     }
     update(newNode) {
         if (newNode.type !== this.node.type) {
@@ -61,5 +59,4 @@ class ElementView {
         return true;
     }
 }
-exports.default = ElementView;
 //# sourceMappingURL=ElementView.js.map

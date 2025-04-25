@@ -1,10 +1,5 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const styled_components_1 = __importDefault(require("styled-components"));
-const Separator = styled_components_1.default.div `
+import styled from "styled-components";
+const Separator = styled.div `
   height: 24px;
   width: 2px;
   background: ${props => props.theme.toolbarItem};
@@ -12,5 +7,5 @@ const Separator = styled_components_1.default.div `
   display: inline-block;
   margin-left: 8px;
 `;
-exports.default = Separator;
+export default Separator;
 //# sourceMappingURL=ToolbarSeparator.js.map

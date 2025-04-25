@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_state_1 = require("prosemirror-state");
-const getMarkRange_1 = __importDefault(require("../queries/getMarkRange"));
-const Mark_1 = __importDefault(require("./Mark"));
-const mark_1 = __importDefault(require("../rules/mark"));
-class Placeholder extends Mark_1.default {
+import { Plugin, TextSelection } from "prosemirror-state";
+import getMarkRange from "../queries/getMarkRange";
+import Mark from "./Mark";
+import markRule from "../rules/mark";
+export default class Placeholder extends Mark {
     get name() {
         return "placeholder";
     }
@@ -18,7 +13,7 @@ class Placeholder extends Mark_1.default {
         };
     }
     get rulePlugins() {
-        return [mark_1.default({ delim: "!!", mark: "placeholder" })];
+        return [markRule({ delim: "!!", mark: "placeholder" })];
     }
     get toMarkdown() {
         return {
@@ -33,7 +28,7 @@ class Placeholder extends Mark_1.default {
     }
     get plugins() {
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 props: {
                     handleTextInput: (view, from, to, text) => {
                         if (this.editor.props.template) {
@@ -41,7 +36,7 @@ class Placeholder extends Mark_1.default {
                         }
                         const { state, dispatch } = view;
                         const $from = state.doc.resolve(from);
-                        const range = getMarkRange_1.default($from, state.schema.marks.placeholder);
+                        const range = getMarkRange($from, state.schema.marks.placeholder);
                         if (!range)
                             return false;
                         const selectionStart = Math.min(from, range.from);
@@ -50,7 +45,7 @@ class Placeholder extends Mark_1.default {
                             .removeMark(range.from, range.to, state.schema.marks.placeholder)
                             .insertText(text, selectionStart, selectionEnd));
                         const $to = view.state.doc.resolve(selectionStart + text.length);
-                        dispatch(view.state.tr.setSelection(prosemirror_state_1.TextSelection.near($to)));
+                        dispatch(view.state.tr.setSelection(TextSelection.near($to)));
                         return true;
                     },
                     handleKeyDown: (view, event) => {
@@ -67,7 +62,7 @@ class Placeholder extends Mark_1.default {
                         }
                         const { state, dispatch } = view;
                         if (event.key === "Backspace") {
-                            const range = getMarkRange_1.default(state.doc.resolve(Math.max(0, state.selection.from - 1)), state.schema.marks.placeholder);
+                            const range = getMarkRange(state.doc.resolve(Math.max(0, state.selection.from - 1)), state.schema.marks.placeholder);
                             if (!range)
                                 return false;
                             dispatch(state.tr
@@ -76,19 +71,19 @@ class Placeholder extends Mark_1.default {
                             return true;
                         }
                         if (event.key === "ArrowLeft") {
-                            const range = getMarkRange_1.default(state.doc.resolve(Math.max(0, state.selection.from - 1)), state.schema.marks.placeholder);
+                            const range = getMarkRange(state.doc.resolve(Math.max(0, state.selection.from - 1)), state.schema.marks.placeholder);
                             if (!range)
                                 return false;
                             const startOfMark = state.doc.resolve(range.from);
-                            dispatch(state.tr.setSelection(prosemirror_state_1.TextSelection.near(startOfMark)));
+                            dispatch(state.tr.setSelection(TextSelection.near(startOfMark)));
                             return true;
                         }
                         if (event.key === "ArrowRight") {
-                            const range = getMarkRange_1.default(state.selection.$from, state.schema.marks.placeholder);
+                            const range = getMarkRange(state.selection.$from, state.schema.marks.placeholder);
                             if (!range)
                                 return false;
                             const endOfMark = state.doc.resolve(range.to);
-                            dispatch(state.tr.setSelection(prosemirror_state_1.TextSelection.near(endOfMark)));
+                            dispatch(state.tr.setSelection(TextSelection.near(endOfMark)));
                             return true;
                         }
                         return false;
@@ -103,13 +98,13 @@ class Placeholder extends Mark_1.default {
                         if (event.target instanceof HTMLSpanElement &&
                             event.target.className.includes("template-placeholder")) {
                             const { state, dispatch } = view;
-                            const range = getMarkRange_1.default(state.selection.$from, state.schema.marks.placeholder);
+                            const range = getMarkRange(state.selection.$from, state.schema.marks.placeholder);
                             if (!range)
                                 return false;
                             event.stopPropagation();
                             event.preventDefault();
                             const startOfMark = state.doc.resolve(range.from);
-                            dispatch(state.tr.setSelection(prosemirror_state_1.TextSelection.near(startOfMark)));
+                            dispatch(state.tr.setSelection(TextSelection.near(startOfMark)));
                             return true;
                         }
                         return false;
@@ -119,5 +114,4 @@ class Placeholder extends Mark_1.default {
         ];
     }
 }
-exports.default = Placeholder;
 //# sourceMappingURL=Placeholder.js.map

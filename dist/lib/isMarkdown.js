@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function isMarkdown(text) {
+export default function isMarkdown(text) {
     const fences = text.match(/^```/gm);
     if (fences && fences.length > 1)
         return true;
@@ -15,5 +13,4 @@ function isMarkdown(text) {
         return true;
     return false;
 }
-exports.default = isMarkdown;
 //# sourceMappingURL=isMarkdown.js.map

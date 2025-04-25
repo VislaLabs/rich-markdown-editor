@@ -1,42 +1,7 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(require("react"));
-const LinkEditor_1 = __importDefault(require("./LinkEditor"));
-const FloatingToolbar_1 = __importDefault(require("./FloatingToolbar"));
-const createAndInsertLink_1 = __importDefault(require("../commands/createAndInsertLink"));
+import * as React from "react";
+import LinkEditor from "./LinkEditor";
+import FloatingToolbar from "./FloatingToolbar";
+import createAndInsertLink from "../commands/createAndInsertLink";
 function isActive(props) {
     const { view } = props;
     const { selection } = view.state;
@@ -48,7 +13,7 @@ function isActive(props) {
         return false;
     }
 }
-class LinkToolbar extends React.Component {
+export default class LinkToolbar extends React.Component {
     constructor() {
         super(...arguments);
         this.menuRef = React.createRef();
@@ -80,7 +45,7 @@ class LinkToolbar extends React.Component {
             dispatch(view.state.tr
                 .insertText(title, from, to)
                 .addMark(from, to + title.length, state.schema.marks.link.create({ href })));
-            createAndInsertLink_1.default(view, title, href, {
+            createAndInsertLink(view, title, href, {
                 onCreateLink,
                 onShowToast,
                 dictionary,
@@ -107,11 +72,10 @@ class LinkToolbar extends React.Component {
         window.removeEventListener("mousedown", this.handleClickOutside);
     }
     render() {
-        const _a = this.props, { onCreateLink, onClose } = _a, rest = __rest(_a, ["onCreateLink", "onClose"]);
+        const { onCreateLink, onClose, ...rest } = this.props;
         const { selection } = this.props.view.state;
         const active = isActive(this.props);
-        return (React.createElement(FloatingToolbar_1.default, Object.assign({ ref: this.menuRef, active: active }, rest), active && (React.createElement(LinkEditor_1.default, Object.assign({ from: selection.from, to: selection.to, onCreateLink: onCreateLink ? this.handleOnCreateLink : undefined, onSelectLink: this.handleOnSelectLink, onRemoveLink: onClose }, rest)))));
+        return (React.createElement(FloatingToolbar, Object.assign({ ref: this.menuRef, active: active }, rest), active && (React.createElement(LinkEditor, Object.assign({ from: selection.from, to: selection.to, onCreateLink: onCreateLink ? this.handleOnCreateLink : undefined, onSelectLink: this.handleOnSelectLink, onRemoveLink: onClose }, rest)))));
     }
 }
-exports.default = LinkToolbar;
 //# sourceMappingURL=LinkToolbar.js.map

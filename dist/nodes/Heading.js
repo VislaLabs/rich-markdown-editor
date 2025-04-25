@@ -1,38 +1,14 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_state_1 = require("prosemirror-state");
-const copy_to_clipboard_1 = __importDefault(require("copy-to-clipboard"));
-const prosemirror_view_1 = require("prosemirror-view");
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const backspaceToParagraph_1 = __importDefault(require("../commands/backspaceToParagraph"));
-const toggleBlockType_1 = __importDefault(require("../commands/toggleBlockType"));
-const splitHeading_1 = __importDefault(require("../commands/splitHeading"));
-const headingToSlug_1 = __importStar(require("../lib/headingToSlug"));
-const Node_1 = __importDefault(require("./Node"));
-const types_1 = require("../types");
-class Heading extends Node_1.default {
+import { Plugin, Selection } from "prosemirror-state";
+import copy from "copy-to-clipboard";
+import { Decoration, DecorationSet } from "prosemirror-view";
+import { textblockTypeInputRule } from "prosemirror-inputrules";
+import backspaceToParagraph from "../commands/backspaceToParagraph";
+import toggleBlockType from "../commands/toggleBlockType";
+import splitHeading from "../commands/splitHeading";
+import headingToSlug, { headingToPersistenceKey } from "../lib/headingToSlug";
+import Node from "./Node";
+import { ToastType } from "../types";
+export default class Heading extends Node {
     constructor() {
         super(...arguments);
         this.className = "heading-name";
@@ -50,10 +26,13 @@ class Heading extends Node_1.default {
                     const $pos = view.state.doc.resolve(endOfHeadingPos);
                     const collapsed = !node.attrs.collapsed;
                     if (collapsed && view.state.selection.to > endOfHeadingPos) {
-                        tr.setSelection(prosemirror_state_1.Selection.near($pos, -1));
+                        tr.setSelection(Selection.near($pos, -1));
                     }
-                    const transaction = tr.setNodeMarkup(result.inside, undefined, Object.assign(Object.assign({}, node.attrs), { collapsed }));
-                    const persistKey = headingToSlug_1.headingToPersistenceKey(node, this.editor.props.id);
+                    const transaction = tr.setNodeMarkup(result.inside, undefined, {
+                        ...node.attrs,
+                        collapsed,
+                    });
+                    const persistKey = headingToPersistenceKey(node, this.editor.props.id);
                     if (collapsed) {
                         localStorage === null || localStorage === void 0 ? void 0 : localStorage.setItem(persistKey, "collapsed");
                     }
@@ -74,9 +53,9 @@ class Heading extends Node_1.default {
             }
             const hash = `#${anchor.id}`;
             const urlWithoutHash = window.location.href.split("#")[0];
-            copy_to_clipboard_1.default(urlWithoutHash + hash);
+            copy(urlWithoutHash + hash);
             if (this.options.onShowToast) {
-                this.options.onShowToast(this.options.dictionary.linkCopied, types_1.ToastType.Info);
+                this.options.onShowToast(this.options.dictionary.linkCopied, ToastType.Info);
             }
         };
     }
@@ -158,14 +137,21 @@ class Heading extends Node_1.default {
     }
     commands({ type, schema }) {
         return (attrs) => {
-            return toggleBlockType_1.default(type, schema.nodes.paragraph, attrs);
+            return toggleBlockType(type, schema.nodes.paragraph, attrs);
         };
     }
     keys({ type, schema }) {
-        const options = this.options.levels.reduce((items, level) => (Object.assign(Object.assign({}, items), {
-            [`Shift-Ctrl-${level}`]: toggleBlockType_1.default(type, schema.nodes.paragraph, { level }),
-        })), {});
-        return Object.assign(Object.assign({}, options), { Backspace: backspaceToParagraph_1.default(type), Enter: splitHeading_1.default(type) });
+        const options = this.options.levels.reduce((items, level) => ({
+            ...items,
+            ...{
+                [`Shift-Ctrl-${level}`]: toggleBlockType(type, schema.nodes.paragraph, { level }),
+            },
+        }), {});
+        return {
+            ...options,
+            Backspace: backspaceToParagraph(type),
+            Enter: splitHeading(type),
+        };
     }
     get plugins() {
         const getAnchors = doc => {
@@ -174,14 +160,14 @@ class Heading extends Node_1.default {
             doc.descendants((node, pos) => {
                 if (node.type.name !== this.name)
                     return;
-                const slug = headingToSlug_1.default(node);
+                const slug = headingToSlug(node);
                 let id = slug;
                 if (previouslySeen[slug] > 0) {
-                    id = headingToSlug_1.default(node, previouslySeen[slug]);
+                    id = headingToSlug(node, previouslySeen[slug]);
                 }
                 previouslySeen[slug] =
                     previouslySeen[slug] !== undefined ? previouslySeen[slug] + 1 : 1;
-                decorations.push(prosemirror_view_1.Decoration.widget(pos, () => {
+                decorations.push(Decoration.widget(pos, () => {
                     const anchor = document.createElement("a");
                     anchor.id = id;
                     anchor.className = this.className;
@@ -191,9 +177,9 @@ class Heading extends Node_1.default {
                     key: id,
                 }));
             });
-            return prosemirror_view_1.DecorationSet.create(doc, decorations);
+            return DecorationSet.create(doc, decorations);
         };
-        const plugin = new prosemirror_state_1.Plugin({
+        const plugin = new Plugin({
             state: {
                 init: (config, state) => {
                     return getAnchors(state.doc);
@@ -209,10 +195,9 @@ class Heading extends Node_1.default {
         return [plugin];
     }
     inputRules({ type }) {
-        return this.options.levels.map(level => prosemirror_inputrules_1.textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), type, () => ({
+        return this.options.levels.map(level => textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), type, () => ({
             level,
         })));
     }
 }
-exports.default = Heading;
 //# sourceMappingURL=Heading.js.map

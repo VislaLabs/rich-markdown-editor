@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const types_1 = require("../types");
+import { ToastType } from "../types";
 function findPlaceholderLink(doc, href) {
     let result;
     function findLinks(node, pos = 0) {
@@ -41,9 +39,9 @@ const createAndInsertLink = async function (view, title, href, options) {
             return;
         dispatch(view.state.tr.removeMark(result.pos, result.pos + result.node.nodeSize, state.schema.marks.link));
         if (onShowToast) {
-            onShowToast(options.dictionary.createLinkError, types_1.ToastType.Error);
+            onShowToast(options.dictionary.createLinkError, ToastType.Error);
         }
     }
 };
-exports.default = createAndInsertLink;
+export default createAndInsertLink;
 //# sourceMappingURL=createAndInsertLink.js.map

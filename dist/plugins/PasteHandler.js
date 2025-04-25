@@ -1,16 +1,11 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_tables_1 = require("prosemirror-tables");
-const prosemirror_commands_1 = require("prosemirror-commands");
-const Extension_1 = __importDefault(require("../lib/Extension"));
-const isUrl_1 = __importDefault(require("../lib/isUrl"));
-const isMarkdown_1 = __importDefault(require("../lib/isMarkdown"));
-const isInCode_1 = __importDefault(require("../queries/isInCode"));
-const Prism_1 = require("./Prism");
+import { Plugin } from "prosemirror-state";
+import { isInTable } from "prosemirror-tables";
+import { toggleMark } from "prosemirror-commands";
+import Extension from "../lib/Extension";
+import isUrl from "../lib/isUrl";
+import isMarkdown from "../lib/isMarkdown";
+import selectionIsInCode from "../queries/isInCode";
+import { LANGUAGES } from "./Prism";
 function normalizePastedMarkdown(text) {
     const CHECKBOX_REGEX = /^\s?(\[(X|\s|_|-)\]\s(.*)?)/gim;
     while (text.match(CHECKBOX_REGEX)) {
@@ -18,13 +13,13 @@ function normalizePastedMarkdown(text) {
     }
     return text;
 }
-class PasteHandler extends Extension_1.default {
+export default class PasteHandler extends Extension {
     get name() {
         return "markdown-paste";
     }
     get plugins() {
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 props: {
                     handlePaste: (view, event) => {
                         if (view.props.editable && !view.props.editable(view.state)) {
@@ -36,13 +31,13 @@ class PasteHandler extends Extension_1.default {
                         const html = event.clipboardData.getData("text/html");
                         const vscode = event.clipboardData.getData("vscode-editor-data");
                         const { state, dispatch } = view;
-                        if (isUrl_1.default(text)) {
+                        if (isUrl(text)) {
                             if (!state.selection.empty) {
-                                prosemirror_commands_1.toggleMark(this.editor.schema.marks.link, { href: text })(state, dispatch);
+                                toggleMark(this.editor.schema.marks.link, { href: text })(state, dispatch);
                                 return true;
                             }
                             const { embeds } = this.editor.props;
-                            if (embeds && !prosemirror_tables_1.isInTable(state)) {
+                            if (embeds && !isInTable(state)) {
                                 for (const embed of embeds) {
                                     const matches = embed.matcher(text);
                                     if (matches) {
@@ -59,7 +54,7 @@ class PasteHandler extends Extension_1.default {
                             view.dispatch(transaction);
                             return true;
                         }
-                        if (isInCode_1.default(view.state)) {
+                        if (selectionIsInCode(view.state)) {
                             event.preventDefault();
                             view.dispatch(view.state.tr.insertText(text));
                             return true;
@@ -70,7 +65,7 @@ class PasteHandler extends Extension_1.default {
                             event.preventDefault();
                             view.dispatch(view.state.tr
                                 .replaceSelectionWith(view.state.schema.nodes.code_fence.create({
-                                language: Object.keys(Prism_1.LANGUAGES).includes(vscodeMeta.mode)
+                                language: Object.keys(LANGUAGES).includes(vscodeMeta.mode)
                                     ? vscodeMeta.mode
                                     : null,
                             }))
@@ -80,7 +75,7 @@ class PasteHandler extends Extension_1.default {
                         if (html === null || html === void 0 ? void 0 : html.includes("data-pm-slice")) {
                             return false;
                         }
-                        if (isMarkdown_1.default(text) ||
+                        if (isMarkdown(text) ||
                             html.length === 0 ||
                             pasteCodeLanguage === "markdown") {
                             event.preventDefault();
@@ -97,5 +92,4 @@ class PasteHandler extends Extension_1.default {
         ];
     }
 }
-exports.default = PasteHandler;
 //# sourceMappingURL=PasteHandler.js.map

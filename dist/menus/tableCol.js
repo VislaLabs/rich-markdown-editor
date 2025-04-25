@@ -1,19 +1,14 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const outline_icons_1 = require("outline-icons");
-const isNodeActive_1 = __importDefault(require("../queries/isNodeActive"));
-function tableColMenuItems(state, index, rtl, dictionary) {
+import { TrashIcon, AlignLeftIcon, AlignRightIcon, AlignCenterIcon, InsertLeftIcon, InsertRightIcon, } from "outline-icons";
+import isNodeActive from "../queries/isNodeActive";
+export default function tableColMenuItems(state, index, rtl, dictionary) {
     const { schema } = state;
     return [
         {
             name: "setColumnAttr",
             tooltip: dictionary.alignLeft,
-            icon: outline_icons_1.AlignLeftIcon,
+            icon: AlignLeftIcon,
             attrs: { index, alignment: "left" },
-            active: isNodeActive_1.default(schema.nodes.th, {
+            active: isNodeActive(schema.nodes.th, {
                 colspan: 1,
                 rowspan: 1,
                 alignment: "left",
@@ -22,9 +17,9 @@ function tableColMenuItems(state, index, rtl, dictionary) {
         {
             name: "setColumnAttr",
             tooltip: dictionary.alignCenter,
-            icon: outline_icons_1.AlignCenterIcon,
+            icon: AlignCenterIcon,
             attrs: { index, alignment: "center" },
-            active: isNodeActive_1.default(schema.nodes.th, {
+            active: isNodeActive(schema.nodes.th, {
                 colspan: 1,
                 rowspan: 1,
                 alignment: "center",
@@ -33,9 +28,9 @@ function tableColMenuItems(state, index, rtl, dictionary) {
         {
             name: "setColumnAttr",
             tooltip: dictionary.alignRight,
-            icon: outline_icons_1.AlignRightIcon,
+            icon: AlignRightIcon,
             attrs: { index, alignment: "right" },
-            active: isNodeActive_1.default(schema.nodes.th, {
+            active: isNodeActive(schema.nodes.th, {
                 colspan: 1,
                 rowspan: 1,
                 alignment: "right",
@@ -47,13 +42,13 @@ function tableColMenuItems(state, index, rtl, dictionary) {
         {
             name: rtl ? "addColumnAfter" : "addColumnBefore",
             tooltip: rtl ? dictionary.addColumnAfter : dictionary.addColumnBefore,
-            icon: outline_icons_1.InsertLeftIcon,
+            icon: InsertLeftIcon,
             active: () => false,
         },
         {
             name: rtl ? "addColumnBefore" : "addColumnAfter",
             tooltip: rtl ? dictionary.addColumnBefore : dictionary.addColumnAfter,
-            icon: outline_icons_1.InsertRightIcon,
+            icon: InsertRightIcon,
             active: () => false,
         },
         {
@@ -62,10 +57,9 @@ function tableColMenuItems(state, index, rtl, dictionary) {
         {
             name: "deleteColumn",
             tooltip: dictionary.deleteColumn,
-            icon: outline_icons_1.TrashIcon,
+            icon: TrashIcon,
             active: () => false,
         },
     ];
 }
-exports.default = tableColMenuItems;
 //# sourceMappingURL=tableCol.js.map

@@ -1,17 +1,12 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_schema_list_1 = require("prosemirror-schema-list");
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_view_1 = require("prosemirror-view");
-const prosemirror_utils_1 = require("prosemirror-utils");
-const Node_1 = __importDefault(require("./Node"));
-const isList_1 = __importDefault(require("../queries/isList"));
-const isInList_1 = __importDefault(require("../queries/isInList"));
-const getParentListItem_1 = __importDefault(require("../queries/getParentListItem"));
-class ListItem extends Node_1.default {
+import { splitListItem, sinkListItem, liftListItem, } from "prosemirror-schema-list";
+import { Plugin, TextSelection, } from "prosemirror-state";
+import { DecorationSet, Decoration } from "prosemirror-view";
+import { findParentNodeClosestToPos } from "prosemirror-utils";
+import Node from "./Node";
+import isList from "../queries/isList";
+import isInList from "../queries/isInList";
+import getParentListItem from "../queries/getParentListItem";
+export default class ListItem extends Node {
     get name() {
         return "list_item";
     }
@@ -26,10 +21,10 @@ class ListItem extends Node_1.default {
     }
     get plugins() {
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 state: {
                     init() {
-                        return prosemirror_view_1.DecorationSet.empty;
+                        return DecorationSet.empty;
                     },
                     apply: (tr, set, oldState, newState) => {
                         const action = tr.getMeta("li");
@@ -39,12 +34,12 @@ class ListItem extends Node_1.default {
                         set = set.map(tr.mapping, tr.doc);
                         switch (action === null || action === void 0 ? void 0 : action.event) {
                             case "mouseover": {
-                                const result = prosemirror_utils_1.findParentNodeClosestToPos(newState.doc.resolve(action.pos), node => node.type.name === this.name ||
+                                const result = findParentNodeClosestToPos(newState.doc.resolve(action.pos), node => node.type.name === this.name ||
                                     node.type.name === "checkbox_item");
                                 if (!result) {
                                     return set;
                                 }
-                                const list = prosemirror_utils_1.findParentNodeClosestToPos(newState.doc.resolve(action.pos), node => isList_1.default(node, this.editor.schema));
+                                const list = findParentNodeClosestToPos(newState.doc.resolve(action.pos), node => isList(node, this.editor.schema));
                                 if (!list) {
                                     return set;
                                 }
@@ -57,18 +52,18 @@ class ListItem extends Node_1.default {
                                 });
                                 const counterLength = String(start + listItemNumber).length;
                                 return set.add(tr.doc, [
-                                    prosemirror_view_1.Decoration.node(result.pos, result.pos + result.node.nodeSize, {
+                                    Decoration.node(result.pos, result.pos + result.node.nodeSize, {
                                         class: `hovering`,
                                     }, {
                                         hover: true,
                                     }),
-                                    prosemirror_view_1.Decoration.node(result.pos, result.pos + result.node.nodeSize, {
+                                    Decoration.node(result.pos, result.pos + result.node.nodeSize, {
                                         class: `counter-${counterLength}`,
                                     }),
                                 ]);
                             }
                             case "mouseout": {
-                                const result = prosemirror_utils_1.findParentNodeClosestToPos(newState.doc.resolve(action.pos), node => node.type.name === this.name ||
+                                const result = findParentNodeClosestToPos(newState.doc.resolve(action.pos), node => node.type.name === this.name ||
                                     node.type.name === "checkbox_item");
                                 if (!result) {
                                     return set;
@@ -132,13 +127,13 @@ class ListItem extends Node_1.default {
     }
     keys({ type }) {
         return {
-            Enter: prosemirror_schema_list_1.splitListItem(type),
-            Tab: prosemirror_schema_list_1.sinkListItem(type),
-            "Shift-Tab": prosemirror_schema_list_1.liftListItem(type),
-            "Mod-]": prosemirror_schema_list_1.sinkListItem(type),
-            "Mod-[": prosemirror_schema_list_1.liftListItem(type),
+            Enter: splitListItem(type),
+            Tab: sinkListItem(type),
+            "Shift-Tab": liftListItem(type),
+            "Mod-]": sinkListItem(type),
+            "Mod-[": liftListItem(type),
             "Shift-Enter": (state, dispatch) => {
-                if (!isInList_1.default(state))
+                if (!isInList(state))
                     return false;
                 if (!state.selection.empty)
                     return false;
@@ -149,7 +144,7 @@ class ListItem extends Node_1.default {
             "Alt-ArrowUp": (state, dispatch) => {
                 if (!state.selection.empty)
                     return false;
-                const result = getParentListItem_1.default(state);
+                const result = getParentListItem(state);
                 if (!result)
                     return false;
                 const [li, pos] = result;
@@ -164,13 +159,13 @@ class ListItem extends Node_1.default {
                 dispatch(tr
                     .delete(pos, pos + li.nodeSize)
                     .insert(newPos, li)
-                    .setSelection(prosemirror_state_1.TextSelection.near(tr.doc.resolve(newPos))));
+                    .setSelection(TextSelection.near(tr.doc.resolve(newPos))));
                 return true;
             },
             "Alt-ArrowDown": (state, dispatch) => {
                 if (!state.selection.empty)
                     return false;
-                const result = getParentListItem_1.default(state);
+                const result = getParentListItem(state);
                 if (!result)
                     return false;
                 const [li, pos] = result;
@@ -184,7 +179,7 @@ class ListItem extends Node_1.default {
                 const newPos = pos + li.nodeSize + $pos.nodeAfter.nodeSize;
                 dispatch(tr
                     .insert(newPos, li)
-                    .setSelection(prosemirror_state_1.TextSelection.near(tr.doc.resolve(newPos)))
+                    .setSelection(TextSelection.near(tr.doc.resolve(newPos)))
                     .delete(pos, pos + li.nodeSize));
                 return true;
             },
@@ -197,5 +192,4 @@ class ListItem extends Node_1.default {
         return { block: "list_item" };
     }
 }
-exports.default = ListItem;
 //# sourceMappingURL=ListItem.js.map

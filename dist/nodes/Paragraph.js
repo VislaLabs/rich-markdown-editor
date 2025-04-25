@@ -1,11 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const Node_1 = __importDefault(require("./Node"));
-class Paragraph extends Node_1.default {
+import { setBlockType } from "prosemirror-commands";
+import Node from "./Node";
+export default class Paragraph extends Node {
     get name() {
         return "paragraph";
     }
@@ -19,11 +14,11 @@ class Paragraph extends Node_1.default {
     }
     keys({ type }) {
         return {
-            "Shift-Ctrl-0": prosemirror_commands_1.setBlockType(type),
+            "Shift-Ctrl-0": setBlockType(type),
         };
     }
     commands({ type }) {
-        return () => prosemirror_commands_1.setBlockType(type);
+        return () => setBlockType(type);
     }
     toMarkdown(state, node) {
         if (node.textContent.trim() === "" &&
@@ -40,5 +35,4 @@ class Paragraph extends Node_1.default {
         return { block: "paragraph" };
     }
 }
-exports.default = Paragraph;
 //# sourceMappingURL=Paragraph.js.map

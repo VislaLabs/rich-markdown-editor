@@ -1,8 +1,6 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const server_1 = require("./server");
+import { parser } from "./server";
 test("renders an empty doc", () => {
-    const ast = server_1.parser.parse("");
+    const ast = parser.parse("");
     expect(ast.toJSON()).toEqual({
         content: [{ type: "paragraph" }],
         type: "doc",

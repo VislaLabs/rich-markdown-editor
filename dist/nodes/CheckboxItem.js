@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_schema_list_1 = require("prosemirror-schema-list");
-const Node_1 = __importDefault(require("./Node"));
-const checkboxes_1 = __importDefault(require("../rules/checkboxes"));
-class CheckboxItem extends Node_1.default {
+import { splitListItem, sinkListItem, liftListItem, } from "prosemirror-schema-list";
+import Node from "./Node";
+import checkboxRule from "../rules/checkboxes";
+export default class CheckboxItem extends Node {
     constructor() {
         super(...arguments);
         this.handleChange = event => {
@@ -70,15 +65,15 @@ class CheckboxItem extends Node_1.default {
         };
     }
     get rulePlugins() {
-        return [checkboxes_1.default];
+        return [checkboxRule];
     }
     keys({ type }) {
         return {
-            Enter: prosemirror_schema_list_1.splitListItem(type),
-            Tab: prosemirror_schema_list_1.sinkListItem(type),
-            "Shift-Tab": prosemirror_schema_list_1.liftListItem(type),
-            "Mod-]": prosemirror_schema_list_1.sinkListItem(type),
-            "Mod-[": prosemirror_schema_list_1.liftListItem(type),
+            Enter: splitListItem(type),
+            Tab: sinkListItem(type),
+            "Shift-Tab": liftListItem(type),
+            "Mod-]": sinkListItem(type),
+            "Mod-[": liftListItem(type),
         };
     }
     toMarkdown(state, node) {
@@ -94,5 +89,4 @@ class CheckboxItem extends Node_1.default {
         };
     }
 }
-exports.default = CheckboxItem;
 //# sourceMappingURL=CheckboxItem.js.map

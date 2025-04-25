@@ -1,15 +1,9 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LANGUAGES = void 0;
-const core_1 = __importDefault(require("refractor/core"));
-const flattenDeep_1 = __importDefault(require("lodash/flattenDeep"));
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_view_1 = require("prosemirror-view");
-const prosemirror_utils_1 = require("prosemirror-utils");
-exports.LANGUAGES = {
+import refractor from "refractor/core";
+import flattenDeep from "lodash/flattenDeep";
+import { Plugin, PluginKey } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
+import { findBlockNodes } from "prosemirror-utils";
+export const LANGUAGES = {
     none: "None",
     bash: "Bash",
     css: "CSS",
@@ -34,7 +28,7 @@ exports.LANGUAGES = {
 const cache = {};
 function getDecorations({ doc, name }) {
     const decorations = [];
-    const blocks = prosemirror_utils_1.findBlockNodes(doc).filter(item => item.node.type.name === name);
+    const blocks = findBlockNodes(doc).filter(item => item.node.type.name === name);
     function parseNodes(nodes, classNames = []) {
         return nodes.map(node => {
             if (node.type === "element") {
@@ -50,21 +44,24 @@ function getDecorations({ doc, name }) {
     blocks.forEach(block => {
         let startPos = block.pos + 1;
         const language = block.node.attrs.language;
-        if (!language || language === "none" || !core_1.default.registered(language)) {
+        if (!language || language === "none" || !refractor.registered(language)) {
             return;
         }
         if (!cache[block.pos] || !cache[block.pos].node.eq(block.node)) {
-            const nodes = core_1.default.highlight(block.node.textContent, language);
-            const _decorations = flattenDeep_1.default(parseNodes(nodes))
+            const nodes = refractor.highlight(block.node.textContent, language);
+            const _decorations = flattenDeep(parseNodes(nodes))
                 .map((node) => {
                 const from = startPos;
                 const to = from + node.text.length;
                 startPos = to;
-                return Object.assign(Object.assign({}, node), { from,
-                    to });
+                return {
+                    ...node,
+                    from,
+                    to,
+                };
             })
                 .filter(node => node.classes && node.classes.length)
-                .map(node => prosemirror_view_1.Decoration.inline(node.from, node.to, {
+                .map(node => Decoration.inline(node.from, node.to, {
                 class: node.classes.join(" "),
             }));
             cache[block.pos] = {
@@ -81,15 +78,15 @@ function getDecorations({ doc, name }) {
         .forEach(pos => {
         delete cache[Number(pos)];
     });
-    return prosemirror_view_1.DecorationSet.create(doc, decorations);
+    return DecorationSet.create(doc, decorations);
 }
-function Prism({ name }) {
+export default function Prism({ name }) {
     let highlighted = false;
-    return new prosemirror_state_1.Plugin({
-        key: new prosemirror_state_1.PluginKey("prism"),
+    return new Plugin({
+        key: new PluginKey("prism"),
         state: {
             init: (_, { doc }) => {
-                return prosemirror_view_1.DecorationSet.create(doc, []);
+                return DecorationSet.create(doc, []);
             },
             apply: (transaction, decorationSet, oldState, state) => {
                 const nodeName = state.selection.$head.parent.type.name;
@@ -118,5 +115,4 @@ function Prism({ name }) {
         },
     });
 }
-exports.default = Prism;
 //# sourceMappingURL=Prism.js.map

@@ -1,11 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_state_1 = require("prosemirror-state");
-const Extension_1 = __importDefault(require("../lib/Extension"));
-class TrailingNode extends Extension_1.default {
+import { Plugin, PluginKey } from "prosemirror-state";
+import Extension from "../lib/Extension";
+export default class TrailingNode extends Extension {
     get name() {
         return "trailing_node";
     }
@@ -16,12 +11,12 @@ class TrailingNode extends Extension_1.default {
         };
     }
     get plugins() {
-        const plugin = new prosemirror_state_1.PluginKey(this.name);
+        const plugin = new PluginKey(this.name);
         const disabledNodes = Object.entries(this.editor.schema.nodes)
             .map(([, value]) => value)
             .filter((node) => this.options.notAfter.includes(node.name));
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 key: plugin,
                 view: () => ({
                     update: (view) => {
@@ -53,5 +48,4 @@ class TrailingNode extends Extension_1.default {
         ];
     }
 }
-exports.default = TrailingNode;
 //# sourceMappingURL=TrailingNode.js.map

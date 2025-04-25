@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const Node_1 = __importDefault(require("./Node"));
-const toggleWrap_1 = __importDefault(require("../commands/toggleWrap"));
-const isNodeActive_1 = __importDefault(require("../queries/isNodeActive"));
-class Blockquote extends Node_1.default {
+import { wrappingInputRule } from "prosemirror-inputrules";
+import Node from "./Node";
+import toggleWrap from "../commands/toggleWrap";
+import isNodeActive from "../queries/isNodeActive";
+export default class Blockquote extends Node {
     get name() {
         return "blockquote";
     }
@@ -21,17 +16,17 @@ class Blockquote extends Node_1.default {
         };
     }
     inputRules({ type }) {
-        return [prosemirror_inputrules_1.wrappingInputRule(/^\s*>\s$/, type)];
+        return [wrappingInputRule(/^\s*>\s$/, type)];
     }
     commands({ type }) {
-        return () => toggleWrap_1.default(type);
+        return () => toggleWrap(type);
     }
     keys({ type }) {
         return {
-            "Ctrl->": toggleWrap_1.default(type),
-            "Mod-]": toggleWrap_1.default(type),
+            "Ctrl->": toggleWrap(type),
+            "Mod-]": toggleWrap(type),
             "Shift-Enter": (state, dispatch) => {
-                if (!isNodeActive_1.default(type)(state)) {
+                if (!isNodeActive(type)(state)) {
                     return false;
                 }
                 const { tr, selection } = state;
@@ -47,5 +42,4 @@ class Blockquote extends Node_1.default {
         return { block: "blockquote" };
     }
 }
-exports.default = Blockquote;
 //# sourceMappingURL=Blockquote.js.map

@@ -1,58 +1,23 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(require("react"));
-const react_portal_1 = require("react-portal");
-const some_1 = __importDefault(require("lodash/some"));
-const prosemirror_state_1 = require("prosemirror-state");
-const tableCol_1 = __importDefault(require("../menus/tableCol"));
-const tableRow_1 = __importDefault(require("../menus/tableRow"));
-const table_1 = __importDefault(require("../menus/table"));
-const formatting_1 = __importDefault(require("../menus/formatting"));
-const image_1 = __importDefault(require("../menus/image"));
-const divider_1 = __importDefault(require("../menus/divider"));
-const FloatingToolbar_1 = __importDefault(require("./FloatingToolbar"));
-const LinkEditor_1 = __importDefault(require("./LinkEditor"));
-const ToolbarMenu_1 = __importDefault(require("./ToolbarMenu"));
-const filterExcessSeparators_1 = __importDefault(require("../lib/filterExcessSeparators"));
-const isMarkActive_1 = __importDefault(require("../queries/isMarkActive"));
-const getMarkRange_1 = __importDefault(require("../queries/getMarkRange"));
-const isNodeActive_1 = __importDefault(require("../queries/isNodeActive"));
-const getColumnIndex_1 = __importDefault(require("../queries/getColumnIndex"));
-const getRowIndex_1 = __importDefault(require("../queries/getRowIndex"));
-const createAndInsertLink_1 = __importDefault(require("../commands/createAndInsertLink"));
+import * as React from "react";
+import { Portal } from "react-portal";
+import some from "lodash/some";
+import { TextSelection } from "prosemirror-state";
+import getTableColMenuItems from "../menus/tableCol";
+import getTableRowMenuItems from "../menus/tableRow";
+import getTableMenuItems from "../menus/table";
+import getFormattingMenuItems from "../menus/formatting";
+import getImageMenuItems from "../menus/image";
+import getDividerMenuItems from "../menus/divider";
+import FloatingToolbar from "./FloatingToolbar";
+import LinkEditor from "./LinkEditor";
+import ToolbarMenu from "./ToolbarMenu";
+import filterExcessSeparators from "../lib/filterExcessSeparators";
+import isMarkActive from "../queries/isMarkActive";
+import getMarkRange from "../queries/getMarkRange";
+import isNodeActive from "../queries/isNodeActive";
+import getColumnIndex from "../queries/getColumnIndex";
+import getRowIndex from "../queries/getRowIndex";
+import createAndInsertLink from "../commands/createAndInsertLink";
 function isVisible(props) {
     const { view } = props;
     const { selection } = view.state;
@@ -71,9 +36,9 @@ function isVisible(props) {
     const slice = selection.content();
     const fragment = slice.content;
     const nodes = fragment.content;
-    return some_1.default(nodes, n => n.content.size);
+    return some(nodes, n => n.content.size);
 }
-class SelectionToolbar extends React.Component {
+export default class SelectionToolbar extends React.Component {
     constructor() {
         super(...arguments);
         this.isActive = false;
@@ -92,7 +57,7 @@ class SelectionToolbar extends React.Component {
                 return;
             }
             const { dispatch } = view;
-            dispatch(view.state.tr.setSelection(new prosemirror_state_1.TextSelection(view.state.doc.resolve(0))));
+            dispatch(view.state.tr.setSelection(new TextSelection(view.state.doc.resolve(0))));
         };
         this.handleOnCreateLink = async (title) => {
             const { dictionary, onCreateLink, view, onShowToast } = this.props;
@@ -109,7 +74,7 @@ class SelectionToolbar extends React.Component {
             dispatch(view.state.tr
                 .removeMark(from, to, markType)
                 .addMark(from, to, markType.create({ href })));
-            createAndInsertLink_1.default(view, title, href, {
+            createAndInsertLink(view, title, href, {
                 onCreateLink,
                 onShowToast,
                 dictionary,
@@ -142,40 +107,40 @@ class SelectionToolbar extends React.Component {
         window.removeEventListener("mouseup", this.handleClickOutside);
     }
     render() {
-        const _a = this.props, { dictionary, onCreateLink, isTemplate, rtl } = _a, rest = __rest(_a, ["dictionary", "onCreateLink", "isTemplate", "rtl"]);
+        const { dictionary, onCreateLink, isTemplate, rtl, ...rest } = this.props;
         const { view } = rest;
         const { state } = view;
         const { selection } = state;
-        const isCodeSelection = isNodeActive_1.default(state.schema.nodes.code_block)(state);
-        const isDividerSelection = isNodeActive_1.default(state.schema.nodes.hr)(state);
+        const isCodeSelection = isNodeActive(state.schema.nodes.code_block)(state);
+        const isDividerSelection = isNodeActive(state.schema.nodes.hr)(state);
         if (isCodeSelection) {
             return null;
         }
-        const colIndex = getColumnIndex_1.default(state.selection);
-        const rowIndex = getRowIndex_1.default(state.selection);
+        const colIndex = getColumnIndex(state.selection);
+        const rowIndex = getRowIndex(state.selection);
         const isTableSelection = colIndex !== undefined && rowIndex !== undefined;
-        const link = isMarkActive_1.default(state.schema.marks.link)(state);
-        const range = getMarkRange_1.default(selection.$from, state.schema.marks.link);
+        const link = isMarkActive(state.schema.marks.link)(state);
+        const range = getMarkRange(selection.$from, state.schema.marks.link);
         const isImageSelection = selection.node && selection.node.type.name === "image";
         let isTextSelection = false;
         let items = [];
         if (isTableSelection) {
-            items = table_1.default(dictionary);
+            items = getTableMenuItems(dictionary);
         }
         else if (colIndex !== undefined) {
-            items = tableCol_1.default(state, colIndex, rtl, dictionary);
+            items = getTableColMenuItems(state, colIndex, rtl, dictionary);
         }
         else if (rowIndex !== undefined) {
-            items = tableRow_1.default(state, rowIndex, dictionary);
+            items = getTableRowMenuItems(state, rowIndex, dictionary);
         }
         else if (isImageSelection) {
-            items = image_1.default(state, dictionary);
+            items = getImageMenuItems(state, dictionary);
         }
         else if (isDividerSelection) {
-            items = divider_1.default(state, dictionary);
+            items = getDividerMenuItems(state, dictionary);
         }
         else {
-            items = formatting_1.default(state, isTemplate, dictionary);
+            items = getFormattingMenuItems(state, isTemplate, dictionary);
             isTextSelection = true;
         }
         items = items.filter(item => {
@@ -185,7 +150,7 @@ class SelectionToolbar extends React.Component {
                 return false;
             return true;
         });
-        items = filterExcessSeparators_1.default(items);
+        items = filterExcessSeparators(items);
         if (!items.length) {
             return null;
         }
@@ -193,9 +158,8 @@ class SelectionToolbar extends React.Component {
         if (isTextSelection && !selectionText) {
             return null;
         }
-        return (React.createElement(react_portal_1.Portal, null,
-            React.createElement(FloatingToolbar_1.default, { view: view, active: isVisible(this.props), ref: this.menuRef }, link && range ? (React.createElement(LinkEditor_1.default, Object.assign({ dictionary: dictionary, mark: range.mark, from: range.from, to: range.to, onCreateLink: onCreateLink ? this.handleOnCreateLink : undefined, onSelectLink: this.handleOnSelectLink }, rest))) : (React.createElement(ToolbarMenu_1.default, Object.assign({ items: items }, rest))))));
+        return (React.createElement(Portal, null,
+            React.createElement(FloatingToolbar, { view: view, active: isVisible(this.props), ref: this.menuRef }, link && range ? (React.createElement(LinkEditor, Object.assign({ dictionary: dictionary, mark: range.mark, from: range.from, to: range.to, onCreateLink: onCreateLink ? this.handleOnCreateLink : undefined, onSelectLink: this.handleOnSelectLink }, rest))) : (React.createElement(ToolbarMenu, Object.assign({ items: items }, rest))))));
     }
 }
-exports.default = SelectionToolbar;
 //# sourceMappingURL=SelectionToolbar.js.map

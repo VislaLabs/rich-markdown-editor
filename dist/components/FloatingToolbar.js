@@ -1,33 +1,9 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const React = __importStar(require("react"));
-const react_portal_1 = require("react-portal");
-const useComponentSize_1 = __importDefault(require("../hooks/useComponentSize"));
-const useMediaQuery_1 = __importDefault(require("../hooks/useMediaQuery"));
-const useViewportHeight_1 = __importDefault(require("../hooks/useViewportHeight"));
-const styled_components_1 = __importDefault(require("styled-components"));
+import * as React from "react";
+import { Portal } from "react-portal";
+import useComponentSize from "../hooks/useComponentSize";
+import useMediaQuery from "../hooks/useMediaQuery";
+import useViewportHeight from "../hooks/useViewportHeight";
+import styled from "styled-components";
 const SSR = typeof window === "undefined";
 const defaultPosition = {
     left: -1000,
@@ -38,9 +14,9 @@ const defaultPosition = {
 function usePosition({ menuRef, isSelectingText, props }) {
     const { view, active } = props;
     const { selection } = view.state;
-    const { width: menuWidth, height: menuHeight } = useComponentSize_1.default(menuRef);
-    const viewportHeight = useViewportHeight_1.default();
-    const isTouchDevice = useMediaQuery_1.default("(hover: none) and (pointer: coarse)");
+    const { width: menuWidth, height: menuHeight } = useComponentSize(menuRef);
+    const viewportHeight = useViewportHeight();
+    const isTouchDevice = useMediaQuery("(hover: none) and (pointer: coarse)");
     if (!active || !menuWidth || !menuHeight || SSR || isSelectingText) {
         return defaultPosition;
     }
@@ -131,13 +107,13 @@ function FloatingToolbar(props) {
             window.removeEventListener("mouseup", handleMouseUp);
         };
     }, [props.active]);
-    return (React.createElement(react_portal_1.Portal, null,
+    return (React.createElement(Portal, null,
         React.createElement(Wrapper, { active: props.active && position.visible, ref: menuRef, offset: position.offset, style: {
                 top: `${position.top}px`,
                 left: `${position.left}px`,
             }, className: "floating-toolbar" }, position.visible && props.children)));
 }
-const Wrapper = styled_components_1.default.div `
+const Wrapper = styled.div `
   will-change: opacity, transform;
   padding: 8px 16px;
   position: absolute;
@@ -196,7 +172,7 @@ const Wrapper = styled_components_1.default.div `
     position: fixed;
   }
 `;
-exports.default = React.forwardRef(function FloatingToolbarWithForwardedRef(props, ref) {
+export default React.forwardRef(function FloatingToolbarWithForwardedRef(props, ref) {
     return React.createElement(FloatingToolbar, Object.assign({}, props, { forwardedRef: ref }));
 });
 //# sourceMappingURL=FloatingToolbar.js.map

@@ -1,16 +1,14 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const outline_icons_1 = require("outline-icons");
+import { BlockQuoteIcon, BulletedListIcon, CodeIcon, Heading1Icon, Heading2Icon, Heading3Icon, HorizontalRuleIcon, OrderedListIcon, PageBreakIcon, TableIcon, TodoListIcon, ImageIcon, StarredIcon, WarningIcon, InfoIcon, LinkIcon, } from "outline-icons";
 const SSR = typeof window === "undefined";
 const isMac = !SSR && window.navigator.platform === "MacIntel";
 const mod = isMac ? "⌘" : "ctrl";
-function blockMenuItems(dictionary) {
+export default function blockMenuItems(dictionary) {
     return [
         {
             name: "heading",
             title: dictionary.h1,
             keywords: "h1 heading1 title",
-            icon: outline_icons_1.Heading1Icon,
+            icon: Heading1Icon,
             shortcut: "^ ⇧ 1",
             attrs: { level: 1 },
         },
@@ -18,7 +16,7 @@ function blockMenuItems(dictionary) {
             name: "heading",
             title: dictionary.h2,
             keywords: "h2 heading2",
-            icon: outline_icons_1.Heading2Icon,
+            icon: Heading2Icon,
             shortcut: "^ ⇧ 2",
             attrs: { level: 2 },
         },
@@ -26,7 +24,7 @@ function blockMenuItems(dictionary) {
             name: "heading",
             title: dictionary.h3,
             keywords: "h3 heading3",
-            icon: outline_icons_1.Heading3Icon,
+            icon: Heading3Icon,
             shortcut: "^ ⇧ 3",
             attrs: { level: 3 },
         },
@@ -36,20 +34,20 @@ function blockMenuItems(dictionary) {
         {
             name: "checkbox_list",
             title: dictionary.checkboxList,
-            icon: outline_icons_1.TodoListIcon,
+            icon: TodoListIcon,
             keywords: "checklist checkbox task",
             shortcut: "^ ⇧ 7",
         },
         {
             name: "bullet_list",
             title: dictionary.bulletList,
-            icon: outline_icons_1.BulletedListIcon,
+            icon: BulletedListIcon,
             shortcut: "^ ⇧ 8",
         },
         {
             name: "ordered_list",
             title: dictionary.orderedList,
-            icon: outline_icons_1.OrderedListIcon,
+            icon: OrderedListIcon,
             shortcut: "^ ⇧ 9",
         },
         {
@@ -58,46 +56,46 @@ function blockMenuItems(dictionary) {
         {
             name: "table",
             title: dictionary.table,
-            icon: outline_icons_1.TableIcon,
+            icon: TableIcon,
             attrs: { rowsCount: 3, colsCount: 3 },
         },
         {
             name: "blockquote",
             title: dictionary.quote,
-            icon: outline_icons_1.BlockQuoteIcon,
+            icon: BlockQuoteIcon,
             shortcut: `${mod} ]`,
         },
         {
             name: "code_block",
             title: dictionary.codeBlock,
-            icon: outline_icons_1.CodeIcon,
+            icon: CodeIcon,
             shortcut: "^ ⇧ \\",
             keywords: "script",
         },
         {
             name: "hr",
             title: dictionary.hr,
-            icon: outline_icons_1.HorizontalRuleIcon,
+            icon: HorizontalRuleIcon,
             shortcut: `${mod} _`,
             keywords: "horizontal rule break line",
         },
         {
             name: "hr",
             title: dictionary.pageBreak,
-            icon: outline_icons_1.PageBreakIcon,
+            icon: PageBreakIcon,
             keywords: "page print break line",
             attrs: { markup: "***" },
         },
         {
             name: "image",
             title: dictionary.image,
-            icon: outline_icons_1.ImageIcon,
+            icon: ImageIcon,
             keywords: "picture photo",
         },
         {
             name: "link",
             title: dictionary.link,
-            icon: outline_icons_1.LinkIcon,
+            icon: LinkIcon,
             shortcut: `${mod} k`,
             keywords: "link url uri href",
         },
@@ -107,25 +105,24 @@ function blockMenuItems(dictionary) {
         {
             name: "container_notice",
             title: dictionary.infoNotice,
-            icon: outline_icons_1.InfoIcon,
+            icon: InfoIcon,
             keywords: "container_notice card information",
             attrs: { style: "info" },
         },
         {
             name: "container_notice",
             title: dictionary.warningNotice,
-            icon: outline_icons_1.WarningIcon,
+            icon: WarningIcon,
             keywords: "container_notice card error",
             attrs: { style: "warning" },
         },
         {
             name: "container_notice",
             title: dictionary.tipNotice,
-            icon: outline_icons_1.StarredIcon,
+            icon: StarredIcon,
             keywords: "container_notice card suggestion",
             attrs: { style: "tip" },
         },
     ];
 }
-exports.default = blockMenuItems;
 //# sourceMappingURL=block.js.map

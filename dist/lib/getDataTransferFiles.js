@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function getDataTransferFiles(event) {
+export default function getDataTransferFiles(event) {
     let dataTransferItemsList = [];
     if (event.dataTransfer) {
         const dt = event.dataTransfer;
@@ -16,5 +14,4 @@ function getDataTransferFiles(event) {
     }
     return Array.prototype.slice.call(dataTransferItemsList);
 }
-exports.default = getDataTransferFiles;
 //# sourceMappingURL=getDataTransferFiles.js.map

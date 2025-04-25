@@ -1,5 +1,5 @@
-import * as React from 'react';
-import Node from './Node';
+import * as React from "react";
+import Node from "./Node";
 export default class Image extends Node {
     get name(): string;
     get schema(): {

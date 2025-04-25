@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function default_1(options) {
+export default function (options) {
     const delimCharCode = options.delim.charCodeAt(0);
     return function emphasisPlugin(md) {
         function tokenize(state, silent) {
@@ -100,5 +98,4 @@ function default_1(options) {
         });
     };
 }
-exports.default = default_1;
 //# sourceMappingURL=mark.js.map

@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const markInputRule_1 = __importDefault(require("../lib/markInputRule"));
-const Mark_1 = __importDefault(require("./Mark"));
-const underlines_1 = __importDefault(require("../rules/underlines"));
-class Underline extends Mark_1.default {
+import { toggleMark } from "prosemirror-commands";
+import markInputRule from "../lib/markInputRule";
+import Mark from "./Mark";
+import underlinesRule from "../rules/underlines";
+export default class Underline extends Mark {
     get name() {
         return "underline";
     }
@@ -24,14 +19,14 @@ class Underline extends Mark_1.default {
         };
     }
     get rulePlugins() {
-        return [underlines_1.default];
+        return [underlinesRule];
     }
     inputRules({ type }) {
-        return [markInputRule_1.default(/(?:__)([^_]+)(?:__)$/, type)];
+        return [markInputRule(/(?:__)([^_]+)(?:__)$/, type)];
     }
     keys({ type }) {
         return {
-            "Mod-u": prosemirror_commands_1.toggleMark(type),
+            "Mod-u": toggleMark(type),
         };
     }
     get toMarkdown() {
@@ -46,5 +41,4 @@ class Underline extends Mark_1.default {
         return { mark: "underline" };
     }
 }
-exports.default = Underline;
 //# sourceMappingURL=Underline.js.map

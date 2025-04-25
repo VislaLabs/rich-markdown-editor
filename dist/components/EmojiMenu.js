@@ -1,18 +1,13 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = __importDefault(require("react"));
-const gemoji_1 = __importDefault(require("gemoji"));
-const fuzzy_search_1 = __importDefault(require("fuzzy-search"));
-const CommandMenu_1 = __importDefault(require("./CommandMenu"));
-const EmojiMenuItem_1 = __importDefault(require("./EmojiMenuItem"));
-const searcher = new fuzzy_search_1.default(gemoji_1.default, ["names"], {
+import React from "react";
+import gemojies from "gemoji";
+import FuzzySearch from "fuzzy-search";
+import CommandMenu from "./CommandMenu";
+import EmojiMenuItem from "./EmojiMenuItem";
+const searcher = new FuzzySearch(gemojies, ["names"], {
     caseSensitive: true,
     sort: true,
 });
-class EmojiMenu extends react_1.default.Component {
+class EmojiMenu extends React.Component {
     constructor() {
         super(...arguments);
         this.clearSearch = () => {
@@ -27,15 +22,21 @@ class EmojiMenu extends react_1.default.Component {
         const result = searcher.search(n).map(item => {
             const description = item.description;
             const name = item.names[0];
-            return Object.assign(Object.assign({}, item), { name: "emoji", title: name, description, attrs: { markup: name, "data-name": name } });
+            return {
+                ...item,
+                name: "emoji",
+                title: name,
+                description,
+                attrs: { markup: name, "data-name": name },
+            };
         });
         return result.slice(0, 10);
     }
     render() {
-        return (react_1.default.createElement(CommandMenu_1.default, Object.assign({}, this.props, { id: "emoji-menu-container", filterable: false, onClearSearch: this.clearSearch, renderMenuItem: (item, _index, options) => {
-                return (react_1.default.createElement(EmojiMenuItem_1.default, { onClick: options.onClick, selected: options.selected, title: item.description, emoji: item.emoji, containerId: "emoji-menu-container" }));
+        return (React.createElement(CommandMenu, Object.assign({}, this.props, { id: "emoji-menu-container", filterable: false, onClearSearch: this.clearSearch, renderMenuItem: (item, _index, options) => {
+                return (React.createElement(EmojiMenuItem, { onClick: options.onClick, selected: options.selected, title: item.description, emoji: item.emoji, containerId: "emoji-menu-container" }));
             }, items: this.items })));
     }
 }
-exports.default = EmojiMenu;
+export default EmojiMenu;
 //# sourceMappingURL=EmojiMenu.js.map

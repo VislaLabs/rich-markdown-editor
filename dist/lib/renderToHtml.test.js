@@ -1,54 +1,49 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const renderToHtml_1 = __importDefault(require("./renderToHtml"));
+import renderToHtml from "./renderToHtml";
 test("renders an empty string", () => {
-    expect(renderToHtml_1.default("")).toBe("");
+    expect(renderToHtml("")).toBe("");
 });
 test("renders plain text as paragraph", () => {
-    expect(renderToHtml_1.default("plain text")).toMatchSnapshot();
+    expect(renderToHtml("plain text")).toMatchSnapshot();
 });
 test("renders blockquote", () => {
-    expect(renderToHtml_1.default("> blockquote")).toMatchSnapshot();
+    expect(renderToHtml("> blockquote")).toMatchSnapshot();
 });
 test("renders code block", () => {
-    expect(renderToHtml_1.default(`
+    expect(renderToHtml(`
     this is indented code
 `)).toMatchSnapshot();
 });
 test("renders code fence", () => {
-    expect(renderToHtml_1.default(`\`\`\`javascript
+    expect(renderToHtml(`\`\`\`javascript
 this is code
 \`\`\``)).toMatchSnapshot();
 });
 test("renders checkbox list", () => {
-    expect(renderToHtml_1.default(`- [ ] unchecked
+    expect(renderToHtml(`- [ ] unchecked
 - [x] checked`)).toMatchSnapshot();
 });
 test("renders bullet list", () => {
-    expect(renderToHtml_1.default(`- item one
+    expect(renderToHtml(`- item one
 - item two
   - nested item`)).toMatchSnapshot();
 });
 test("renders info notice", () => {
-    expect(renderToHtml_1.default(`:::info
+    expect(renderToHtml(`:::info
 content of notice
 :::`)).toMatchSnapshot();
 });
 test("renders warning notice", () => {
-    expect(renderToHtml_1.default(`:::warning
+    expect(renderToHtml(`:::warning
 content of notice
 :::`)).toMatchSnapshot();
 });
 test("renders tip notice", () => {
-    expect(renderToHtml_1.default(`:::tip
+    expect(renderToHtml(`:::tip
 content of notice
 :::`)).toMatchSnapshot();
 });
 test("renders headings", () => {
-    expect(renderToHtml_1.default(`# Heading 1
+    expect(renderToHtml(`# Heading 1
 
 ## Heading 2
 
@@ -57,16 +52,16 @@ test("renders headings", () => {
 #### Heading 4`)).toMatchSnapshot();
 });
 test("renders horizontal rule", () => {
-    expect(renderToHtml_1.default(`---`)).toMatchSnapshot();
+    expect(renderToHtml(`---`)).toMatchSnapshot();
 });
 test("renders image", () => {
-    expect(renderToHtml_1.default(`![caption](https://lorempixel.com/200/200)`)).toMatchSnapshot();
+    expect(renderToHtml(`![caption](https://lorempixel.com/200/200)`)).toMatchSnapshot();
 });
 test("renders image with alignment", () => {
-    expect(renderToHtml_1.default(`![caption](https://lorempixel.com/200/200 "left-40")`)).toMatchSnapshot();
+    expect(renderToHtml(`![caption](https://lorempixel.com/200/200 "left-40")`)).toMatchSnapshot();
 });
 test("renders table", () => {
-    expect(renderToHtml_1.default(`
+    expect(renderToHtml(`
 | heading | centered | right aligned |
 |---------|:--------:|--------------:|
 |         | center   |               |
@@ -74,34 +69,34 @@ test("renders table", () => {
 `)).toMatchSnapshot();
 });
 test("renders bold marks", () => {
-    expect(renderToHtml_1.default(`this is **bold** text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is **bold** text`)).toMatchSnapshot();
 });
 test("renders code marks", () => {
-    expect(renderToHtml_1.default(`this is \`inline code\` text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is \`inline code\` text`)).toMatchSnapshot();
 });
 test("renders highlight marks", () => {
-    expect(renderToHtml_1.default(`this is ==highlighted== text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is ==highlighted== text`)).toMatchSnapshot();
 });
 test("renders italic marks", () => {
-    expect(renderToHtml_1.default(`this is *italic* text`)).toMatchSnapshot();
-    expect(renderToHtml_1.default(`this is _also italic_ text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is *italic* text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is _also italic_ text`)).toMatchSnapshot();
 });
 test("renders template placeholder marks", () => {
-    expect(renderToHtml_1.default(`this is !!a placeholder!!`)).toMatchSnapshot();
+    expect(renderToHtml(`this is !!a placeholder!!`)).toMatchSnapshot();
 });
 test("renders underline marks", () => {
-    expect(renderToHtml_1.default(`this is __underlined__ text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is __underlined__ text`)).toMatchSnapshot();
 });
 test("renders link marks", () => {
-    expect(renderToHtml_1.default(`this is [linked](https://www.example.com) text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is [linked](https://www.example.com) text`)).toMatchSnapshot();
 });
 test("renders underline marks", () => {
-    expect(renderToHtml_1.default(`this is ~~strikethrough~~ text`)).toMatchSnapshot();
+    expect(renderToHtml(`this is ~~strikethrough~~ text`)).toMatchSnapshot();
 });
 test("renders ordered list", () => {
-    expect(renderToHtml_1.default(`1. item one
+    expect(renderToHtml(`1. item one
 1. item two`)).toMatchSnapshot();
-    expect(renderToHtml_1.default(`1. item one
+    expect(renderToHtml(`1. item one
 2. item two`)).toMatchSnapshot();
 });
 //# sourceMappingURL=renderToHtml.test.js.map

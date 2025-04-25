@@ -1,11 +1,6 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const Node_1 = __importDefault(require("./Node"));
-class HorizontalRule extends Node_1.default {
+import { InputRule } from "prosemirror-inputrules";
+import Node from "./Node";
+export default class HorizontalRule extends Node {
     get name() {
         return "hr";
     }
@@ -42,7 +37,7 @@ class HorizontalRule extends Node_1.default {
     }
     inputRules({ type }) {
         return [
-            new prosemirror_inputrules_1.InputRule(/^(?:---|___\s|\*\*\*\s)$/, (state, match, start, end) => {
+            new InputRule(/^(?:---|___\s|\*\*\*\s)$/, (state, match, start, end) => {
                 const { tr } = state;
                 if (match[0]) {
                     const markup = match[0].trim();
@@ -65,5 +60,4 @@ class HorizontalRule extends Node_1.default {
         };
     }
 }
-exports.default = HorizontalRule;
 //# sourceMappingURL=HorizontalRule.js.map

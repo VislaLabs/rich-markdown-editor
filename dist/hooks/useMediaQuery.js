@@ -1,9 +1,7 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const react_1 = require("react");
-function useMediaQuery(query) {
-    const [matches, setMatches] = react_1.useState(false);
-    react_1.useEffect(() => {
+import { useState, useEffect } from "react";
+export default function useMediaQuery(query) {
+    const [matches, setMatches] = useState(false);
+    useEffect(() => {
         if (window.matchMedia) {
             const media = window.matchMedia(query);
             if (media.matches !== matches) {
@@ -18,5 +16,4 @@ function useMediaQuery(query) {
     }, [matches, query]);
     return matches;
 }
-exports.default = useMediaQuery;
 //# sourceMappingURL=useMediaQuery.js.map

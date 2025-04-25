@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const toggleList_1 = __importDefault(require("../commands/toggleList"));
-const Node_1 = __importDefault(require("./Node"));
-class OrderedList extends Node_1.default {
+import { wrappingInputRule } from "prosemirror-inputrules";
+import toggleList from "../commands/toggleList";
+import Node from "./Node";
+export default class OrderedList extends Node {
     get name() {
         return "ordered_list";
     }
@@ -35,16 +30,16 @@ class OrderedList extends Node_1.default {
         };
     }
     commands({ type, schema }) {
-        return () => toggleList_1.default(type, schema.nodes.list_item);
+        return () => toggleList(type, schema.nodes.list_item);
     }
     keys({ type, schema }) {
         return {
-            "Shift-Ctrl-9": toggleList_1.default(type, schema.nodes.list_item),
+            "Shift-Ctrl-9": toggleList(type, schema.nodes.list_item),
         };
     }
     inputRules({ type }) {
         return [
-            prosemirror_inputrules_1.wrappingInputRule(/^(\d+)\.\s$/, type, match => ({ order: +match[1] }), (match, node) => node.childCount + node.attrs.order === +match[1]),
+            wrappingInputRule(/^(\d+)\.\s$/, type, match => ({ order: +match[1] }), (match, node) => node.childCount + node.attrs.order === +match[1]),
         ];
     }
     toMarkdown(state, node) {
@@ -66,5 +61,4 @@ class OrderedList extends Node_1.default {
         };
     }
 }
-exports.default = OrderedList;
 //# sourceMappingURL=OrderedList.js.map

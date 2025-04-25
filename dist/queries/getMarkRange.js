@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function getMarkRange($pos, type) {
+export default function getMarkRange($pos, type) {
     if (!$pos || !type) {
         return false;
     }
@@ -28,5 +26,4 @@ function getMarkRange($pos, type) {
     }
     return { from: startPos, to: endPos, mark };
 }
-exports.default = getMarkRange;
 //# sourceMappingURL=getMarkRange.js.map

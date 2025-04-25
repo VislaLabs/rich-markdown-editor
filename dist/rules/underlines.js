@@ -1,6 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function markdownUnderlines(md) {
+export default function markdownUnderlines(md) {
     md.inline.ruler2.after("emphasis", "underline", state => {
         const tokens = state.tokens;
         for (let i = tokens.length - 1; i > 0; i--) {
@@ -19,5 +17,4 @@ function markdownUnderlines(md) {
         return false;
     });
 }
-exports.default = markdownUnderlines;
 //# sourceMappingURL=underlines.js.map

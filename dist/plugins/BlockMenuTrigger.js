@@ -1,41 +1,16 @@
-"use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.run = void 0;
-const prosemirror_inputrules_1 = require("prosemirror-inputrules");
-const client_1 = __importDefault(require("react-dom/client"));
-const React = __importStar(require("react"));
-const prosemirror_state_1 = require("prosemirror-state");
-const prosemirror_tables_1 = require("prosemirror-tables");
-const prosemirror_utils_1 = require("prosemirror-utils");
-const outline_icons_1 = require("outline-icons");
-const prosemirror_view_1 = require("prosemirror-view");
-const Extension_1 = __importDefault(require("../lib/Extension"));
+import { InputRule } from "prosemirror-inputrules";
+import ReactDOM from "react-dom/client";
+import * as React from "react";
+import { Plugin } from "prosemirror-state";
+import { isInTable } from "prosemirror-tables";
+import { findParentNode } from "prosemirror-utils";
+import { PlusIcon } from "outline-icons";
+import { Decoration, DecorationSet } from "prosemirror-view";
+import Extension from "../lib/Extension";
 const MAX_MATCH = 500;
 const OPEN_REGEX = /^\/(\w+)?$/;
 const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
-function run(view, from, to, regex, handler) {
+export function run(view, from, to, regex, handler) {
     if (view.composing) {
         return false;
     }
@@ -51,8 +26,7 @@ function run(view, from, to, regex, handler) {
         return false;
     return true;
 }
-exports.run = run;
-class BlockMenuTrigger extends Extension_1.default {
+export default class BlockMenuTrigger extends Extension {
     get name() {
         return "blockmenu";
     }
@@ -60,10 +34,10 @@ class BlockMenuTrigger extends Extension_1.default {
         const button = document.createElement("button");
         button.className = "block-menu-trigger";
         button.type = "button";
-        const root = client_1.default.createRoot(button);
-        root.render(React.createElement(outline_icons_1.PlusIcon, { color: "currentColor" }));
+        const root = ReactDOM.createRoot(button);
+        root.render(React.createElement(PlusIcon, { color: "currentColor" }));
         return [
-            new prosemirror_state_1.Plugin({
+            new Plugin({
                 props: {
                     handleClick: () => {
                         this.options.onClose();
@@ -96,7 +70,7 @@ class BlockMenuTrigger extends Extension_1.default {
                         return false;
                     },
                     decorations: (state) => {
-                        const parent = prosemirror_utils_1.findParentNode((node) => node.type.name === "paragraph")(state.selection);
+                        const parent = findParentNode((node) => node.type.name === "paragraph")(state.selection);
                         if (!parent) {
                             return;
                         }
@@ -106,24 +80,24 @@ class BlockMenuTrigger extends Extension_1.default {
                         const isTopLevel = state.selection.$from.depth === 1;
                         if (isTopLevel) {
                             if (isEmpty) {
-                                decorations.push(prosemirror_view_1.Decoration.widget(parent.pos, () => {
+                                decorations.push(Decoration.widget(parent.pos, () => {
                                     button.addEventListener("click", () => {
                                         this.options.onOpen("");
                                     });
                                     return button;
                                 }));
-                                decorations.push(prosemirror_view_1.Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
+                                decorations.push(Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
                                     class: "placeholder",
                                     "data-empty-text": this.options.dictionary.newLineEmpty,
                                 }));
                             }
                             if (isSlash) {
-                                decorations.push(prosemirror_view_1.Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
+                                decorations.push(Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
                                     class: "placeholder",
                                     "data-empty-text": `  ${this.options.dictionary.newLineWithSlash}`,
                                 }));
                             }
-                            return prosemirror_view_1.DecorationSet.create(state.doc, decorations);
+                            return DecorationSet.create(state.doc, decorations);
                         }
                         return;
                     },
@@ -133,15 +107,15 @@ class BlockMenuTrigger extends Extension_1.default {
     }
     inputRules() {
         return [
-            new prosemirror_inputrules_1.InputRule(OPEN_REGEX, (state, match) => {
+            new InputRule(OPEN_REGEX, (state, match) => {
                 if (match &&
                     state.selection.$from.parent.type.name === "paragraph" &&
-                    !prosemirror_tables_1.isInTable(state)) {
+                    !isInTable(state)) {
                     this.options.onOpen(match[1]);
                 }
                 return null;
             }),
-            new prosemirror_inputrules_1.InputRule(CLOSE_REGEX, (state, match) => {
+            new InputRule(CLOSE_REGEX, (state, match) => {
                 if (match) {
                     this.options.onClose();
                 }
@@ -150,5 +124,4 @@ class BlockMenuTrigger extends Extension_1.default {
         ];
     }
 }
-exports.default = BlockMenuTrigger;
 //# sourceMappingURL=BlockMenuTrigger.js.map

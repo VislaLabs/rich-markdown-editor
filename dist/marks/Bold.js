@@ -1,12 +1,7 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const markInputRule_1 = __importDefault(require("../lib/markInputRule"));
-const Mark_1 = __importDefault(require("./Mark"));
-class Bold extends Mark_1.default {
+import { toggleMark } from "prosemirror-commands";
+import markInputRule from "../lib/markInputRule";
+import Mark from "./Mark";
+export default class Bold extends Mark {
     get name() {
         return "strong";
     }
@@ -21,12 +16,12 @@ class Bold extends Mark_1.default {
         };
     }
     inputRules({ type }) {
-        return [markInputRule_1.default(/(?:\*\*)([^*]+)(?:\*\*)$/, type)];
+        return [markInputRule(/(?:\*\*)([^*]+)(?:\*\*)$/, type)];
     }
     keys({ type }) {
         return {
-            "Mod-b": prosemirror_commands_1.toggleMark(type),
-            "Mod-B": prosemirror_commands_1.toggleMark(type),
+            "Mod-b": toggleMark(type),
+            "Mod-B": toggleMark(type),
         };
     }
     get toMarkdown() {
@@ -41,5 +36,4 @@ class Bold extends Mark_1.default {
         return { mark: "strong" };
     }
 }
-exports.default = Bold;
 //# sourceMappingURL=Bold.js.map

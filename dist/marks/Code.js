@@ -1,13 +1,8 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const prosemirror_commands_1 = require("prosemirror-commands");
-const markInputRule_1 = __importDefault(require("../lib/markInputRule"));
-const moveLeft_1 = __importDefault(require("../commands/moveLeft"));
-const moveRight_1 = __importDefault(require("../commands/moveRight"));
-const Mark_1 = __importDefault(require("./Mark"));
+import { toggleMark } from "prosemirror-commands";
+import markInputRule from "../lib/markInputRule";
+import moveLeft from "../commands/moveLeft";
+import moveRight from "../commands/moveRight";
+import Mark from "./Mark";
 function backticksFor(node, side) {
     const ticks = /`+/g;
     let match;
@@ -26,7 +21,7 @@ function backticksFor(node, side) {
     }
     return result;
 }
-class Code extends Mark_1.default {
+export default class Code extends Mark {
     get name() {
         return "code_inline";
     }
@@ -38,13 +33,13 @@ class Code extends Mark_1.default {
         };
     }
     inputRules({ type }) {
-        return [markInputRule_1.default(/(?:^|[^`])(`([^`]+)`)$/, type)];
+        return [markInputRule(/(?:^|[^`])(`([^`]+)`)$/, type)];
     }
     keys({ type }) {
         return {
-            "Mod`": prosemirror_commands_1.toggleMark(type),
-            ArrowLeft: moveLeft_1.default(),
-            ArrowRight: moveRight_1.default(),
+            "Mod`": toggleMark(type),
+            ArrowLeft: moveLeft(),
+            ArrowRight: moveRight(),
         };
     }
     get toMarkdown() {
@@ -62,5 +57,4 @@ class Code extends Mark_1.default {
         return { mark: "code_inline" };
     }
 }
-exports.default = Code;
 //# sourceMappingURL=Code.js.map
