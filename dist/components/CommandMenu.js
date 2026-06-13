@@ -329,14 +329,14 @@ class CommandMenu extends React.Component {
     }
     render() {
         const { dictionary, isActive, uploadImage } = this.props;
-        const items = this.filtered;
         const { insertItem, ...positioning } = this.state;
+        const items = isActive ? this.filtered : [];
         return (React.createElement(Portal, null,
             React.createElement(Wrapper, Object.assign({ id: this.props.id || "block-menu-container", active: isActive, ref: this.menuRef }, positioning),
                 insertItem ? (React.createElement(LinkInputWrapper, null,
                     React.createElement(LinkInput, { type: "text", placeholder: insertItem.title
                             ? dictionary.pasteLinkWithTitle(insertItem.title)
-                            : dictionary.pasteLink, onKeyDown: this.handleLinkInputKeydown, onPaste: this.handleLinkInputPaste, autoFocus: true }))) : (React.createElement(List, null,
+                            : dictionary.pasteLink, onKeyDown: this.handleLinkInputKeydown, onPaste: this.handleLinkInputPaste, autoFocus: true }))) : (isActive && (React.createElement(List, null,
                     items.map((item, index) => {
                         if (item.name === "separator") {
                             return (React.createElement(ListItem, { key: index },
@@ -352,7 +352,7 @@ class CommandMenu extends React.Component {
                         })));
                     }),
                     items.length === 0 && (React.createElement(ListItem, null,
-                        React.createElement(Empty, null, dictionary.noResults))))),
+                        React.createElement(Empty, null, dictionary.noResults)))))),
                 uploadImage && (React.createElement(VisuallyHidden, null,
                     React.createElement("input", { type: "file", ref: this.inputRef, onChange: this.handleImagePicked, accept: "image/*" }))))));
     }

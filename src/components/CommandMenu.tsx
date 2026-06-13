@@ -456,8 +456,14 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
   render() {
     const { dictionary, isActive, uploadImage } = this.props;
-    const items = this.filtered;
     const { insertItem, ...positioning } = this.state;
+
+    // Lazy: only build + render the (potentially large) item list while the
+    // menu is actually open. When closed the Wrapper stays mounted — keeping
+    // the positioning ref, the open transition and the file input alive — but
+    // we skip the items.map entirely so BlockMenuItem / EmojiMenuItem are not
+    // mounted (and re-rendered on every editor commit) while hidden.
+    const items = isActive ? this.filtered : [];
 
     return (
       <Portal>
@@ -482,36 +488,39 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
               />
             </LinkInputWrapper>
           ) : (
-            <List>
-              {items.map((item, index) => {
-                if (item.name === "separator") {
+            isActive && (
+              <List>
+                {items.map((item, index) => {
+                  if (item.name === "separator") {
+                    return (
+                      <ListItem key={index}>
+                        <hr />
+                      </ListItem>
+                    );
+                  }
+                  const selected =
+                    index === this.state.selectedIndex && isActive;
+
+                  if (!item.title) {
+                    return null;
+                  }
+
                   return (
                     <ListItem key={index}>
-                      <hr />
+                      {this.props.renderMenuItem(item as any, index, {
+                        selected,
+                        onClick: () => this.insertItem(item),
+                      })}
                     </ListItem>
                   );
-                }
-                const selected = index === this.state.selectedIndex && isActive;
-
-                if (!item.title) {
-                  return null;
-                }
-
-                return (
-                  <ListItem key={index}>
-                    {this.props.renderMenuItem(item as any, index, {
-                      selected,
-                      onClick: () => this.insertItem(item),
-                    })}
+                })}
+                {items.length === 0 && (
+                  <ListItem>
+                    <Empty>{dictionary.noResults}</Empty>
                   </ListItem>
-                );
-              })}
-              {items.length === 0 && (
-                <ListItem>
-                  <Empty>{dictionary.noResults}</Empty>
-                </ListItem>
-              )}
-            </List>
+                )}
+              </List>
+            )
           )}
           {uploadImage && (
             <VisuallyHidden>
